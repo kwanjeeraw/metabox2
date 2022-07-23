@@ -295,11 +295,12 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                          h4("Transformation"),
                                                                                          radioButtons("tranM", h5("Choose transformation method"),
                                                                                                       choices = list("none" = "none",
-                                                                                                                     "cube" = "cube",
+                                                                                                                     "cube root" = "cube",
                                                                                                                      "log10" = "log10",
                                                                                                                      "log2" = "log2",
                                                                                                                      "glog10" = "glog10",
-                                                                                                                     "glog2" = "glog2"
+                                                                                                                     "glog2" = "glog2",
+                                                                                                                     "square root" = "sqrt"
 
                                                                                                       ),selected = "none"),
                                                                                          br(),
