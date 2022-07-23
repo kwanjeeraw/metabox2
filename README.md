@@ -1,5 +1,5 @@
 # Metabox 2.0
-Metabox 2.0: A toolbox for thorough metabolomics data processing, analysis, integration and interpretation. The tool includes several methods for data processing, statistical analysis, biomarker analysis and data interpretation.
+Metabox 2.0: A toolbox for thorough metabolomics data analysis. It is a substantial update of the [metabox](https://github.com/kwanjeeraw/metabox) R package, released in 2016. The tool includes several methods for data processing, statistical analysis, biomarker analysis, integrative analysis and data interpretation. Metabox 2.0 supports a wide range of users, from bench biologists to experienced bioinformaticians. It comes with an intuitive web interface for simple data analysis, as well as running R commands for exclusive projects.
 
 ![demo](metabox2_img.png)
 

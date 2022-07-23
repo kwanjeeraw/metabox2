@@ -15,7 +15,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                            ###################################################################
                            tabPanel("Home",value = "home",
                                     tags$div(HTML("<h2><center>WELCOME TO <b>METABOX</b> 2.0 </center></h2>"), class = "header"),
-                                    tags$div(HTML("<h5><center>A Toolbox for Thorough Metabolomic Data Analysis, Integration and Interpretation</center></h5>"),class = "header"),
+                                    tags$div(HTML("<h5><center>A Toolbox for Thorough Metabolomics Data Analysis</center></h5>"),class = "header"),
                                     br(),br(),
                                     HTML('<center><img src="first_pipeline.png" width="1150" height = "450" ></center>'),
                                     br(), br(), hr(),
