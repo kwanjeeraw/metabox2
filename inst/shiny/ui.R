@@ -160,12 +160,12 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                    ))
                                                  ),
                                                  #####IS-QC base norm##############################################
-                                                 tabPanel("IS- or QC-based normalization", value = "QCnorm",
+                                                 tabPanel("IS- and QC-based normalization", value = "QCnorm",
                                                           fluidRow(width=12,
                                                                    sidebarLayout(
                                                                      column(3,
                                                                             sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative; height: 600px;",
-                                                                                         h4("IS- or QC-based normalization"),
+                                                                                         h4("IS- and QC-based normalization"),
                                                                                          h6("*serrf and loess methods take long execution time."),
                                                                                          radioButtons("QCnormSelect", h5("Choose normalization method"),
                                                                                                       choices = list("none" = "none",
@@ -274,7 +274,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                    sidebarLayout(
                                                                      column(3,
                                                                             sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative;",
-                                                                                         h4("Data-driven normalization"),
+                                                                                         h4("Sample-based normalization"),
                                                                                          radioButtons("DATAnormSelect", h5("Choose normalization method"),
                                                                                                       choices = list("none" = "none",
                                                                                                                      "contrast" = "contrast",
