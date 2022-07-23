@@ -1,14 +1,14 @@
 Package: metabox2
 Type: Package
 Title: metabox2
-Version: 0.1.0
+Version: 1.0
 Author: Kwanjeera W
 Maintainer: The package maintainer <kwanjeera.wan@mahidol.ac.th>
-Description: Metabox 2.0: A toolbox for comprehensive metabolomics data analysis.
+Description: Metabox 2.0: A toolbox for comprehensive metabolomics data processing, analysis, integration and interpretatin.
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Imports: 
     biotools,
     car,
@@ -20,6 +20,7 @@ Imports:
     RColorBrewer,
     reshape2,
     scales,
+    pcaMethods,
     shiny
 Suggests: 
     crmn,
@@ -39,4 +40,8 @@ Suggests:
     Hmisc,
     lme4,
     piano,
-    plyr
+    plyr,
+    packMBPLSDA,
+    ade4,
+    DiscriMiner,
+    FactoMineR

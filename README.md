@@ -1,6 +1,5 @@
 # Metabox 2.0
-Metabox 2.0: A toolbox for thorough metabolomics data processing, analysis, integration and interpretatin.
-The tool includes several methods for data processing, statistical analysis, biomarker analysis and data interpretation.
+Metabox 2.0: A toolbox for thorough metabolomics data processing, analysis, integration and interpretation. The tool includes several methods for data processing, statistical analysis, biomarker analysis and data interpretation.
 
 ![demo](metabox2_img.png)
 
@@ -34,6 +33,10 @@ Updates
 #### version 1.0 (JUL 2022)
 * Initial version
 
+References
+=========
+- Wanichthanarak K, Fan S, Grapov D, Barupal DK, Fiehn O (2017) Metabox: A Toolbox for Metabolomic Data Analysis, Interpretation and Integrative Exploration. PLOS ONE 12(1): e0171046. [![DOI](https://doi.org/10.1371/journal.pone.0171046)
+
 License
 =========
-[GNU General Public License (v3)](https://github.com/kwanjeeraw/grinnGUI/blob/master/LICENSE)
+[GNU General Public License (v3)](https://github.com/kwanjeeraw/metabox2/blob/master/LICENSE)
