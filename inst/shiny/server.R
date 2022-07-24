@@ -899,7 +899,7 @@ server = function(input, output, session) {
       })
 
       #output$plotQCboxOri <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueN$X[,1:ncol(metboshow$keepValueN$X)<=50]))})
-      output$plotQCboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = FALSE, plot_title="Before normalization")})
+      output$plotQCboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")})
       output$plotQCdenOri <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plot_title="Before normalization densityplot plot (variables)")})
       output$plotQCdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plotvar=FALSE, plot_title="Before normalization densityplot plot (samples)")})
 
@@ -937,7 +937,7 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = FALSE, plot_title="After normalization")})
+        rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After normalization")})
       output$plotQCden <- renderPlot({
         isolate({
           progress <- shiny::Progress$new()
@@ -1213,7 +1213,7 @@ server = function(input, output, session) {
       })
 
       #output$plotNboxOri <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueDP$X[,1:ncol(metboshow$keepValueDP$X)<=50]))})
-      output$plotNboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = FALSE, plot_title="Before normalization")})
+      output$plotNboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")})
       output$plotNdenOri <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plot_title="Before normalization densityplot plot (variables)")})
       output$plotNdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plotvar=FALSE, plot_title="Before normalization densityplot plot (samples)")})
       # output$plotNbox <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueMP$X[,1:ncol(metboshow$keepValueDP$X)<=50]))})
@@ -1226,7 +1226,12 @@ server = function(input, output, session) {
             progress$inc(0.1, detail = "...")
           }
           Sys.sleep(1)
-          rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After normalization")})
+          if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){
+            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After normalization")
+          }else{
+            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After normalization")#dolog for normalization
+          }
+          })
       })
 
       output$plotNden <- renderPlot({
@@ -3755,8 +3760,8 @@ server = function(input, output, session) {
       dt_plot = list();
       dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=TRUE, plot_title="Before normalization")
       dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=TRUE, plot_title="After normalization")
-      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = FALSE, plot_title="Before normalization")
-      dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = FALSE, plot_title="After normalization")
+      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")
+      dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After normalization")
       # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueN, plot_title="Before normalization")
       # dt_plot[['box2']] = boxplot_overview(metboshow$metbo_QCnorm, plot_title="After normalization")
       dt_plot[['dens1']] = densityplot_overview(metboshow$keepValueN$X, plot_title="Before normalization (variables)")
@@ -3790,8 +3795,12 @@ server = function(input, output, session) {
       if(is.null(metboshow$metbo_scal)){
         dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=TRUE, plot_title="After normalization")
       }
-      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = FALSE, plot_title="Before normalization")
-      dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After normalization")
+      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")
+      if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){
+        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After normalization")
+      }else{
+        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After normalization")#dolog for normalization
+      }
       # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueDP, plot_title="Before normalization")
       # dt_plot[['box2']] = boxplot_overview(metboshow$keepValueMP, plot_title="After normalization")
       dt_plot[['dens1']] = densityplot_overview(metboshow$keepValueDP$X, plot_title="Before normalization (variables)")
