@@ -1050,7 +1050,7 @@ server = function(input, output, session) {
 
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
-        cat("\nData normalization with\n",input$DATAnormSelect,"\nDone!\n")
+        cat("\nData normalization with\n",isolate({input$DATAnormSelect}),"\nDone!\n")
       })
 
     }
@@ -1063,8 +1063,8 @@ server = function(input, output, session) {
 
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
-        cat("\nData normalization with",input$DATAnormSelect,"\n")
-        cat("\nData transformation with",input$tranM,"transformation.\n","\nDone!\n")
+        cat("\nData normalization with",isolate({input$DATAnormSelect}),"\n")
+        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n","\nDone!\n")
       })
 
     }
@@ -1074,7 +1074,7 @@ server = function(input, output, session) {
       metboshow$metbo_tran <- transform_input_data(metboshow$keepValueDP, method = input$tranM)
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
-        cat("\nData transformation with",input$tranM,"transformation.\n","\nDone!\n")
+        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n","\nDone!\n")
       })
     }
 
@@ -1084,8 +1084,8 @@ server = function(input, output, session) {
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_tran, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
-        cat("\nData transformation with",input$tranM,"transformation.\n")
-        cat("\nData scaling with",input$scalM,"scaling.\n","\nDone!\n")
+        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n")
+        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
       })
     }
     ########6#SoTxNo
@@ -1096,8 +1096,8 @@ server = function(input, output, session) {
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_norm, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
-        cat("\nData normalization with",input$DATAnormSelect,"\n")
-        cat("\nData scaling with",input$scalM,"scaling.\n","\nDone!\n")
+        cat("\nData normalization with",isolate({input$DATAnormSelect}),"\n")
+        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
       })
     }
     ########7#SoTxNx
@@ -1105,7 +1105,7 @@ server = function(input, output, session) {
       metboshow$metbo_scal <- scale_input_data(metboshow$keepValueDP, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
-        cat("\nData scaling with",input$scalM,"scaling.\n","\nDone!\n")
+        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
       })
     }
     ########8#SoToNo
@@ -1117,9 +1117,9 @@ server = function(input, output, session) {
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_tran, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
-        cat("\nData normalization with",input$DATAnormSelect,"\n")
-        cat("\nData transformation with",input$tranM,"transformation.\n")
-        cat("\nData scaling with",input$scalM,"scaling.\n","\nDone!\n")
+        cat("\nData normalization with",isolate({input$DATAnormSelect}),"\n")
+        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n")
+        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
       })
     }
 
@@ -1184,7 +1184,6 @@ server = function(input, output, session) {
             layout(dragmode = "select") %>%
             event_register("plotly_selected")
         })
-
       }
 
       if(is.null(metboshow$metbo_scal)){
