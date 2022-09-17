@@ -595,7 +595,7 @@ server = function(input, output, session) {
       req(input$DATAnormSelect)
       if(input$DATAnormSelect == "pqn"){shinyjs::show("ref")
         updateSelectInput(session, "ref",
-                          choices=c(row.names(metboshow$keepValueDP$X),row.names(metboshow$keepValueDP$X)))
+                          choices=c(NULL,row.names(metboshow$keepValueDP$X),row.names(metboshow$keepValueDP$X)))
       }else{shinyjs::hide("ref")}
     })
 
@@ -1046,7 +1046,7 @@ server = function(input, output, session) {
     ########2#SxTxNo
     if(input$scalM == "none" && input$tranM == "none" && input$DATAnormSelect != "none"){
       metboshow$metbo_norm <- normalize_input_data_bydata(metboshow$keepValueDP,method = input$DATAnormSelect,
-                                                          ref = as.numeric(input$ref))
+                                                          ref = input$ref)
 
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
@@ -1058,7 +1058,7 @@ server = function(input, output, session) {
     if(input$scalM == "none" && input$tranM != "none" && input$DATAnormSelect != "none"){
 
       metboshow$metbo_norm <- normalize_input_data_bydata(metboshow$keepValueDP,method = input$DATAnormSelect,
-                                                          ref = as.numeric(input$ref))
+                                                          ref = input$ref)
       metboshow$metbo_tran <- transform_input_data(metboshow$metbo_norm, method = input$tranM)
 
       output$txtbox.DATnorm <- renderPrint({
@@ -1092,7 +1092,7 @@ server = function(input, output, session) {
     if(input$scalM != "none" && input$tranM == "none" && input$DATAnormSelect != "none"){
 
       metboshow$metbo_norm <- normalize_input_data_bydata(metboshow$keepValueDP,method = input$DATAnormSelect,
-                                                          ref = as.numeric(input$ref))
+                                                          ref = input$ref)
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_norm, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
         cat("\nExecuting function ...\n")
@@ -1112,7 +1112,7 @@ server = function(input, output, session) {
     if(input$scalM != "none" && input$tranM != "none" && input$DATAnormSelect != "none"){
 
       metboshow$metbo_norm <- normalize_input_data_bydata(metboshow$keepValueDP,method = input$DATAnormSelect,
-                                                          ref = as.numeric(input$ref))
+                                                          ref = input$ref)
       metboshow$metbo_tran <- transform_input_data(metboshow$metbo_norm, method = input$tranM)
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_tran, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
