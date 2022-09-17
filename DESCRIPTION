@@ -1,14 +1,15 @@
-Package: metabox2
+Package: metabox.beta
 Type: Package
-Title: metabox2
-Version: 1.0
+Title: metabox.beta
+Version: 0.1.0
 Author: Kwanjeera W
 Maintainer: The package maintainer <kwanjeera.wan@mahidol.ac.th>
-Description: Metabox 2.0: A toolbox for comprehensive metabolomics data processing, analysis, integration and interpretatin.
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Imports: 
     biotools,
     car,
