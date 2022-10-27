@@ -49,8 +49,13 @@ set_input_obj <- function(inputdata, idCol=1, classCol=2, xCol=3){
   }else{
     ID = inputdata[,idCol] #list of ids
     orgID = ID #keep original IDs, for statistical analyses
-    if (is.character(ID)) ID=factor(ID)
-    if (!is.numeric(ID)) ID=as.numeric(ID) #convert IDs to numbers, for MUVR
+    if (is.character(ID)) {
+      ID=factor(ID, levels = ID)
+    }else if(is.factor(ID)) {
+      ID=ID
+    }else {
+      ID=as.numeric(ID) #convert IDs to numbers, for MUVR
+    }
   }
   # #Set classCol; classCol is numeric
   # if (missing(classCol)) {
@@ -73,7 +78,8 @@ set_input_obj <- function(inputdata, idCol=1, classCol=2, xCol=3){
   cat("\nUploaded data contains:\n-",
       nrow(X), "samples and", ncol(X), "variables.\n-",
       "repeated samples =",isRepeated,".\n-",
-      nlevels(Y), "classes/response variables.\n-",
+      "class/factor with",nlevels(Y), "levels.\n-",
+      sum(apply(X, 2, function(x) { sum(x<0) }),na.rm = TRUE)," negative variables.\n-",
       sum(is.na(X)), "(",round((sum(is.na(X))/(nrow(X)*ncol(X)))*100,2),"%) missing values.\n")
 
   input_obj$inputdata = inputdata; input_obj$ID = ID;  input_obj$orgID = orgID; input_obj$unik = unik; input_obj$unikID = unikID; input_obj$idCol = idCol;

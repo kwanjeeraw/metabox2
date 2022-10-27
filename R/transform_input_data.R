@@ -19,8 +19,9 @@ transform_input_data <- function(METBObj, method="log2"){
     return(METBObj)
   }
   if(sum(is.na(METBObj$X)) > 0){#Data contains missing values
-    cat("\nThe data contains missing values. Data was not transformed.\n")
-    return(METBObj)
+    cat("\nThe data contains missing values. glog10 and glog2 methods will not transform the data. The others will retain NAs in the transformed data.
+        Imputing the missing values before data transformation is recommended.\n")
+    #return(METBObj)
   }
   #Initialize parameters
   dat = METBObj$X; methodls = list(); #working data
@@ -41,17 +42,18 @@ transform_input_data <- function(METBObj, method="log2"){
     cat("\nData transformation with 'generalized log2 transformation'.\n")
   }
   if (method == "log10"){#log10
-    dat[dat<=0] = 1
+    dat[dat==0] = 1
     new_dat = log10(dat)
     cat("\nData transformation with 'log10 transformation'.\n")
   }
   if (method == "log2"){#log2
-    dat[dat<=0] = 1
+    dat[dat==0] = 1
     new_dat = log2(dat)
     cat("\nData transformation with 'log2 transformation'.\n")
   }
   if (method == "sqrt"){#square root
-    new_dat = sign(dat) * sqrt(dat)
+    dat[dat==0] = 0
+    new_dat = sqrt(dat)
     cat("\nData transformation with 'square root transformation'.\n")
   }
   # if (method == "log2_2"){#glog2

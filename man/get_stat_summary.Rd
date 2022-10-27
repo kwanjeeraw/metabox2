@@ -16,8 +16,7 @@ data frame of statistical summary.
 Get statistical summary of METBObj.
 }
 \details{
-The function calculates median, mean and SD (sd). The fold change (fc) of each variable/feature will be computed,
-if the category/factor column is found. For 2 levels, fc=level1/level2, for more than 2 levels, fc=each_level/all_mean.
+The function calculates median, mean and SD (sd). The z-score of each variable/feature will be computed.
 }
 \examples{
 #sugar_dt = set_input_obj(sugar, 1,2,5)
