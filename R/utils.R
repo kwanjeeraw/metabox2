@@ -187,19 +187,16 @@ get_stat_summary <- function(METBObj){
     calc_grsd = aggregate(dat, list(F1), FUN = sd, na.rm=TRUE) #calculate sd for each level of F1
     calc_grsd=t(calc_grsd[-1])
     colnames(calc_grsd) = paste0(levels(F1),"_sd")
-    if(nlevels(F1)>2){#more than 2 levels
-      #calc_fc = apply(calc_grmean,2, function(x){x/calc_mean}) #foldChange = each_level/all_mean
-      rm <- colMeans(calc_grmean);calc_grmean <- sweep(calc_grmean, 2, rm);sx <- apply(calc_grmean, 2, sd);
-      calc_fc <- sweep(calc_grmean, 2, sx, "/"); #scale z-score
-      colnames(calc_fc) = paste0(levels(F1),"_zscore")
-    }else{#2 levels
-      #calc_fc = calc_grmean[,1]/calc_grmean[,2] #foldChange = level1/level2
-      #calc_fc = data.frame(calc_fc)
-      rm <- colMeans(calc_grmean);calc_grmean <- sweep(calc_grmean, 2, rm);sx <- apply(calc_grmean, 2, sd);
-      calc_fc <- sweep(calc_grmean, 2, sx, "/"); #scale z-score
-      colnames(calc_fc) = paste0(levels(F1),"_zscore")
-    }
-    stat_summ = data.frame(all_median=calc_median, all_mean=calc_mean, all_sd=calc_sd, calc_grmedian, calc_grmean, calc_grsd, calc_fc, check.names = FALSE)
+    #calc_fc = apply(calc_grmean,2, function(x){x/calc_mean}) #foldChange = each_level/all_mean
+    rm <- colMeans(dat);rm_mean <- sweep(dat, 2, rm);sx <- apply(rm_mean, 2, sd);
+    calc_fc <- sweep(rm_mean, 2, sx, "/"); #scale z-score
+    calc_fcgrmean = aggregate(calc_fc, list(F1), FUN = mean, na.rm=TRUE) #calculate z-score mean for each level of F1
+    calc_fcgrmean=t(calc_fcgrmean[-1])
+    colnames(calc_fcgrmean) = paste0(levels(F1),"_mean_zscore")
+    calc_fcgrsd = aggregate(calc_fc, list(F1), FUN = sd, na.rm=TRUE) #calculate z-score sd for each level of F1
+    calc_fcgrsd=t(calc_fcgrsd[-1])
+    colnames(calc_fcgrsd) = paste0(levels(F1),"_sd_zscore")
+    stat_summ = data.frame(all_median=calc_median, all_mean=calc_mean, all_sd=calc_sd, calc_grmedian, calc_grmean, calc_grsd, calc_fcgrmean, calc_fcgrsd, check.names = FALSE)
   }
   return(stat_summ)
 }
