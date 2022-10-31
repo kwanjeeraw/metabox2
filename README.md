@@ -37,7 +37,8 @@ Updates
 * Allow scaling and block weighting by the block inertia
 * Allow missing values in normalization, transformation and scaling
 #### version 1.2 (OCT 2022)
-* Summarize z-score of each variable in univariate analysis
+* Summarize average z-score and SD of each variable in univariate analysis
+* Fix bug when running MUVR
 
 References
 =========
