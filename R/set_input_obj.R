@@ -70,6 +70,10 @@ set_input_obj <- function(inputdata, idCol=1, classCol=2, xCol=3){
 
   ###INITIALIZE VARIABLES
   X = inputdata[,-1:-(xCol-1)] #X;
+  if(!is.data.frame(X)){ #if 1 variable;
+    X=data.frame(matrix(inputdata[,-1:-(xCol-1)],ncol=1)) #X;
+    colnames(X) = colnames(inputdata)[xCol]
+  }
   Y = inputdata[,classCol] #Y;
   unik = !duplicated(ID)  #boolean of unique IDs; for MUVR
   unikID = ID[unik] #list of ids; for MUVR
