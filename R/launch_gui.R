@@ -7,7 +7,7 @@
 #'#launch_gui()
 #'@export
 launch_gui<-function(){
-  shiny::runApp(system.file("shiny", package = "metabox.beta"),
+  shiny::runApp(system.file("shiny", package = "metabox2"),
                 display.mode = "normal",
                 launch.browser = TRUE)
 }
