@@ -151,7 +151,7 @@ get_rsd <- function(METBObj, sampleType=FALSE){
 #'@description Get statistical summary of METBObj.
 #'@usage get_stat_summary(METBObj)
 #'@param METBObj METBObj object contains list of data.
-#'@details The function calculates median, mean and SD (sd). The z-score of each variable/feature will be computed.
+#'@details The function calculates median, mean, SD, coefficient of variation (cv) and normality.
 #'@return data frame of statistical summary.
 #'@examples
 #'#sugar_dt = set_input_obj(sugar, 1,2,5)
@@ -160,6 +160,9 @@ get_rsd <- function(METBObj, sampleType=FALSE){
 get_stat_summary <- function(METBObj){
   #Initialize parameters
   dat = METBObj$X; stat_summ = data.frame(); #working data
+  normshaptest = function(x){ #shapiro.test by group
+    tryCatch(shapiro.test(x)$p.value, error=function(e){0})
+  }
   if(is.numeric(METBObj$Y)){#numeric response variables
     cat('\nFind a numeric vector. Assuming response variables are continuous.')
     calc_median = apply(dat, 2, function(x) median(x, na.rm=TRUE)) #calculate median across levels
@@ -187,16 +190,22 @@ get_stat_summary <- function(METBObj){
     calc_grsd = aggregate(dat, list(F1), FUN = sd, na.rm=TRUE) #calculate sd for each level of F1
     calc_grsd=t(calc_grsd[-1])
     colnames(calc_grsd) = paste0(levels(F1),"_sd")
-    #calc_fc = apply(calc_grmean,2, function(x){x/calc_mean}) #foldChange = each_level/all_mean
-    rm <- colMeans(dat);rm_mean <- sweep(dat, 2, rm);sx <- apply(rm_mean, 2, sd);
-    calc_fc <- sweep(rm_mean, 2, sx, "/"); #scale z-score
-    calc_fcgrmean = aggregate(calc_fc, list(F1), FUN = mean, na.rm=TRUE) #calculate z-score mean for each level of F1
-    calc_fcgrmean=t(calc_fcgrmean[-1])
-    colnames(calc_fcgrmean) = paste0(levels(F1),"_mean_zscore")
-    calc_fcgrsd = aggregate(calc_fc, list(F1), FUN = sd, na.rm=TRUE) #calculate z-score sd for each level of F1
-    calc_fcgrsd=t(calc_fcgrsd[-1])
-    colnames(calc_fcgrsd) = paste0(levels(F1),"_sd_zscore")
-    stat_summ = data.frame(all_median=calc_median, all_mean=calc_mean, all_sd=calc_sd, calc_grmedian, calc_grmean, calc_grsd, calc_fcgrmean, calc_fcgrsd, check.names = FALSE)
+    calc_grcv = abs(data.frame((matrix(mapply('/',calc_grsd,calc_grmean),ncol = nlevels(F1),byrow = F)),row.names = row.names(calc_grmean))) #calculate abs coefficient of variation for each level of F1
+    colnames(calc_grcv) = paste0(levels(F1),"_cv")
+    calc_grnorm = aggregate(dat, list(F1), FUN = normshaptest) #calculate normality for each level of F1
+    calc_grnorm=t(calc_grnorm[-1])
+    colnames(calc_grnorm) = paste0(levels(F1),"_pnormal")
+    # calc_fc = apply(calc_grmean,2, function(x){x/calc_mean}) #foldChange = each_level/all_mean
+    # rm <- colMeans(dat);rm_mean <- sweep(dat, 2, rm);sx <- apply(rm_mean, 2, sd);
+    # calc_fc <- sweep(rm_mean, 2, sx, "/"); #scale z-score
+    # calc_fcgrmean = aggregate(calc_fc, list(F1), FUN = mean, na.rm=TRUE) #calculate z-score mean for each level of F1
+    # calc_fcgrmean=t(calc_fcgrmean[-1])
+    # colnames(calc_fcgrmean) = paste0(levels(F1),"_mean_zscore")
+    # calc_fcgrsd = aggregate(calc_fc, list(F1), FUN = sd, na.rm=TRUE) #calculate z-score sd for each level of F1
+    # calc_fcgrsd=t(calc_fcgrsd[-1])
+    # colnames(calc_fcgrsd) = paste0(levels(F1),"_sd_zscore")
+    stat_summ = data.frame(all_median=calc_median, all_mean=calc_mean, all_sd=calc_sd,
+                           calc_grmedian, calc_grmean, calc_grsd, calc_grcv, calc_grnorm, check.names = FALSE)
   }
   return(stat_summ)
 }
@@ -357,7 +366,7 @@ boxplot_byF1 <- function(METBObj, xCol=1, factorLv1){
   if(numlevels <= 8){
     grcolors = brewer.pal(name="Set1", n = 8)
   }else{
-    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 8))(numlevels)
+    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
   }
   ggplot(plotdata, aes(x=Groups, y = value, color=Groups, label=Sample_ID)) + geom_boxplot(outlier.shape = NA) +
     scale_color_manual(values = grcolors) + geom_jitter(width=0.1, alpha=0.2) + theme_light() + ggtitle(xnames) +
@@ -408,7 +417,7 @@ boxplot_byF1F2 <- function(METBObj, xCol=1, factorLv1, factorLv2){
   if(numlevels <= 8){
     grcolors = brewer.pal(name="Set1", n = 8)
   }else{
-    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 8))(numlevels)
+    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
   }
   ggplot(plotdata, aes(x=F1, y = value, color=Groups, label=Sample_ID)) + geom_boxplot(outlier.shape = NA) + geom_point(position=position_jitterdodge(), alpha=0.2) +
     scale_color_manual(values = grcolors) + theme_light() + ggtitle(xnames) +
@@ -514,7 +523,7 @@ intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title=
     if(numlevels <= 8){
       grcolors = brewer.pal(name="Set1", n = 8)
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 8))(numlevels)
+      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
     }
     ggplot(plotdata, aes(Sample_ID, value, color = ClassCol)) + geom_point(size=ptsize, alpha=0.5) +
       scale_color_manual(values = grcolors) + theme_minimal() +
@@ -570,7 +579,7 @@ interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize
   if(numlevels <= 8){
     grcolors = brewer.pal(name="Set1", n = 8)
   }else{
-    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 8))(numlevels)
+    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
   }
   statsum = FSA::Summarize(dat[,xCol] ~ F1 + Groups, dat, digits=4)
   ggplot(statsum, aes(x = F1, y = median, colour = Groups, group = Groups)) + geom_point(size=ptsize, alpha=0.5) + geom_line() +
@@ -684,7 +693,7 @@ multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL
     if(numlevels <= 8){
       grcolors = brewer.pal(name="Set1", n = 8)
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 8))(numlevels)
+      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
     }
     ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, label=Sample_ID)) + geom_point(size=ptsize) +
       stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) + scale_color_manual(values = grcolors) +
@@ -773,7 +782,7 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
     if(numlevels <= 8){
       grcolors = brewer.pal(name="Set1", n = 8)
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 8))(numlevels)
+      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
     }
     if(!is.null(shapeCol) && shapeCol != which(colnames(pcadata) == "ClassCol")){# check shapeCol
       colnames(pcadata)[shapeCol] = 'shapeCol' #shape column
@@ -896,7 +905,7 @@ rlaplot_overview <- function(METBObj, classCol=NULL, type="wg", dolog=TRUE, doav
     if(numlevels <= 8){
       grcolors = brewer.pal(name="Set1", n = 8)
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 8))(numlevels)
+      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
     }
     pl = ggplot(plot_data, aes(x = ind, y = value, color=ClassCol))
     if(limitx && dim_dt[1] > 100){

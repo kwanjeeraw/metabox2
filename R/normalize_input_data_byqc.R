@@ -164,7 +164,7 @@ normalize_input_data_byqc <- function(METBObj, method="nomis", istd=NULL, factor
   #       cat("\nERROR! Could not install the required package 'ruv'. Data was not normalized.\n")
   #     }else{
   #       inputdat = METBObj$inputdata #working data
-  #       G = model.matrix(~-1+. , data=data.frame(inputdat[,factorCol])) #biological factors, G
+  #       G = model.matrix(~-1+. , data=data.frame(inputdat[,factorCol])) #biological factors, G, error if > 2 groups
   #       m_dat = log2(data.matrix(dat, rownames.force = T)) #log abundances of the metabolites
   #       isIS = log2(dat[,istd])
   #       istdls = colnames(m_dat)[istd] = paste0("STD_",colnames(m_dat)[istd]) #rename IS

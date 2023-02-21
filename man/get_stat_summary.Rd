@@ -16,7 +16,7 @@ data frame of statistical summary.
 Get statistical summary of METBObj.
 }
 \details{
-The function calculates median, mean and SD (sd). The z-score of each variable/feature will be computed.
+The function calculates median, mean, SD, coefficient of variation (cv) and normality.
 }
 \examples{
 #sugar_dt = set_input_obj(sugar, 1,2,5)

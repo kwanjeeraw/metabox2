@@ -886,7 +886,7 @@ server = function(input, output, session) {
       })
 
       output$plotQCoverOri <- renderPlotly({
-        p_isO <- ggplotly(pcaplot_overview(metboshow$keepValueN,scale=TRUE, plot_title="Before normalization"), source = 'pca_isO')
+        p_isO <- ggplotly(pcaplot_overview(metboshow$keepValueN,scale=FALSE, plot_title="Before normalization"), source = 'pca_isO')
         p_isO %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -913,7 +913,7 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        p_is <- ggplotly(pcaplot_overview(metboshow$metbo_QCnorm,scale=TRUE, plot_title="After normalization"), source = 'pca_is')
+        p_is <- ggplotly(pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After normalization"), source = 'pca_is')
         p_is %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -1156,7 +1156,7 @@ server = function(input, output, session) {
 
 
       output$plotNoverOri <- renderPlotly({
-        p_NO <-ggplotly(pcaplot_overview(metboshow$keepValueDP, scale=TRUE, plot_title="Before normalization"), source = 'pca_NO')
+        p_NO <-ggplotly(pcaplot_overview(metboshow$keepValueDP, scale=FALSE, plot_title="Before normalization"), source = 'pca_NO')
         p_NO %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -1179,7 +1179,7 @@ server = function(input, output, session) {
             }
             Sys.sleep(1)
           })
-          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, plot_title="After normalization"), source = 'pca_N')
+          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale=FALSE, plot_title="After normalization"), source = 'pca_N')
           p_N %>%
             layout(dragmode = "select") %>%
             event_register("plotly_selected")
@@ -1197,7 +1197,7 @@ server = function(input, output, session) {
             }
             Sys.sleep(1)
           })
-          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale = TRUE, plot_title="After normalization"), source = 'pca_N')
+          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale = FALSE, plot_title="After normalization"), source = 'pca_N')
           p_N %>%
             layout(dragmode = "select") %>%
             event_register("plotly_selected")
@@ -3757,8 +3757,8 @@ server = function(input, output, session) {
       generate_report(metboshow$metbo_QCnorm,reportfile="normalize_byqc_report")
       write.csv(cbind(metboshow$metbo_QCnorm$inputdata[,1:metboshow$firstV-1],metboshow$metbo_QCnorm$X),"ISQC_normalization_output_table.csv")
       dt_plot = list();
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=TRUE, plot_title="Before normalization")
-      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=TRUE, plot_title="After normalization")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before normalization")
+      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After normalization")
       dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")
       dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After normalization")
       # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueN, plot_title="Before normalization")
@@ -3786,13 +3786,13 @@ server = function(input, output, session) {
         generate_report(metboshow$metbo_tran,reportfile="transform_data_report")
       }
       write.csv(cbind(metboshow$keepValueMP$inputdata[,1:metboshow$firstV-1],metboshow$keepValueMP$X),"Data_normalization_output_table.csv")
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=TRUE, plot_title="Before normalization")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before normalization")
       if(!is.null(metboshow$metbo_scal)){
         generate_report(metboshow$metbo_scal,reportfile="scale_data_report")
         dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After normalization")
       }
       if(is.null(metboshow$metbo_scal)){
-        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=TRUE, plot_title="After normalization")
+        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After normalization")
       }
       dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")
       if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){

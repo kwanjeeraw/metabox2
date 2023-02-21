@@ -30,15 +30,20 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 
 Updates
 =========
-#### version 1.0 (JUL 2022)
-* Initial version
+#### version 1.3 (FEB 2023)
+* Summarize coefficient of variation (cv) and normality
+* Exclude average z-score of each variable
+* Fix default scaling of PCA plot
+* Fix default color
+#### version 1.2 (OCT 2022)
+* Summarize average z-score and SD of each variable in univariate analysis
+* Fix bug when running MUVR
 #### version 1.1 (SEP 2022)
 * More imputation methods: zero, half-min
 * Allow scaling and block weighting by the block inertia
 * Allow missing values in normalization, transformation and scaling
-#### version 1.2 (OCT 2022)
-* Summarize average z-score and SD of each variable in univariate analysis
-* Fix bug when running MUVR
+#### version 1.0 (JUL 2022)
+* Initial version
 
 References
 =========
