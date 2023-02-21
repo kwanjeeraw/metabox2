@@ -8,7 +8,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                 shinyjs::useShinyjs(),
                 shinyjs::extendShinyjs(text = app_jscode, functions = c('disableTab','enableTab')),
                 extendShinyjs(text = reset_all_evenData, functions = c("resetSelected")),
-                navbarPage(windowTitle="Metabox 2.0",img(src="metabox2.png",width=100), id="tabs",
+                navbarPage(windowTitle="Metabox 2.0",img(src="metabox2.png",width=105), id="tabs",
 
                            ###################################################################
                            ############################HOME PAGE##############################
@@ -162,12 +162,12 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                    ))
                                                  ),
                                                  #####IS-QC base norm##############################################
-                                                 tabPanel("IS- and QC-based normalization", value = "QCnorm",
+                                                 tabPanel("IS- or QC-based normalization", value = "QCnorm",
                                                           fluidRow(width=12,
                                                                    sidebarLayout(
                                                                      column(3,
                                                                             sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative; height: 600px;",
-                                                                                         h4("IS- and QC-based normalization"),
+                                                                                         h4("IS- or QC-based normalization"),
                                                                                          h6("*serrf and loess methods take long execution time."),
                                                                                          radioButtons("QCnormSelect", h5("Choose normalization method"),
                                                                                                       choices = list("none" = "none",
@@ -203,7 +203,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                     column(12,
                                                                                                                            h5("PCA score plot of the 1st two PCs provides the overview of the data."),hr(style="border-top: 1px dashed #D3D3D3;"),
                                                                                                                            column(6,
-                                                                                                                                  plotlyOutput(outputId = "plotQCoverOri")
+                                                                                                                                  plotlyOutput(outputId = "plotQCoverOri",height = "480px")
                                                                                                                            ),
                                                                                                                            column(6,
                                                                                                                                   div(verbatimTextOutput("txtbox.QCoverOri"),style = " overflow-y:scroll; max-height: 350px;")
@@ -211,7 +211,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                     ),
                                                                                                                     column(12,br(),br(),
                                                                                                                            column(6,
-                                                                                                                                  plotlyOutput(outputId = "plotQCover"),br()
+                                                                                                                                  plotlyOutput(outputId = "plotQCover",height = "480px"),br()
                                                                                                                            ),
                                                                                                                            column(6,
                                                                                                                                   h5("*Drag on the plot to select sample(s), double-click to unselect."),
@@ -339,7 +339,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                      column(12,
                                                                                                                             h5("PCA score plot of the first two PCs provides the overview of the data."),hr(style="border-top: 1px dashed #D3D3D3;"),
                                                                                                                             column(6,
-                                                                                                                                   plotlyOutput(outputId = "plotNoverOri", height = "100%", width = "100%")
+                                                                                                                                   plotlyOutput(outputId = "plotNoverOri",height = "480px", width = "100%")
                                                                                                                             ),
                                                                                                                             column(6,
                                                                                                                                    div(verbatimTextOutput("txtbox.NoverOri"),style = "overflow-y:scroll; max-height: 350px;")
@@ -347,7 +347,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                      ),
                                                                                                                      column(12,br(),br(),
                                                                                                                             column(6,
-                                                                                                                                   plotlyOutput(outputId = "plotNover", height = "100%", width = "100%"),br()
+                                                                                                                                   plotlyOutput(outputId = "plotNover",height = "480px", width = "100%"),br()
                                                                                                                             ),
                                                                                                                             column(6,
                                                                                                                                    h5("*Drag on the plot to select sample(s), double-click to unselect."),
@@ -478,10 +478,10 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                                Dashed line represents statistical significance cutoff (adjusted p-value < 0.05)."),
                                                                                                                            h5("*Display only the top 100 variables, sorte by adjusted p-values. Click on a dot to toggle its boxplot."),
                                                                                                                            hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                           plotlyOutput(outputId = "plotPvalUNI")
+                                                                                                                           plotlyOutput(outputId = "plotPvalUNI",height = "480px")
                                                                                                                     ),
                                                                                                                     column(12,
-                                                                                                                           plotlyOutput(outputId = "plotBoxUNI")
+                                                                                                                           plotlyOutput(outputId = "plotBoxUNI",height = "480px")
                                                                                                                     )
                                                                                                            ),
                                                                                                            tabPanel("Output table", value = "UNIoutputTab",
@@ -541,10 +541,10 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                            column(3,selectInput("MULScorePC2","Select PC to display on y-axis (PCY)",choices=NULL, selected=NULL)),br()
                                                                                                                     ),
                                                                                                                     column(6,
-                                                                                                                           plotlyOutput(outputId = "plotScoreMUL"),br()
+                                                                                                                           plotlyOutput(outputId = "plotScoreMUL",height = "480px"),br()
                                                                                                                     ),
                                                                                                                     column(6,
-                                                                                                                           plotlyOutput(outputId = "plotLoadMUL"),br()
+                                                                                                                           plotlyOutput(outputId = "plotLoadMUL",height = "480px"),br()
                                                                                                                     )
                                                                                                            ),
                                                                                                            tabPanel("Loading", value = "MULloading",br(),
@@ -553,7 +553,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                     hr(style="border-top: 1px dashed #D3D3D3;"),
                                                                                                                     selectInput("MULselectPC","Select PC to display",choices=NULL, selected=NULL),
                                                                                                                     column(12,
-                                                                                                                           plotlyOutput(outputId = "plotPCloadMUL")
+                                                                                                                           plotlyOutput(outputId = "plotPCloadMUL",height = "480px")
                                                                                                                     )
                                                                                                            ),
                                                                                                            tabPanel("VIP", value = "MULvip",br(),
@@ -561,7 +561,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                            h5("Variable importance in projection (VIP) plot."),
                                                                                                                            h5("*Display only the top 100 variables, sorted by VIP values."),
                                                                                                                            hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                           plotlyOutput(outputId = "plotvipMUL")
+                                                                                                                           plotlyOutput(outputId = "plotvipMUL",height = "480px")
                                                                                                                     )
                                                                                                            ),
                                                                                                            tabPanel("Output table", value = "MULoutputTab",br(),
@@ -616,7 +616,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                     column(12,
                                                                                                                            h5("*Drag on the plot to zoom, double-click to reset."),
                                                                                                                            h5("*Plotting will take awhile for a lot of variables."),br(),
-                                                                                                                           plotlyOutput(outputId = "plotHeatCOR", height = "650px")
+                                                                                                                           plotlyOutput(outputId = "plotHeatCOR", height = "680px")
                                                                                                                     )
 
                                                                                                            ),
@@ -943,19 +943,19 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                tabsetPanel(id = "MBPLtabsetAna",
                                                                                                             tabPanel("BIP plot", value = "MBPLbipDat",br(),
                                                                                                                      column(12,
-                                                                                                                      plotlyOutput(outputId = "plotBipMBPL", width = "100%", height = "100%")
+                                                                                                                      plotlyOutput(outputId = "plotBipMBPL", width = "100%", height = "480px")
                                                                                                                      )
                                                                                                             ),
                                                                                                             tabPanel("VIP plot", value = "MBPLvip",br(),
                                                                                                                      column(12,
                                                                                                                       numericInput("MBPLselectvipprop", "Select top n% of variables to display (max = 100%)", 10, min = 5, max=100, step=5),
-                                                                                                                      plotlyOutput(outputId = "plotVipMBPL", width = "100%", height = "100%")
+                                                                                                                      plotlyOutput(outputId = "plotVipMBPL", width = "100%", height = "480px")
                                                                                                                      )
                                                                                                             ),tabPanel("Loading plot", value = "MBPLload",br(),
                                                                                                                      column(12,
                                                                                                                       column(6,selectInput("MBPLselectPC","Select PC to display",choices=NULL, selected=NULL)),
                                                                                                                       column(6,numericInput("MBPLselectloadprop", "Select top n% of variables to display (max = 100%)", 10, min = 5, max=100, step=5)),
-                                                                                                                      column(12,plotlyOutput(outputId = "plotLoadMBPL", width = "100%", height = "100%"))
+                                                                                                                      column(12,plotlyOutput(outputId = "plotLoadMBPL", width = "100%", height = "480px"))
                                                                                                                      )
                                                                                                             ),tabPanel("Model validation", value = "MBPLmodelVa",br(),
                                                                                                                      column(12,

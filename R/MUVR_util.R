@@ -49,7 +49,7 @@ MUVR_plotvip <- function(MVObj, model="min", plot_title="") {
   dat=reshape2::melt(dat, id.vars=c("var")) #for ggplot
   ggplot(dat, aes(x = var, y = value)) + geom_boxplot(outlier.shape = NA) + ggtitle(plot_title) +
     geom_jitter(width=0.1, alpha=0.2) + theme_light() + coord_flip() + labs(x = "", y = "VIP rank") +
-    theme(plot.title = element_text(size = 12), axis.title=element_text(size=10), axis.text=element_text(size=8))
+    theme(plot.title = element_text(size = 12), axis.title=element_text(size=10), axis.text=element_text(size=10))
 }
 
 #'Validation plot
@@ -99,6 +99,6 @@ MUVR_plotval <- function(MVObj, plot_title="") {
   }
   outplot = outplot+labs(x="Number of variables", y=metric) +
     scale_colour_manual(name="",values=colors,label=c("Validations", "Repetitions","Overall","Min-relevant","Mid-relevant","All-relevant")) + ggtitle(plot_title) +
-    theme(plot.title = element_text(size = 12), axis.title=element_text(size=10), axis.text=element_text(size=8))
+    theme(plot.title = element_text(size = 12), axis.title=element_text(size=10), axis.text=element_text(size=10))
   return(outplot)
 }
