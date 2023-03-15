@@ -1,5 +1,5 @@
 # Metabox 2.0
-Metabox 2.0: A toolbox for thorough metabolomics data analysis. It is a substantial update of the [metabox](https://github.com/kwanjeeraw/metabox) R package, released in 2016. The tool includes several methods for data processing, statistical analysis, biomarker analysis, integrative analysis and data interpretation. Metabox 2.0 supports a wide range of users, from bench biologists to experienced bioinformaticians. It comes with an intuitive web interface for simple data analysis, as well as running R commands for exclusive projects.
+Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation. It is a substantial update of the [metabox](https://github.com/kwanjeeraw/metabox) R package, released in 2016. The tool includes several methods for data processing, statistical analysis, biomarker analysis, integrative analysis and data interpretation. Metabox 2.0 supports a wide range of users, from bench biologists to experienced bioinformaticians. It comes with an intuitive web interface for simple data analysis, as well as running R commands for exclusive projects.
 
 ![demo](metabox2_img.png)
 
@@ -30,19 +30,19 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 
 Updates
 =========
-#### version 1.3 (FEB 2023)
+#### version 2.4 (MAR 2023)
+* Add example data sets for GUI version
+#### version 2.3 (FEB 2023)
 * Summarize coefficient of variation (cv) and normality
-* Exclude average z-score of each variable
 * Fix default scaling of PCA plot
 * Fix default color
-#### version 1.2 (OCT 2022)
-* Summarize average z-score and SD of each variable in univariate analysis
+#### version 2.2 (OCT 2022)
 * Fix bug when running MUVR
-#### version 1.1 (SEP 2022)
+#### version 2.1 (SEP 2022)
 * More imputation methods: zero, half-min
 * Allow scaling and block weighting by the block inertia
 * Allow missing values in normalization, transformation and scaling
-#### version 1.0 (JUL 2022)
+#### version 2.0 (JUL 2022)
 * Initial version
 
 References
