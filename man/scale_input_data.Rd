@@ -4,12 +4,12 @@
 \alias{scale_input_data}
 \title{Scale data}
 \usage{
-scale_input_data(METBObj, method="level")
+scale_input_data(METBObj, method="pareto")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
 
-\item{method}{name of scaling method. Choose one from the list: auto, level, pareto, power, range, vast. Default is level.}
+\item{method}{name of scaling method. Choose one from the list: auto, level, pareto, power, range, vast. Default is pareto}
 }
 \value{
 METBObj object

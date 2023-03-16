@@ -1,8 +1,8 @@
 #'Transform data
 #'@description Transform variables/features to be closer to normal or Gaussian distribution. The generalized logarithm transformation is used to stabilize variance.
-#'@usage transform_input_data(METBObj, method="log2")
+#'@usage transform_input_data(METBObj, method="sqrt")
 #'@param METBObj METBObj object contains list of data.
-#'@param method name of scaling method. Choose one from the list: cube, glog10, glog2, log10, log2, sqrt. Default is log2.
+#'@param method name of scaling method. Choose one from the list: cube, glog10, glog2, log10, log2, sqrt. Default is sqrt
 #'@return METBObj object.
 #'@author Kwanjeera W \email{kwanjeera.wan@@mahidol.ac.th}
 #'@references David M. Rocke, Blythe Durbin. glog (2003) \url{https://doi.org/10.1093/bioinformatics/btg107}.
@@ -11,7 +11,7 @@
 #'@examples
 #'#out = transform_input_data(METBObj)
 #'@export
-transform_input_data <- function(METBObj, method="log2"){
+transform_input_data <- function(METBObj, method="sqrt"){
   #Check argument
   tmparg <- try(method <- match.arg(method, c("cube","glog10","glog2","log10","log2","sqrt"), several.ok = FALSE), silent = TRUE)
   if (class(tmparg) == "try-error") {
