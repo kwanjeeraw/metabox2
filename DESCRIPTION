@@ -1,10 +1,10 @@
 Package: metabox2
 Type: Package
 Title: metabox2
-Version: 1.2
+Version: 2.4
 Author: Kwanjeera W
 Maintainer: The package maintainer <kwanjeera.wan@mahidol.ac.th>
-Description: Metabox 2.0: A toolbox for comprehensive metabolomics data processing, analysis, integration and interpretatin.
+Description: Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation.
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -44,4 +44,7 @@ Suggests:
     packMBPLSDA,
     ade4,
     DiscriMiner,
-    FactoMineR
+    FactoMineR,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

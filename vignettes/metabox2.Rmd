@@ -4,7 +4,7 @@ author: "Kwanjeera W (<kwanjeera.wan@mahidol.ac.th>)"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{metabox2 use cases}
+  %\VignetteIndexEntry{metabox2}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -87,8 +87,10 @@ Example commands for Statistical analysis module:
 output_univ= univ_analyze(output_sqrt, var.equal = FALSE, ispara = FALSE, doposthoc = FALSE)
 str(output_univ) #preview statistical result
 boxplot_byF1(output_sqrt,xCol = 3,factorLv1 = output_sqrt$Y) #boxplot by a fator
-boxplot_byF1F2(output_sqrt,xCol = 3,factorLv1 = output_sqrt$Y,factorLv2=output_sqrt$inputdata$Batch) #boxplot by 2 fators
-interactionplot_byF1F2(output_sqrt$X,xCol = 3,factorLv1 = output_sqrt$Y,factorLv2 = output_sqrt$inputdata$Batch) #interaction plot
+boxplot_byF1F2(output_sqrt,xCol = 3,factorLv1 = output_sqrt$Y,
+factorLv2=output_sqrt$inputdata$Batch) #boxplot by 2 fators
+interactionplot_byF1F2(output_sqrt$X,xCol = 3,factorLv1 = output_sqrt$Y,
+factorLv2 = output_sqrt$inputdata$Batch) #interaction plot
 ```
 ![Interaction plot](interaction.png)
 
@@ -105,7 +107,8 @@ corrplot_heatmap(data.frame(output_corr$corr_data)) #correlation heatmap
 ```
 output_pca= multiv_analyze(output_sqrt, method="pca", scale="center") #PCA
 str(output_pca) #preview statistical result
-multiv_scoreplot(output_sqrt,score_data = output_pca$score_val,pcx = output_pca$model_summary$R2X[1],pcy = output_pca$model_summary$R2X[2]) #PCA score plot
+multiv_scoreplot(output_sqrt,score_data = output_pca$score_val,
+pcx = output_pca$model_summary$R2X[1],pcy = output_pca$model_summary$R2X[2]) #PCA score plot
 multiv_loadingplot(output_pca$loading_val) #Loading plot
 multiv_loadingplot_bypc(output_pca$loading_val,pc = 1) #Loding plot of PC1
 ```
@@ -116,7 +119,8 @@ multiv_loadingplot_bypc(output_pca$loading_val,pc = 1) #Loding plot of PC1
 ```
 output_plsda= multiv_analyze(output_sqrt, method="pls", scale="center") #PLS-DA
 str(output_plsda) #preview statistical result
-multiv_scoreplot(output_sqrt,score_data = output_plsda$score_val,pcx = output_plsda$model_summary$R2X[1],pcy = output_plsda$model_summary$R2X[2]) #PLS-DA score plot
+multiv_scoreplot(output_sqrt,score_data = output_plsda$score_val,
+pcx = output_plsda$model_summary$R2X[1],pcy = output_plsda$model_summary$R2X[2]) #PLS-DA score plot
 multiv_loadingplot(output_plsda$loading_val) #Loading plot
 multiv_loadingplot_bypc(output_plsda$loading_val,pc = 1) #Loding plot of PC1
 multiv_vipplot(output_plsda$vip_val) #VIP plot
@@ -130,8 +134,11 @@ input_obj = set_input_obj(input_dat,idCol=1,classCol=2,xCol=3) #setup metabox ob
 head(input_obj$X) #preview input data
 output_oplsda= multiv_analyze(input_obj, method="opls", scale="pareto") #OPLS-DA
 str(output_oplsda) #preview statistical result
-multiv_scoreplot(input_obj,score_data = output_oplsda$score_val,oscore_data = output_oplsda$oscore_val,pcx = output_oplsda$model_summary$R2X[1],pcy = output_oplsda$model_summary$R2X[2]) #OPLS-DA score plot
-multiv_loadingplot(loading_data = output_oplsda$loading_val,oloading_data = output_oplsda$oloading_val) #Loading plot
+multiv_scoreplot(input_obj,score_data = output_oplsda$score_val,
+oscore_data = output_oplsda$oscore_val,pcx = output_oplsda$model_summary$R2X[1],
+pcy = output_oplsda$model_summary$R2X[2]) #OPLS-DA score plot
+multiv_loadingplot(loading_data = output_oplsda$loading_val,
+oloading_data = output_oplsda$oloading_val) #Loading plot
 multiv_loadingplot_bypc(output_oplsda$loading_val,pc = 1) #Loding plot of PC1
 multiv_vipplot(output_oplsda$vip_val) #VIP plot
 ```
@@ -161,7 +168,9 @@ input_dat1 = read_input_data('LC_Fat_Tissue.csv') #load input file1
 input_obj1 = set_input_obj(input_dat1,idCol=1,classCol=3,xCol=4) #setup metabox object
 input_dat2 = read_input_data('GC_Fat_Tissue.csv') #load input file2
 input_obj2 = set_input_obj(input_dat2,idCol=1,classCol=3,xCol=4) #setup metabox object
-output_mbpls = mbplsda_analyze(data.frame(input_obj1$Y), list(lc = input_obj1$X,gc = input_obj2$X),nrepet=10, npermut=5, nboot=5, testmodel=TRUE, cpus=1) #integrative analysis
+output_mbpls = mbplsda_analyze(data.frame(input_obj1$Y), 
+list(lc = input_obj1$X,gc = input_obj2$X),nrepet=10, 
+npermut=5, nboot=5, testmodel=TRUE, cpus=1) #integrative analysis
 mbplsda_plottestdim(output_mbpls$result$res_optimal) #Prediction error rate plot
 mbplsda_plotpermut(output_mbpls$result$res_permut) #Permutation testing plot
 mbplsda_screeplot(output_mbpls$result$base_model$eig) #Scree plot
@@ -177,26 +186,33 @@ Example commands for Data interpretation module:
 **Overrepresentation analysis**
 
 ```
-output_ora1=overrep_analyze(fnanal_data$compound_data$kegg, nodetype="compound", size=5) #pathway, metabolite ORA
+#pathway, metabolite ORA
+output_ora1=overrep_analyze(fnanal_data$compound_data$kegg, nodetype="compound", size=5)
 head(output_ora1$enrichment) #preview result
-output_ora2=overrep_analyze(fnanal_data$combined_data$id[1:9], nodetype="protein", size=3) #pathway, protein ORA
+#pathway, protein ORA
+output_ora2=overrep_analyze(fnanal_data$combined_data$id[1:9], nodetype="protein", size=3)
 head(output_ora2$enrichment) #preview result
-output_ora3=overrep_analyze(fnanal_data$compound_data$hmdb, settype="chemicalclass") #chemical class ORA
+#chemical class ORA
+output_ora3=overrep_analyze(fnanal_data$compound_data$hmdb, settype="chemicalclass")
 head(output_ora3$enrichment) #preview result
 ```
 
 **Pathway enrichment analysis**
 
 ```
-output_enr=enrichment_analyze(fnanal_data$compound_data, pcol=5, fccol=6, method="reporter", nodetype="compound", settype="pathway") #enrichment analysis containing directional values (Fold-change)
+#enrichment analysis containing directional values (Fold-change)
+output_enr=enrichment_analyze(fnanal_data$compound_data, pcol=5, fccol=6, method="reporter", 
+nodetype="compound", settype="pathway")
 head(output_enr$enrichment) #preview result
-piano::networkPlot2(output_enr$network,class="distinct",direction = "down",significance=0.1,lay = 5) #enrichment network plot by piano package (optional)
+#enrichment network plot by piano package (optional)
+piano::networkPlot2(output_enr$network,class="distinct",direction = "down",significance=0.1,lay = 5)
 ```
 ![Enrichment network plot by piano package](enr.png)
 
 **Integrated pathway overrepresentation analysis**
 
 ```
-output_ora = comb_overrep_analyze(fnanal_data$combined_data, organism = "hsa", size = 3) #integrated pathway ORA
+#integrated pathway ORA
+output_ora = comb_overrep_analyze(fnanal_data$combined_data, organism = "hsa", size = 3)
 head(output_ora$enrichment) #preview result
 ```
