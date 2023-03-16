@@ -2,7 +2,7 @@
 #'@description Scale data for between-variable/feature variations
 #'@usage scale_input_data(METBObj, method="pareto")
 #'@param METBObj METBObj object contains list of data.
-#'@param method name of scaling method. Choose one from the list: auto, level, pareto, power, range, vast. Default is pareto
+#'@param method name of scaling method. Choose one from the list: auto, level, pareto, power, range, vast. Default is pareto.
 #'@return METBObj object
 #'@author Kwanjeera W \email{kwanjeera.wan@@mahidol.ac.th}
 #'@references Qingxia Yang, et al. NOREVA (2020) \url{https://doi.org/10.1093/bib/bbz137}.

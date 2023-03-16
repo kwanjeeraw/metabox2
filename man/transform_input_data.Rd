@@ -9,7 +9,7 @@ transform_input_data(METBObj, method="sqrt")
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
 
-\item{method}{name of scaling method. Choose one from the list: cube, glog10, glog2, log10, log2, sqrt. Default is sqrt}
+\item{method}{name of scaling method. Choose one from the list: cube, glog10, glog2, log10, log2, sqrt. Default is sqrt.}
 }
 \value{
 METBObj object.
