@@ -30,6 +30,8 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 
 Updates
 =========
+#### version 2.5 (MAY 2023)
+* Update pathway data for enrichment analysis
 #### version 2.4 (MAR 2023)
 * Add example data sets for GUI version
 #### version 2.3 (FEB 2023)
