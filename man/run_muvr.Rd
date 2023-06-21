@@ -31,7 +31,7 @@ MVObject object.
 Perform ML analysis using MUVR package.
 }
 \details{
-Based on MUVR version 0.0.975. (2021-09-21). The \code{partitionSize} is for calculating \code{nOuter}.
+Based on MUVR version 0.0.976. (2023-03-09). The \code{partitionSize} is for calculating \code{nOuter}.
 }
 \examples{
 #res_muvr = run_muvr(METBObj, method="PLS")
