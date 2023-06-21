@@ -364,9 +364,9 @@ boxplot_byF1 <- function(METBObj, xCol=1, factorLv1){
   plotdata = cbind(Sample_ID=METBObj$ID, dat, Groups=F1) #working data; add the factor column at the end of the dataframe
   numlevels = nlevels(F1) #no. of levels
   if(numlevels <= 8){
-    grcolors = brewer.pal(name="Set1", n = 8)
+    grcolors = mbcolors
   }else{
-    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
+    grcolors = colorRampPalette(mbcolors)(numlevels)
   }
   ggplot(plotdata, aes(x=Groups, y = value, color=Groups, label=Sample_ID)) + geom_boxplot(outlier.shape = NA) +
     scale_color_manual(values = grcolors) + geom_jitter(width=0.1, alpha=0.2) + theme_light() + ggtitle(xnames) +
@@ -415,9 +415,9 @@ boxplot_byF1F2 <- function(METBObj, xCol=1, factorLv1, factorLv2){
   plotdata = cbind(Sample_ID=METBObj$ID, dat, F1=F1, Groups=F2) #working data; add the F1 and F2 columns at the end of the dataframe
   numlevels = max(nlevels(F1), nlevels(F2)) #no. of levels for color
   if(numlevels <= 8){
-    grcolors = brewer.pal(name="Set1", n = 8)
+    grcolors = mbcolors
   }else{
-    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
+    grcolors = colorRampPalette(mbcolors)(numlevels)
   }
   ggplot(plotdata, aes(x=F1, y = value, color=Groups, label=Sample_ID)) + geom_boxplot(outlier.shape = NA) + geom_point(position=position_jitterdodge(), alpha=0.2) +
     scale_color_manual(values = grcolors) + theme_light() + ggtitle(xnames) +
@@ -521,9 +521,9 @@ intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title=
     Y = as.factor(plotdata$ClassCol) #working data
     numlevels = nlevels(Y) #no. of levels
     if(numlevels <= 8){
-      grcolors = brewer.pal(name="Set1", n = 8)
+      grcolors = mbcolors
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
+      grcolors = colorRampPalette(mbcolors)(numlevels)
     }
     ggplot(plotdata, aes(Sample_ID, value, color = ClassCol)) + geom_point(size=ptsize, alpha=0.5) +
       scale_color_manual(values = grcolors) + theme_minimal() +
@@ -577,9 +577,9 @@ interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize
   }
   numlevels = max(nlevels(F1), nlevels(F2)) #no. of levels for color
   if(numlevels <= 8){
-    grcolors = brewer.pal(name="Set1", n = 8)
+    grcolors = mbcolors
   }else{
-    grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
+    grcolors = colorRampPalette(mbcolors)(numlevels)
   }
   statsum = FSA::Summarize(dat[,xCol] ~ F1 + Groups, dat, digits=4)
   ggplot(statsum, aes(x = F1, y = median, colour = Groups, group = Groups)) + geom_point(size=ptsize, alpha=0.5) + geom_line() +
@@ -691,9 +691,9 @@ multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL
     Y = as.factor(plotdata$ClassCol) #working data
     numlevels = nlevels(Y) #no. of levels
     if(numlevels <= 8){
-      grcolors = brewer.pal(name="Set1", n = 8)
+      grcolors = mbcolors
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
+      grcolors = colorRampPalette(mbcolors)(numlevels)
     }
     ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, label=Sample_ID)) + geom_point(size=ptsize) +
       stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) + scale_color_manual(values = grcolors) +
@@ -780,9 +780,9 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
     Y = as.factor(pcadata$ClassCol) #working data
     numlevels = nlevels(Y) #no. of levels
     if(numlevels <= 8){
-      grcolors = brewer.pal(name="Set1", n = 8)
+      grcolors = mbcolors
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
+      grcolors = colorRampPalette(mbcolors)(numlevels)
     }
     if(!is.null(shapeCol) && shapeCol != which(colnames(pcadata) == "ClassCol")){# check shapeCol
       colnames(pcadata)[shapeCol] = 'shapeCol' #shape column
@@ -903,9 +903,9 @@ rlaplot_overview <- function(METBObj, classCol=NULL, type="wg", dolog=TRUE, doav
     Y = as.factor(inputdata$ClassCol) #working data
     numlevels = nlevels(Y) #no. of levels
     if(numlevels <= 8){
-      grcolors = brewer.pal(name="Set1", n = 8)
+      grcolors = mbcolors
     }else{
-      grcolors = colorRampPalette(brewer.pal(name="Set1", n = 9))(numlevels)
+      grcolors = colorRampPalette(mbcolors)(numlevels)
     }
     pl = ggplot(plot_data, aes(x = ind, y = value, color=ClassCol))
     if(limitx && dim_dt[1] > 100){
