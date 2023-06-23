@@ -1,0 +1,24 @@
+---
+title: "Integrative analysis using MBPLSDA"
+date: "`r Sys.Date()`"
+params:
+  METBObj: NULL
+  datsummary1: NULL
+  datsummary2: NULL
+  note: NULL
+---
+Data Summary
+---------------
+**Input size:** `r params$datsummary1$details$inputsize` data set(s)
+
+Date Analysis Summary
+---------------
+**Method:** `r params$datsummary1$details$testMethod`\
+**Number of factor levels:** `r params$datsummary1$details$nclass`\
+**Number of scanned components:** `r params$datsummary1$details$ncomp`\
+**Number of optimal components:** `r params$datsummary1$details$noptcomp`\
+**Number of CPU:** `r params$datsummary1$details$cpus`\
+**Perform model components testing and permutation:** `r params$datsummary1$details$testmodel`\
+
+**Note**\
+`r params$note`

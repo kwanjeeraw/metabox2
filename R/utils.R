@@ -71,7 +71,7 @@ install_pkgs <- function(pkg_ls){
 #'@export
 generate_report = function(METBObj=NULL, datsummary1=NULL, datsummary2=NULL, note=NULL, reportfile, savedir=getwd()) {
   rmarkdown::render(
-    paste0(system.file("reports", package = "metabox.beta"), "/", reportfile, ".Rmd"), params = list(
+    paste0(system.file("shiny/reports", package = "metabox2"), "/", reportfile, ".Rmd"), params = list(
       METBObj = METBObj,datsummary1 = datsummary1, datsummary2=datsummary2,note=note
     ),
     output_format = "pdf_document",output_file = paste0(reportfile,".pdf"), output_dir = savedir)
