@@ -5,17 +5,24 @@ fluidRow(
            h4("Metabox 2.0"),
            column(12,
                   tags$p("Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation.
-                         It is a substantial update of the metabox R package, released in 2016.
-                         The tool includes several methods for data processing, statistical analysis, biomarker analysis, integrative analysis and data interpretation.
-                         This GUI supports a wide range of users, from bench biologists to experienced bioinformaticians.
-                         It comes with an intuitive web interface for simple data analysis.
-                         We recommend the R command line version for custom pipelines and other exclusive projects."),
-                  tags$p("This project is supported by Program Management Unit for Human Resources & Institutional Development, Research and Innovation (PMU-B).")
+                  Metabox 2.0 is an updated version of the R package ",
+                  a(href="https://github.com/kwanjeeraw/metabox","Metabox"),", released in 2016.
+                  The tool includes several methods for data processing, statistical analysis, biomarker analysis, integrative analysis and data interpretation.
+                  This GUI supports a wide range of users, from bench biologists to experienced bioinformaticians.
+                  It comes with an intuitive web interface for simple data analysis.
+                  We recommend the R command line version for custom pipelines and other exclusive projects."),
+                  #tags$p("This project is supported by Program Management Unit for Human Resources & Institutional Development, Research and Innovation (PMU-B).")
            )),hr(style="border-top: 1px dashed #B5C7DA;"),
          fluidRow(
            h4("Updates"),
            column(12,
-                  HTML('<h5>version 2.4 (MAR 2023)</h5>
+                  HTML('<h5>version 2.6 (JUNE 2023)</h5>
+                  <ul><li>Change report location</li>
+                  <li>Set default package color</li>
+                  <li>Update MUVR to current version</li></ul>
+                  <h5>version 2.5 (MAY 2023)</h5>
+                  <ul><li>Update pathway data for enrichment analysis</li></ul>
+                  <h5>version 2.4 (MAR 2023)</h5>
                   <ul><li>Add example data sets for GUI version</li></ul>
                   <h5>version 2.3 (FEB 2023)</h5>
                   <ul><li>Summarize coefficient of variation (cv) and normality</li>

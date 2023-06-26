@@ -1,5 +1,5 @@
 # Metabox 2.0
-Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation. It is a substantial update of the [metabox](https://github.com/kwanjeeraw/metabox) R package, released in 2016. The tool includes several methods for data processing, statistical analysis, biomarker analysis, integrative analysis and data interpretation. Metabox 2.0 supports a wide range of users, from bench biologists to experienced bioinformaticians. It comes with an intuitive web interface for simple data analysis, as well as running R commands for exclusive projects.
+Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation. Metabox 2.0 is an updated version of the R package Metabox [metabox](https://github.com/kwanjeeraw/metabox), released in 2016. The tool includes several methods for data processing, statistical analysis, biomarker analysis, integrative analysis and data interpretation. Metabox 2.0 supports a wide range of users, from bench biologists to experienced bioinformaticians. It comes with an intuitive web interface for simple data analysis. We recommend the R command line version for custom pipelines and other exclusive projects.
 
 ![demo](metabox2_img.png)
 
@@ -30,6 +30,10 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 
 Updates
 =========
+#### version 2.6 (JUNE 2023)
+* Change report location
+* Set default package color
+* Update MUVR to current version
 #### version 2.5 (MAY 2023)
 * Update pathway data for enrichment analysis
 #### version 2.4 (MAR 2023)
