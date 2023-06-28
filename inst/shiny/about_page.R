@@ -19,7 +19,8 @@ fluidRow(
                   HTML('<h5>version 2.6 (JUNE 2023)</h5>
                   <ul><li>Change report location</li>
                   <li>Set default package color</li>
-                  <li>Update MUVR to current version</li></ul>
+                  <li>Update MUVR to current version</li>
+                  <li>Fix bug when running univariate analysis</li></ul>
                   <h5>version 2.5 (MAY 2023)</h5>
                   <ul><li>Update pathway data for enrichment analysis</li></ul>
                   <h5>version 2.4 (MAR 2023)</h5>

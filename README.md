@@ -34,6 +34,7 @@ Updates
 * Change report location
 * Set default package color
 * Update MUVR to current version
+* Fix bug when running univariate analysis
 #### version 2.5 (MAY 2023)
 * Update pathway data for enrichment analysis
 #### version 2.4 (MAR 2023)
