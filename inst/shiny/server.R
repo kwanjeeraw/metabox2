@@ -1518,7 +1518,7 @@ server = function(input, output, session) {
     if(!is.null(metboshow$metbo_multi)){
       req(input$MULScorePC1);req(input$MULScorePC2);req(metboshow$metbo_multi)
       isolate({
-        if((input$multiM == "pca" || input$multiM == "pls") && ncol(metboshow$metbo_multi$score_val) > 1 && input$MULScorePC2 != "NA"){#pca or pls
+        if(((input$multiM != "opls" && ncol(metboshow$metbo_multi$score_val) > 1) && input$MULScorePC2 != "NA")){#pca or pls
           shinyjs::show("MULScorePC1")
           shinyjs::show("MULScorePC2")
           metboshow$MULScoreCol1 <- which(input$MULScorePC1 == colnames(metboshow$metbo_multi$score_val))
@@ -1570,7 +1570,7 @@ server = function(input, output, session) {
         }else if(input$multiM == "opls"){#opls
           shinyjs::hide("MULScorePC1")
           shinyjs::hide("MULScorePC2")
-          if(!is.na(metboshow$metbo_multi$score_val)[,1] && !is.na(metboshow$metbo_multi$oscore_val)[,1]){
+          if(all(!is.na(metboshow$metbo_multi$score_val[,1])) && all(!is.na(metboshow$metbo_multi$oscore_val[,1]))){
             output$plotPCloadMUL <- renderPlotly({#loading by pc
               progress <- shiny::Progress$new()
               on.exit(progress$close())
