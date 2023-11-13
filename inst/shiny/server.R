@@ -3943,7 +3943,7 @@ server = function(input, output, session) {
         filtld = metboshow$metbo_multi$loading_val[order(abs(metboshow$metbo_multi$loading_val[,input$MULselectPC]),decreasing = TRUE),]
         dt_plot[['loadingpc']] = multiv_loadingplot_bypc(head(filtld,n=100), pc = input$MULselectPC, plot_title="Loadings by PC")
       }else if(input$multiM == "opls"){#opls
-        if(!is.na(metboshow$metbo_multi$score_val)[,1] && !is.na(metboshow$metbo_multi$oscore_val)[,1]){
+        if(all(!is.na(metboshow$metbo_multi$score_val[,1])) && all(!is.na(metboshow$metbo_multi$oscore_val[,1]))){
           dt_plot[['scpl']] = multiv_scoreplot(metboshow$keepValueM,score_data=metboshow$metbo_multi$score_val,
                                                pcx=metboshow$metbo_multi$model_summary$R2X[1],pcy=metboshow$metbo_multi$model_summary$R2X[2],
                                                oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot")
