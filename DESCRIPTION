@@ -12,10 +12,10 @@ RoxygenNote: 7.2.3
 Imports:
     biotools,
     ade4,
-    lme4
+    lme4,
     crmn,
     MetNorm (>= 0.1),
-    DiscriMiner (>= 0.1-29)
+    DiscriMiner (>= 0.1-29),
     ruv,
     dplyr,
     MVN,
@@ -36,15 +36,15 @@ Imports:
     shinyjs,
     shinythemes,
     shinybusy,
-    shinyWidgets,
+    shinyWidgets
 
 Suggests:
-    rmarkdown
+    rmarkdown,
     pcaMethods,
     affy,
     preprocessCore,
     vsn,
     ropls,
-    piano,
+    piano
     
 VignetteBuilder: knitr
