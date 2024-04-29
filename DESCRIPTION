@@ -14,8 +14,6 @@ Imports:
     ade4,
     lme4,
     crmn,
-    MetNorm (>= 0.1),
-    DiscriMiner (>= 0.1-29),
     ruv,
     dplyr,
     MVN,
@@ -37,7 +35,6 @@ Imports:
     shinythemes,
     shinybusy,
     shinyWidgets
-
 Suggests:
     rmarkdown,
     pcaMethods,
@@ -46,5 +43,4 @@ Suggests:
     vsn,
     ropls,
     piano
-    
 VignetteBuilder: knitr
