@@ -34,11 +34,11 @@ Imports:
     shinyjs,
     shinythemes,
     shinybusy,
-    shinyWidgets,
-    MetNorm (>= 0.1),
-    DiscriMiner (>= 0.1-29)
+    shinyWidgets
 Suggests:
     rmarkdown,
+    MetNorm (>= 0.1),
+    DiscriMiner (>= 0.1-29),
     pcaMethods,
     affy,
     preprocessCore,
