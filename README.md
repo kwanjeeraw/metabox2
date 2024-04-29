@@ -37,7 +37,7 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 
 Updates
 =========
-#### version 2.7 (APr 2024)
+#### version 2.7 (APR 2024)
 * Change number of cross-validation segments for multivariate analysis
 * Change figure title
 #### version 2.6 (JUNE 2023)
