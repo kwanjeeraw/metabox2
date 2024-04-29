@@ -886,7 +886,7 @@ server = function(input, output, session) {
       })
 
       output$plotQCoverOri <- renderPlotly({
-        p_isO <- ggplotly(pcaplot_overview(metboshow$keepValueN,scale=FALSE, plot_title="Before normalization"), source = 'pca_isO')
+        p_isO <- ggplotly(pcaplot_overview(metboshow$keepValueN,scale=FALSE, plot_title="Before processing"), source = 'pca_isO')
         p_isO %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -899,9 +899,9 @@ server = function(input, output, session) {
       })
 
       #output$plotQCboxOri <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueN$X[,1:ncol(metboshow$keepValueN$X)<=50]))})
-      output$plotQCboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")})
-      output$plotQCdenOri <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plot_title="Before normalization densityplot plot (variables)")})
-      output$plotQCdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plotvar=FALSE, plot_title="Before normalization densityplot plot (samples)")})
+      output$plotQCboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before processing")})
+      output$plotQCdenOri <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plot_title="Before processing densityplot plot (variables)")})
+      output$plotQCdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plotvar=FALSE, plot_title="Before processing densityplot plot (samples)")})
 
       output$plotQCover <- renderPlotly({
         isolate({
@@ -913,7 +913,7 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        p_is <- ggplotly(pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After normalization"), source = 'pca_is')
+        p_is <- ggplotly(pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing"), source = 'pca_is')
         p_is %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -937,7 +937,7 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After normalization")})
+        rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After processing")})
       output$plotQCden <- renderPlot({
         isolate({
           progress <- shiny::Progress$new()
@@ -948,8 +948,8 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        densityplot_overview(metboshow$metbo_QCnorm$X, plot_title="After normalization densityplot plot (variables)")})
-      output$plotQCdenS <- renderPlot({densityplot_overview(metboshow$metbo_QCnorm$X, plotvar=FALSE, plot_title="After normalization densityplot plot (samples)")})
+        densityplot_overview(metboshow$metbo_QCnorm$X, plot_title="After processing densityplot plot (variables)")})
+      output$plotQCdenS <- renderPlot({densityplot_overview(metboshow$metbo_QCnorm$X, plotvar=FALSE, plot_title="After processing densityplot plot (samples)")})
     }else{
       shinyjs::hide("QCsummary")
       shinyjs::hide("QCplotTab")
@@ -1156,7 +1156,7 @@ server = function(input, output, session) {
 
 
       output$plotNoverOri <- renderPlotly({
-        p_NO <-ggplotly(pcaplot_overview(metboshow$keepValueDP, scale=FALSE, plot_title="Before normalization"), source = 'pca_NO')
+        p_NO <-ggplotly(pcaplot_overview(metboshow$keepValueDP, scale=FALSE, plot_title="Before processing"), source = 'pca_NO')
         p_NO %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -1179,7 +1179,7 @@ server = function(input, output, session) {
             }
             Sys.sleep(1)
           })
-          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale=FALSE, plot_title="After normalization"), source = 'pca_N')
+          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale=FALSE, plot_title="After processing"), source = 'pca_N')
           p_N %>%
             layout(dragmode = "select") %>%
             event_register("plotly_selected")
@@ -1197,7 +1197,7 @@ server = function(input, output, session) {
             }
             Sys.sleep(1)
           })
-          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale = FALSE, plot_title="After normalization"), source = 'pca_N')
+          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale = FALSE, plot_title="After processing"), source = 'pca_N')
           p_N %>%
             layout(dragmode = "select") %>%
             event_register("plotly_selected")
@@ -1212,9 +1212,9 @@ server = function(input, output, session) {
       })
 
       #output$plotNboxOri <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueDP$X[,1:ncol(metboshow$keepValueDP$X)<=50]))})
-      output$plotNboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")})
-      output$plotNdenOri <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plot_title="Before normalization densityplot plot (variables)")})
-      output$plotNdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plotvar=FALSE, plot_title="Before normalization densityplot plot (samples)")})
+      output$plotNboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before processing")})
+      output$plotNdenOri <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plot_title="Before processing densityplot plot (variables)")})
+      output$plotNdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plotvar=FALSE, plot_title="Before processing densityplot plot (samples)")})
       # output$plotNbox <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueMP$X[,1:ncol(metboshow$keepValueDP$X)<=50]))})
       output$plotNboxS <- renderPlot({
         isolate({
@@ -1226,9 +1226,9 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
           if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){
-            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After normalization")
+            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After processing")
           }else{
-            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After normalization")#dolog for normalization
+            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After processing")#dolog for normalization
           }
           })
       })
@@ -1243,8 +1243,8 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        densityplot_overview(metboshow$keepValueMP$X, plot_title="After normalization densityplot plot (variables)")})
-      output$plotNdenS <- renderPlot({densityplot_overview(metboshow$keepValueMP$X, plotvar=FALSE, plot_title="After normalization densityplot plot (samples)")})
+        densityplot_overview(metboshow$keepValueMP$X, plot_title="After processing densityplot plot (variables)")})
+      output$plotNdenS <- renderPlot({densityplot_overview(metboshow$keepValueMP$X, plotvar=FALSE, plot_title="After processing densityplot plot (samples)")})
     }else{
       shinyjs::hide("Nsummary")
       shinyjs::hide("NplotTab")
@@ -3761,16 +3761,16 @@ server = function(input, output, session) {
       generate_report(metboshow$metbo_QCnorm,reportfile="normalize_byqc_report")
       write.csv(cbind(metboshow$metbo_QCnorm$inputdata[,1:metboshow$firstV-1],metboshow$metbo_QCnorm$X),"ISQC_normalization_output_table.csv")
       dt_plot = list();
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before normalization")
-      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After normalization")
-      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")
-      dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After normalization")
-      # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueN, plot_title="Before normalization")
-      # dt_plot[['box2']] = boxplot_overview(metboshow$metbo_QCnorm, plot_title="After normalization")
-      dt_plot[['dens1']] = densityplot_overview(metboshow$keepValueN$X, plot_title="Before normalization (variables)")
-      dt_plot[['dens2']] = densityplot_overview(metboshow$metbo_QCnorm$X, plot_title="After normalization (variables)")
-      dt_plot[['dens_samp1']] = densityplot_overview(metboshow$keepValueN$X, plotvar=FALSE, plot_title="Before normalization (samples)")
-      dt_plot[['dens_samp2']] = densityplot_overview(metboshow$metbo_QCnorm$X, plotvar=FALSE, plot_title="After normalization (samples)")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before processing")
+      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing")
+      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before processing")
+      dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After processing")
+      # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueN, plot_title="Before processing")
+      # dt_plot[['box2']] = boxplot_overview(metboshow$metbo_QCnorm, plot_title="After processing")
+      dt_plot[['dens1']] = densityplot_overview(metboshow$keepValueN$X, plot_title="Before processing (variables)")
+      dt_plot[['dens2']] = densityplot_overview(metboshow$metbo_QCnorm$X, plot_title="After processing (variables)")
+      dt_plot[['dens_samp1']] = densityplot_overview(metboshow$keepValueN$X, plotvar=FALSE, plot_title="Before processing (samples)")
+      dt_plot[['dens_samp2']] = densityplot_overview(metboshow$metbo_QCnorm$X, plotvar=FALSE, plot_title="After processing (samples)")
       ggsave("ISQC_normalization_output_figure.pdf",
              marrangeGrob(grobs = dt_plot, nrow=1, ncol=2, as.table=TRUE), dpi = 600, units = "in", width = 18, height = 10, device = "pdf")
       files <- c("normalize_byqc_report.pdf","ISQC_normalization_output_table.csv","ISQC_normalization_output_figure.pdf")
@@ -3790,26 +3790,26 @@ server = function(input, output, session) {
         generate_report(metboshow$metbo_tran,reportfile="transform_data_report")
       }
       write.csv(cbind(metboshow$keepValueMP$inputdata[,1:metboshow$firstV-1],metboshow$keepValueMP$X),"Data_normalization_output_table.csv")
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before normalization")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before processing")
       if(!is.null(metboshow$metbo_scal)){
         generate_report(metboshow$metbo_scal,reportfile="scale_data_report")
-        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After normalization")
+        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing")
       }
       if(is.null(metboshow$metbo_scal)){
-        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After normalization")
+        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing")
       }
-      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before normalization")
+      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before processing")
       if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){
-        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After normalization")
+        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After processing")
       }else{
-        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After normalization")#dolog for normalization
+        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After processing")#dolog for normalization
       }
-      # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueDP, plot_title="Before normalization")
-      # dt_plot[['box2']] = boxplot_overview(metboshow$keepValueMP, plot_title="After normalization")
-      dt_plot[['dens1']] = densityplot_overview(metboshow$keepValueDP$X, plot_title="Before normalization (variables)")
-      dt_plot[['dens2']] = densityplot_overview(metboshow$keepValueMP$X, plot_title="After normalization (variables)")
-      dt_plot[['dens_samp1']] = densityplot_overview(metboshow$keepValueDP$X, plotvar=FALSE, plot_title="Before normalization (samples)")
-      dt_plot[['dens_samp2']] = densityplot_overview(metboshow$keepValueMP$X, plotvar=FALSE, plot_title="After normalization (samples)")
+      # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueDP, plot_title="Before processing")
+      # dt_plot[['box2']] = boxplot_overview(metboshow$keepValueMP, plot_title="After processing")
+      dt_plot[['dens1']] = densityplot_overview(metboshow$keepValueDP$X, plot_title="Before processing (variables)")
+      dt_plot[['dens2']] = densityplot_overview(metboshow$keepValueMP$X, plot_title="After processing (variables)")
+      dt_plot[['dens_samp1']] = densityplot_overview(metboshow$keepValueDP$X, plotvar=FALSE, plot_title="Before processing (samples)")
+      dt_plot[['dens_samp2']] = densityplot_overview(metboshow$keepValueMP$X, plotvar=FALSE, plot_title="After processing (samples)")
       ggsave("Data_normalization_output_figure.pdf",
              marrangeGrob(grobs = dt_plot, nrow=1, ncol=2, as.table=TRUE), dpi = 600, units = "in", width = 18, height = 10, device = "pdf")
       files <- c("Data_normalization_output_table.csv","Data_normalization_output_figure.pdf")
