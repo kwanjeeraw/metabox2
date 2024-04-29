@@ -34,7 +34,9 @@ Imports:
     shinyjs,
     shinythemes,
     shinybusy,
-    shinyWidgets
+    shinyWidgets,
+    MetNorm (>= 0.1),
+    DiscriMiner (>= 0.1-29)
 Suggests:
     rmarkdown,
     pcaMethods,
