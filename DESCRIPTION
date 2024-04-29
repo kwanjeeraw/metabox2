@@ -22,6 +22,7 @@ Imports:
     reshape2,
     scales,
     pcaMethods,
+    packMBPLSDA,
     V8,
     DT,
     plotly,
@@ -31,7 +32,8 @@ Imports:
     shinyjs,
     shinythemes,
     shinybusy,
-    shinyWidgets
+    shinyWidgets,
+    gridExtra
 Suggests:
     crmn,
     affy,
@@ -39,8 +41,6 @@ Suggests:
     ruv,
     preprocessCore,
     vsn,
-    MUVR,
-    devtools,
     pacman,
     data.table,
     bootstrap,
@@ -51,7 +51,6 @@ Suggests:
     lme4,
     piano,
     plyr,
-    packMBPLSDA,
     DiscriMiner,
     FactoMineR,
     knitr,
