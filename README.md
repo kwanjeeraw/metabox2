@@ -11,6 +11,13 @@ Installation
 if (!require("devtools"))
   install.packages("devtools")
 devtools::install_github("kwanjeeraw/metabox2")
+
+##Install R dependencies ##
+if (!require("remotes"))
+  install.packages("remotes"")
+remotes::install_gitlab("CarlBrunius/MUVR"")
+
+##Run metabox2
 library(metabox2)
 
 ##(Optional) Use graphical user interface ##
@@ -30,6 +37,9 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 
 Updates
 =========
+#### version 2.7 (APr 2024)
+* Change number of cross-validation segments for multivariate analysis
+* Change figure title
 #### version 2.6 (JUNE 2023)
 * Change report location
 * Set default package color
@@ -54,6 +64,7 @@ Updates
 
 References
 =========
+- Wanichthanarak K, In-On A, Fan S, Fiehn O, Wangwiwatsin A, Khoomrung S (2024) Data processing solutions to render metabolomics more quantitative: case studies in food and clinical metabolomics using Metabox 2.0. GigaScience 13(2024): [giae005](https://10.1093/gigascience/giae005)
 - Wanichthanarak K, Fan S, Grapov D, Barupal DK, Fiehn O (2017) Metabox: A Toolbox for Metabolomic Data Analysis, Interpretation and Integrative Exploration. PLOS ONE 12(1): [e0171046](https://doi.org/10.1371/journal.pone.0171046)
 
 License
