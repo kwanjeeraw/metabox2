@@ -1,7 +1,7 @@
 Package: metabox2
 Type: Package
 Title: metabox2
-Version: 2.4
+Version: 2.7
 Author: Kwanjeera W
 Maintainer: The package maintainer <kwanjeera.wan@mahidol.ac.th>
 Description: Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation.
@@ -12,6 +12,7 @@ RoxygenNote: 7.2.3
 Imports:
     biotools,
     car,
+    ade4,
     dplyr,
     ggplot2,
     MVN,
@@ -21,7 +22,16 @@ Imports:
     reshape2,
     scales,
     pcaMethods,
-    shiny
+    V8,
+    DT,
+    plotly,
+    ggthemes,
+    shiny,
+    shinydashboard,
+    shinyjs,
+    shinythemes,
+    shinybusy,
+    shinyWidgets
 Suggests:
     crmn,
     affy,
@@ -42,7 +52,6 @@ Suggests:
     piano,
     plyr,
     packMBPLSDA,
-    ade4,
     DiscriMiner,
     FactoMineR,
     knitr,
