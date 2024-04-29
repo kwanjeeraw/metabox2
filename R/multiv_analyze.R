@@ -76,7 +76,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   cat("\n\nPerforming multivariate analysis ...\n")
   if (method == "pca"){#PCA
     out_data = tryCatch({
-      ropls::opls(x=dat, fig.pdfC="none", scaleC=scale)
+      ropls::opls(x=dat, fig.pdfC="none", scaleC=scale, crossvalI=6)
     },
     error=function(e){
       cat(e$message)
@@ -87,7 +87,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   }
   if (method == "pls"){#PLS
     out_data = tryCatch({
-      ropls::opls(x=dat, y=Y, fig.pdfC="none", scaleC=scale)
+      ropls::opls(x=dat, y=Y, fig.pdfC="none", scaleC=scale, crossvalI=6)
     },
     error=function(e){
       cat(e$message)
@@ -98,7 +98,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   }
   if (method == "opls"){#OPLS
     out_data = tryCatch({
-      ropls::opls(x=dat, y=Y, predI = 1, orthoI = 2, fig.pdfC="none", scaleC=scale)
+      ropls::opls(x=dat, y=Y, predI = 1, orthoI = 2, fig.pdfC="none", scaleC=scale, crossvalI=6)
     },
     error=function(e){
       cat(e$message)
