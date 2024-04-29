@@ -8,13 +8,11 @@ Installation
 * Install metabox2 and required packages using the following commands
 ```
 ##Install metabox2 ##
-if (!require("devtools"))
-  install.packages("devtools")
-devtools::install_github("kwanjeeraw/metabox2")
+if (!require("remotes"))
+  install.packages("remotes")
+remotes::install_github("kwanjeeraw/metabox2")
 
 ##Install R dependencies ##
-if (!require("remotes"))
-  install.packages("remotes"")
 remotes::install_gitlab("CarlBrunius/MUVR"")
 
 ##Run metabox2
