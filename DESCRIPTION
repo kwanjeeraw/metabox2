@@ -12,13 +12,5 @@ RoxygenNote: 7.2.3
 Imports:
     ade4,biotools,BiocManager,crmn,lme4,pROC,ruv,dplyr,MVN,randomForest,plotly,ggthemes,reshape2,packMBPLSDA,DT,pacman,bootstrap,rcompanion,FSA,Hmisc,shinydashboard,shinyjs,shinythemes,shinybusy,shinyWidgets,V8
 Suggests:
-    rmarkdown,
-    MetNorm (>= 0.1),
-    DiscriMiner (>= 0.1-29),
-    affy,
-    pcaMethods,
-    preprocessCore,
-    ropls,
-    piano,
-    vsn
+    rmarkdown,MetNorm (>= 0.1),DiscriMiner (>= 0.1-29),affy,pcaMethods,preprocessCore,ropls,piano,vsn
 VignetteBuilder: knitr
