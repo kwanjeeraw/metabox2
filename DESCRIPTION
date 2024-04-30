@@ -11,6 +11,7 @@ LazyData: true
 RoxygenNote: 7.2.3
 Imports:
     biotools,
+    BiocManager,
     ade4,
     lme4,
     crmn,
