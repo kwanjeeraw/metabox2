@@ -13,7 +13,7 @@ if (!require("remotes"))
 remotes::install_github("kwanjeeraw/metabox2")
 
 ##Install R dependencies ##
-remotes::install_gitlab("CarlBrunius/MUVR)
+remotes::install_gitlab("CarlBrunius/MUVR")
 if (!require("BiocManager"))
     install.packages("BiocManager")
 BiocManager::install('pcaMethods')"
