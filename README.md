@@ -16,12 +16,12 @@ remotes::install_github("kwanjeeraw/metabox2")
 remotes::install_gitlab("CarlBrunius/MUVR")
 if (!require("BiocManager"))
     install.packages("BiocManager")
-BiocManager::install('pcaMethods')"
-BiocManager::install('affy')"
-BiocManager::install('preprocessCore')"
-BiocManager::install('vsn')"
-BiocManager::install('ropls')"
-BiocManager::install('piano')"
+BiocManager::install("pcaMethods")
+BiocManager::install("affy")
+BiocManager::install("preprocessCore")
+BiocManager::install("vsn")
+BiocManager::install("ropls")
+BiocManager::install("piano")
 
 ##Run metabox2
 library(metabox2)
