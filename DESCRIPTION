@@ -16,8 +16,8 @@ Suggests:
     MetNorm (>= 0.1),
     DiscriMiner (>= 0.1-29),
     affy,
-    preprocessCore,
     pcaMethods,
+    preprocessCore,
     ropls,
     piano,
     vsn
