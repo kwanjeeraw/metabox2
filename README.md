@@ -40,6 +40,16 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 launch_gui()
 ```
 
+Using the online version
+========================
+We provide the following servers for the online version
+
+* [server1](http://203.146.252.245:8081/metaboxweb/)
+* [server2](http://203.146.252.245:8082/metaboxweb/)
+* [server3](http://203.146.252.245:8083/metaboxweb/)
+
+*Note: An online version is in high demand. Users might experience slow page loading. Currently, we are expanding our server and creating a portable docker image.*
+
 Updates
 =========
 #### version 2.7 (APR 2024)
