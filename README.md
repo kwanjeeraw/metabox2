@@ -52,6 +52,8 @@ We provide the following servers for the online version
 
 Updates
 =========
+#### version 2.8 (AUG 2024)
+* Change number of QC for normalization by QC-based methods
 #### version 2.7 (APR 2024)
 * Change number of cross-validation segments for multivariate analysis
 * Change figure title

@@ -4,7 +4,7 @@
 #'@param p is phenotypes. p is a data.frame containing following columns:
 #'sampleType must include 'qc', 'sample'; It can include NA, which will not be normalized by LOESS, e.g. blank samples; It can include other type of samples like 'validate1', 'validate2', e.g. validate QCs.
 #'time is the injection order of each sample. Must be numeric, and unique.
-#'batch is batch information of samples. Each batch must contain at least 3 'qc's, although 5 qcs are recommended.
+#'batch is batch information of samples. Each batch must contain at least 2 'qc's, although 5 qcs are recommended.
 #'@param f is phenotypes.
 #'@param e is the data matrix. Each row is a compound and each column is a sample.
 #'@param e_matrix is the \code{e} data matrix. Each row is a compound and each column is a sample.
@@ -78,8 +78,8 @@ run_loess = function(p, f, e, e_matrix){
     stop("Your data must have 'batch'. Please see example data for more information.")
   }
   # check if any batch has too little qc
-  if(any(table(p$batch, p$sampleType)[,'qc']<3)){
-    stop("Some batches has a small number of QC that is not enough for training model. Each batch should have at least 3 QCs.")
+  if(any(table(p$batch, p$sampleType)[,'qc']<2)){
+    stop("Some batches has a small number of QC that is not enough for training model. Each batch should have at least 2 QCs.")
   }
 
   # check with missing value. All missing values are by default replaced by half minimum.

@@ -10,7 +10,7 @@ run_serrf(p, f, e, e_matrix)
 \item{p}{is phenotypes. p is a data.frame containing following columns:
 sampleType must include 'qc', 'sample'; It can include NA, which will not be normalized by SERRF, e.g. blank samples; It can include other type of samples like 'validate1', 'validate2', e.g. validate QCs.
 time is the injection order of each sample. Must be numeric, and unique.
-batch is batch information of samples. Each batch must contain at least 3 'qc's, although 5 qcs are recommended.}
+batch is batch information of samples. Each batch must contain at least 2 'qc's, although 5 qcs are recommended.}
 
 \item{f}{is phenotypes.}
 

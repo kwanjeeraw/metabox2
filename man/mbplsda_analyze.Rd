@@ -57,7 +57,8 @@ permutation test for model validity and parameter estimation.
 #lc_pos = set_input_obj(read_input_data("data/adipose_LC_POS.csv"),1,2,3)
 #lc_imp = impute_missing_data(lc_pos,method = "bpca",cutoff=30)
 #lc_neg = set_input_obj(read_input_data("data/adipose_LC_NEG.csv"),1,2,3)
-#out = mbplsda_analyze(data.frame(gc_dt$inputdata[,2]), list(gc = gc_dt$X,lcpos=lc_imp$X, lcneg=lc_neg$X),nrepet=10, npermut=3, nboot=3, testmodel = F,cpus = 2)
+#out = mbplsda_analyze(data.frame(gc_dt$inputdata[,2]), list(gc = gc_dt$X,lcpos=lc_imp$X, lcneg=lc_neg$X),
+#nrepet=10, npermut=3, nboot=3, testmodel = F,cpus = 2)
 }
 \references{
 Brandolini-Bunlon M., et al. (2019) Multi-block PLS discriminant analysis. Metabolomics, 15(10):134.
