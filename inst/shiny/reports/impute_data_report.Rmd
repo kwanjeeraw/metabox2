@@ -20,7 +20,6 @@ Date Processing Summary
 
 **Removed variables:** `r params$METBObj$details$impute_data$removed`\
 
-**Imputed variables:** `r params$METBObj$details$impute_data$imputed`
+**Imputed variables:** `r params$METBObj$details$impute_data$imputed`\
 
-**Note**\
-`r params$note`
+**Note** `r params$METBObj$text`

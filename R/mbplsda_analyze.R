@@ -43,13 +43,13 @@
 mbplsda_analyze <- function(class_data, input_data, scale=TRUE, option="none", nf=10, optdim=2, nrepet=30, npermut=100, nboot=100, threshold=0.5, testmodel=FALSE, cpus=1){
   #Check argument
   if (class(class_data) != "data.frame"){
-    stop("argument 'class_data' is not valid, a data frame is required.")
+    stop("Argument 'class_data' is not valid, a data frame is required.")
   }
   if (ncol(class_data) > 1){
-    cat("\nargument 'class_data' contains more than one column, only the 1st column will be used.")
+    cat("Argument 'class_data' contains more than one column, only the 1st column will be used.")
   }
   if (class(input_data) != "list"){
-    stop("argument 'input_data' is not valid, a list is required.")
+    stop("Argument 'input_data' is not valid, a list is required.")
   }
   if (length(input_data) < 2){
     #stop("argument 'input_data' is not valid, two or more data sets are required.")
@@ -89,7 +89,7 @@ mbplsda_analyze <- function(class_data, input_data, scale=TRUE, option="none", n
   }else{
     require(ade4, quietly=TRUE); require(packMBPLSDA, quietly=TRUE);
     base_mb = tryCatch({
-      cat("Calculating base model ...\n")
+      cat("* Calculating base model ...\n")
       ls_X = ktab.list.df(input_data)
       dj_table = disjunctive(F1)
       dudi_pca = dudi.pca(dj_table , center = FALSE, scale = FALSE, scannf = FALSE)
@@ -98,38 +98,38 @@ mbplsda_analyze <- function(class_data, input_data, scale=TRUE, option="none", n
     },error=function(e){
       cat(e$message)
       #message(e)
-      cat("\nERROR! Data was not analyzed.\n")
+      cat("\nERROR! when calculating base model, could not compute base model.\n")
       list()
     })
     if(testmodel){
       test_dim = tryCatch({
-        cat("Testing model components, this process might take long time ...\n")
+        cat("** Testing model components, this process might take long time ...\n")
         testdim_mbplsda(object = base_mb, nrepet = nrepet, threshold = threshold, bloY = nlev, cpus = cpus, algo = c("max"), outputs = c("ER"))
       },error=function(e){
         cat(e$message)
         #message(e)
-        cat("\nERROR! Data was not analyzed.\n")
+        cat("\nERROR! when testing model components, could not test model components.\n")
         list()
       })
       test_perm = tryCatch({
-        cat("Performing permutation testing, this process might take long time ...\n")
+        cat("*** Performing permutation testing, this process might take long time ...\n")
         permut_mbplsda(base_mb, nrepet = nrepet, npermut = npermut, optdim = maxOpt, bloY = nlev, nbObsPermut = 10, cpus = cpus, algo = c("max"), outputs = c("ER"))
       },error=function(e){
         cat(e$message)
         #message(e)
-        cat("\nERROR! Data was not analyzed.\n")
+        cat("\nERROR! when performing permutation testing, could not perform permutation testing.\n")
         list()
       })
     }else{
       test_dim=list();test_perm=list();
     }
     test_boot = tryCatch({
-      cat("Performing bootstrapping ...\n")
+      cat("**** Performing bootstrapping ...\n")
       boot_mbplsda(base_mb, optdim = maxOpt, nrepet = nboot, cpus=cpus)
     },error=function(e){
       cat(e$message)
       #message(e)
-      cat("\nERROR! Data was not analyzed.\n")
+      cat("\nERROR! when performing bootstrapping, could not perform bootstrapping.\n")
       list()
     })
     mbplsda_res = list(base_model = base_mb, res_optimal = test_dim, res_permut = test_perm, res_boot = test_boot)

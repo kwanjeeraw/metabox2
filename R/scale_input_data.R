@@ -13,54 +13,59 @@ scale_input_data <- function(METBObj, method="pareto"){
   #Check argument
   tmparg <- try(method <- match.arg(method, c("auto","level","pareto","power","range","vast"), several.ok = FALSE), silent = TRUE)
   if (class(tmparg) == "try-error") {
-    cat("\nERROR! Argument 'method' is not valid, choose one from the list: auto,level,pareto,power,range,vast.\nValues were not scaled.\n")
+    cat("ERROR! Argument 'method' is not valid, choose one from the list: auto,level,pareto,power,range,vast.\nData was not scaled.\n")
     return(METBObj)
   }
   if(sum(is.na(METBObj$X)) > 0){#Data contains missing values
-    cat("\nThe data contains missing values, which will be retained in the scaled data.
+    cat("The data contains missing values, which will be retained in the scaled data.
         Imputing the missing values before scaling is recommended.\n")
     #return(METBObj)
   }
   #Initialize parameters
-  dat = METBObj$X; methodls = list(); #working data
-  cat("\nExecuting function ...")
+  dat = METBObj$X; methodls = list(); printtxt=""; #working data
+  cat("Executing function ...")
   #Metabolite-based normalization method to adjust metabolite variances
   if (method == "auto"){#auto scaling or unit variance scaling
     new_dat = data.frame(scale(dat), check.names = FALSE)
-    cat("\nData scaling with 'auto scaling'.\n")
+    printtxt = paste0(printtxt,"\nData scaling with 'auto scaling'.\n")
   }
   if(method == "level") {#level scaling
     new_dat = data.frame(apply(dat, 2, function(x){
       (x - mean(x, na.rm=TRUE))/mean(x, na.rm=TRUE)
     }), check.names=FALSE)
-    cat("\nData scaling with 'level scaling'.\n")
+    printtxt = paste0(printtxt,"\nData scaling with 'level scaling'.\n")
   }
   if(method == "pareto") {#pareto scaling
     new_dat = data.frame(apply(dat, 2, function(x){
       (x - mean(x, na.rm=TRUE))/sqrt(sd(x, na.rm=TRUE))
     }), check.names=FALSE)
-    cat("\nData scaling with 'pareto scaling'.\n")
+    printtxt = paste0(printtxt,"\nData scaling with 'pareto scaling'.\n")
   }
   if(method == "power") {#power scaling
     new_dat = data.frame(apply(dat, 2, function(x){
       sqrt(x) - mean(sqrt(x))
     }), check.names=FALSE)
-    cat("\nData scaling with 'power scaling'.\n")
+    printtxt = paste0(printtxt,"\nData scaling with 'power scaling'.\n")
   }
   if(method == "range") {#range scaling
     new_dat = data.frame(apply(dat, 2, function(x){
       (x - mean(x, na.rm=TRUE))/(max(x)-min(x))
     }), check.names=FALSE)
-    cat("\nData scaling with 'range scaling'.\n")
+    printtxt = paste0(printtxt,"\nData scaling with 'range scaling'.\n")
   }
   if(method == "vast") {#vast scaling
     new_dat = data.frame(apply(dat, 2, function(x){
       mean(x, na.rm=TRUE) *
         (x - mean(x, na.rm=TRUE)) / (sd(x, na.rm=TRUE)**2)
     }), check.names=FALSE)
-    cat("\nData scaling with 'vast scaling'.\n")
+    printtxt = paste0(printtxt,"\nData scaling with 'vast scaling'.\n")
   }
+  printtxt = paste(printtxt,"\nData summary:\n*",
+                   nrow(new_dat), "samples and", ncol(new_dat), "variables.\n**",
+                   sum(apply(new_dat, 2, function(x) { sum(x<0) }),na.rm = TRUE)," negative variables.\n***",
+                   sum(is.na(new_dat)), "(",round((sum(is.na(new_dat))/(nrow(new_dat)*ncol(new_dat)))*100,2),"% ) missing values.\n")
+  cat(printtxt)
   methodls$method = method;
-  METBObj$X = new_dat; METBObj$details$scale_data = methodls; #update input data
+  METBObj$X = new_dat; METBObj$details$scale_data = methodls; METBObj$text = printtxt;#update input data
   return(METBObj)
 }

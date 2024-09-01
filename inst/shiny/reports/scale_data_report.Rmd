@@ -14,7 +14,6 @@ Data Summary
 
 Date Processing Summary
 ---------------
-**Method:** `r params$METBObj$details$scale_data$method`
+**Method:** `r params$METBObj$details$scale_data$method`\
 
-**Note**\
-`r params$note`
+**Note** `r params$METBObj$text`

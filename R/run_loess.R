@@ -60,27 +60,28 @@ run_loess = function(p, f, e, e_matrix){
     norm.min = apply(norm,1,min,na.rm=T)
     return(norm - c(norm.min - ori.min))
   }
-  # check if 'qc' or 'sample' is not in sampleType
-  if(any(!c('qc','sample') %in% p$sampleType)){
-    stop("The 'sampleType' must contain at least 'qc' and 'sample'. Please see example data for more information.")
-  }
-  # check if time is in the datasheet
-  if(!"time" %in% colnames(p)){
-    stop("Your data must have 'time'. Please see example data for more information.")
-  }
-  # check if time has duplicated value.
-  if(any(duplicated(p$time))){
-    time_duplicated = duplicated(p$time)
-    stop("Your dataset has ",sum(time_duplicated)," duplicated 'time' value. 'time' of each sample should be unique. The duplicated 'time' values are ", paste0(p$time[time_duplicated],collapse = ', '),'.')
-  }
-  # check if batch is in the datasheet
-  if(!"batch" %in% colnames(p)){
-    stop("Your data must have 'batch'. Please see example data for more information.")
-  }
-  # check if any batch has too little qc
-  if(any(table(p$batch, p$sampleType)[,'qc']<2)){
-    stop("Some batches has a small number of QC that is not enough for training model. Each batch should have at least 2 QCs.")
-  }
+  # Pre-check by normalize_input_data_byqc
+  # # check if 'qc' or 'sample' is not in sampleType
+  # if(any(!c('qc','sample') %in% p$sampleType)){
+  #   stop("The 'sampleType' must contain at least 'qc' and 'sample'. Please see example data for more information.")
+  # }
+  # # check if time is in the datasheet
+  # if(!"time" %in% colnames(p)){
+  #   stop("Your data must have 'time'. Please see example data for more information.")
+  # }
+  # # check if time has duplicated value.
+  # if(any(duplicated(p$time))){
+  #   time_duplicated = duplicated(p$time)
+  #   stop("Your dataset has ",sum(time_duplicated)," duplicated 'time' value. 'time' of each sample should be unique. The duplicated 'time' values are ", paste0(p$time[time_duplicated],collapse = ', '),'.')
+  # }
+  # # check if batch is in the datasheet
+  # if(!"batch" %in% colnames(p)){
+  #   stop("Your data must have 'batch'. Please see example data for more information.")
+  # }
+  # # check if any batch has too little qc
+  # if(any(table(p$batch, p$sampleType)[,'qc']<2)){
+  #   stop("Some batches has a small number of QC that is not enough for training model. Each batch should have at least 2 QCs.")
+  # }
 
   # check with missing value. All missing values are by default replaced by half minimum.
   num_miss = sum(is.na(e))

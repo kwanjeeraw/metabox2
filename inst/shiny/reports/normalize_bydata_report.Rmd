@@ -15,7 +15,6 @@ Data Summary
 Date Processing Summary
 ---------------
 **Method:** `r params$METBObj$details$normalize_bydata$method`\
-**Reference sample index for pqn method:** `r params$METBObj$details$normalize_bydata$ref`
+**Reference sample index for pqn method:** `r params$METBObj$details$normalize_bydata$ref`\
 
-**Note**\
-`r params$note`
+**Note** `r params$METBObj$text`

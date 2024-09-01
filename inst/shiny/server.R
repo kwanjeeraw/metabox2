@@ -709,20 +709,12 @@ server = function(input, output, session) {
       shinybusy::show_modal_spinner(color = "#3CB371", text = "Computing ...")
       metboshow$metbo_missing <- impute_missing_data(metboshow$metbo_input, method = input$missCheck, removeall=input$reall, cutoff=input$remPercent )
       # shinyjs::hide("txtbox.QCnorm")
-      if (input$reall == TRUE){
-        output$txtbox.missing <- renderPrint({cat("\nRemove all variables with missing values.\n")})}else{
-          if(input$missCheck=="min"){
-            output$txtbox.missing <- renderPrint({
-              cat("\nImpute missing values with a chosen method.\n")
-              cat("\nRemove variables with >",isolate({input$remPercent}),"% missing values.\n")
-              cat("\nImpute missing values with half of 'min' value of each column.\n")})
-          }else{
-            output$txtbox.missing <- renderPrint({
-              cat("\nImpute missing values with a chosen method.\n")
-              cat("\nRemove variables with >",isolate({input$remPercent}),"% missing values.\n")
-              cat("\nImpute missing values with",isolate({input$missCheck}),"of each column.\n")})
-          }
+      output$txtbox.missing <- renderPrint({
+        if(is.null(metboshow$metbo_missing)) { cat("")}
+        else{
+          output$txtbox.missing <- renderPrint({cat(metboshow$metbo_missing$text)})
         }
+      })
       shinybusy::remove_modal_spinner()
     }else{
       output$txtbox.missing <- renderPrint({cat("\nNot found data to impute missing values.\n")})
@@ -801,9 +793,8 @@ server = function(input, output, session) {
       if(sum(is.na(metboshow$keepValueN$X)) > 0){#Data contains missing values
         output$txtbox.QCnorm <- renderPrint({
           shinyjs::hide("QCplotTab")
-          cat("\nThe data contains missing values.\n")
-          cat("\nThe data was not normalized.\n")
-          cat("\nPlease impute missing values.\n")
+          cat("\nThe data contains missing values.")
+          cat("\nThe analysis cab be performed after missing value imputation.\n")
         })
         shinyjs::hide("next3")
         shinyjs::show("skip2")
@@ -817,8 +808,7 @@ server = function(input, output, session) {
                                                           injectionOrder=which(input$injectionOrder == colnames(metboshow$keepValueN$inputdata)),
                                                           batch=which(input$batch == colnames(metboshow$keepValueN$inputdata)))
       output$txtbox.QCnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData normalization with\n",isolate({input$QCnormSelect}),"\nDone!\n")
+        cat(metboshow$metbo_QCnorm$text)
       })
       shinybusy::remove_modal_spinner()
 
@@ -1033,9 +1023,8 @@ server = function(input, output, session) {
     if(sum(is.na(metboshow$keepValueDP$X)) > 0){#Data contains missing values
       output$txtbox.DATnorm <- renderPrint({
         shinyjs::hide("Ntabset")
-        cat("\nThe data contains missing values.\n")
-        cat("\nThe data was not normalized.\n")
-        cat("\nPlease impute missing values.\n")
+        cat("\nThe data contains missing values.")
+        cat("\nThe analysis cab be performed after missing value imputation.\n")
       })
       return(NULL)
     }
@@ -1049,8 +1038,7 @@ server = function(input, output, session) {
                                                           ref = input$ref)
 
       output$txtbox.DATnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData normalization with\n",isolate({input$DATAnormSelect}),"\nDone!\n")
+        cat(metboshow$metbo_norm$text)
       })
 
     }
@@ -1062,9 +1050,8 @@ server = function(input, output, session) {
       metboshow$metbo_tran <- transform_input_data(metboshow$metbo_norm, method = input$tranM)
 
       output$txtbox.DATnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData normalization with",isolate({input$DATAnormSelect}),"\n")
-        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n","\nDone!\n")
+        cat("\nData normalization with",isolate({input$DATAnormSelect}),".\n")
+        cat(metboshow$metbo_tran$text)
       })
 
     }
@@ -1073,8 +1060,7 @@ server = function(input, output, session) {
     if(input$scalM == "none" && input$tranM != "none" && input$DATAnormSelect == "none"){
       metboshow$metbo_tran <- transform_input_data(metboshow$keepValueDP, method = input$tranM)
       output$txtbox.DATnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n","\nDone!\n")
+        cat(metboshow$metbo_tran$text)
       })
     }
 
@@ -1083,9 +1069,8 @@ server = function(input, output, session) {
       metboshow$metbo_tran <- transform_input_data(metboshow$keepValueDP, method = input$tranM)
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_tran, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n")
-        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
+        cat("\nData transformation with",isolate({input$tranM}),".\n")
+        cat(metboshow$metbo_scal$text)
       })
     }
     ########6#SoTxNo
@@ -1095,17 +1080,15 @@ server = function(input, output, session) {
                                                           ref = input$ref)
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_norm, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData normalization with",isolate({input$DATAnormSelect}),"\n")
-        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
+        cat("\nData normalization with",isolate({input$DATAnormSelect}),".\n")
+        cat(metboshow$metbo_scal$text)
       })
     }
     ########7#SoTxNx
     if(input$scalM != "none" && input$tranM == "none" && input$DATAnormSelect == "none"){
       metboshow$metbo_scal <- scale_input_data(metboshow$keepValueDP, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
+        cat(metboshow$metbo_scal$text)
       })
     }
     ########8#SoToNo
@@ -1116,10 +1099,9 @@ server = function(input, output, session) {
       metboshow$metbo_tran <- transform_input_data(metboshow$metbo_norm, method = input$tranM)
       metboshow$metbo_scal <- scale_input_data(metboshow$metbo_tran, method = input$scalM)
       output$txtbox.DATnorm <- renderPrint({
-        cat("\nExecuting function ...\n")
-        cat("\nData normalization with",isolate({input$DATAnormSelect}),"\n")
-        cat("\nData transformation with",isolate({input$tranM}),"transformation.\n")
-        cat("\nData scaling with",isolate({input$scalM}),"scaling.\n","\nDone!\n")
+        cat("\nData normalization with",isolate({input$DATAnormSelect}),".\n")
+        cat("\nData transformation with",isolate({input$tranM}),".\n")
+        cat(metboshow$metbo_scal$text)
       })
     }
 
@@ -1335,9 +1317,8 @@ server = function(input, output, session) {
     output$INtableUNI <- NULL
     if(!is.null(metboshow$metbo_uni)){metboshow$metbo_uni <- NULL}
     if(sum(is.na(metboshow$keepValueM$X)) > 0){#Data contains missing values
-      cat("\nThe data contains missing values.\n")
-      cat("\nThe analysis was not performed.\n")
-      cat("\nPlease impute missing values.\n")
+      cat("\nThe data contains missing values.")
+      cat("\nThe analysis cab be performed after missing value imputation.\n")
       metboshow$metbo_uni <- NULL
       metboshow$S_missing_M1 <- TRUE
       shinyjs::hide("UNIplotTab")
@@ -1480,9 +1461,8 @@ server = function(input, output, session) {
     if(!is.null(metboshow$metbo_multi)){metboshow$metbo_multi <- NULL}
     shinyjs::show("MULplotTab")
     if(sum(is.na(metboshow$keepValueM$X)) > 0){#Data contains missing values
-      cat("\nThe data contains missing values.\n")
-      cat("\nThe analysis was not performed.\n")
-      cat("\nPlease impute missing values.\n")
+      cat("\nThe data contains missing values.")
+      cat("\nThe analysis cab be performed after missing value imputation.\n")
       metboshow$S_missing_M1 <- TRUE
       shinyjs::hide("MULplotTab")
       return(NULL)
@@ -1495,7 +1475,7 @@ server = function(input, output, session) {
       },error=function(e){
         shinybusy::remove_modal_spinner()
         message(e)
-        return()
+        return(NULL)
       })
     }else{return(NULL)}
 
@@ -1649,9 +1629,8 @@ server = function(input, output, session) {
     if(!is.null(metboshow$metbo_corr)){metboshow$metbo_corr <- NULL}
     shinyjs::show("CORplotTab")
     if(sum(is.na(metboshow$keepValueM$X)) > 0){#Data contains missing values
-      cat("\nThe data contains missing values.\n")
-      cat("\nThe analysis was not performed.\n")
-      cat("\nPlease impute missing values.\n")
+      cat("\nThe data contains missing values.")
+      cat("\nThe analysis cab be performed after missing value imputation.\n")
       metboshow$S_missing_M1 <- TRUE
       shinyjs::hide("CORplotTab")
       return(NULL)
@@ -1716,9 +1695,8 @@ server = function(input, output, session) {
     metboshow$LMEfix <- match(input$LMEfix,colnames(metboshow$keepValueM$inputdata[1:metboshow$firstV-1]))
 
     if(sum(is.na(metboshow$keepValueM$X)) > 0){#Data contains missing values
-      cat("\nThe data contains missing values.\n")
-      cat("\nThe analysis was not performed.\n")
-      cat("\nPlease impute missing values.\n")
+      cat("\nThe data contains missing values.")
+      cat("\nThe analysis cab be performed after missing value imputation.\n")
       metboshow$S_missing_M1 <- TRUE
       metboshow$LMEfix <- NULL
       return(NULL)
@@ -1765,9 +1743,8 @@ server = function(input, output, session) {
     if(!is.null(metboshow$metbo_ml)){metboshow$metbo_ml <- NULL}
     if(sum(is.na(metboshow$keepValueM$X)) > 0){#Data contains missing values
       shinyjs::hide("MUVplotTab")
-      cat("\nThe data contains missing values.\n")
-      cat("\nThe analysis was not performed.\n")
-      cat("\nPlease impute missing values.\n")
+      cat("\nThe data contains missing values.")
+      cat("\nThe analysis cab be performed after missing value imputation.\n")
       metboshow$B_missing <- TRUE
       return(NULL)
     }
@@ -2546,7 +2523,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL1 == 'none'){cat("\nMissing sample ID column in data set 1; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM1,"\n")}
                 cat("\nThe data set 1 contains missing values",sum(is.na(metboshow$metbo_data_mbpl1$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl1$X))/(nrow(metboshow$metbo_data_mbpl1$X)*ncol(metboshow$metbo_data_mbpl1$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 1.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 1 with", nrow(metboshow$metbo_read_mbpl1), "rows and", ncol(metboshow$metbo_read_mbpl1), "columns.\n","class/factor column: ",metboshow$classM1,"\n")
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2558,7 +2535,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 2 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL2 == 'none'){cat("\nMissing sample ID column in data set 2; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM2,"\n")}
                 cat("\nThe data set 2 contains missing values",sum(is.na(metboshow$metbo_data_mbpl2$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl2$X))/(nrow(metboshow$metbo_data_mbpl2$X)*ncol(metboshow$metbo_data_mbpl2$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 2.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 2 with", nrow(metboshow$metbo_read_mbpl2), "rows and", ncol(metboshow$metbo_read_mbpl2), "columns.\n","class/factor column: ",metboshow$classM2,"\n")
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2648,7 +2625,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL1 == 'none'){cat("\nMissing sample ID column in data set 1; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM1,"\n")}
                 cat("\nThe data set 1 contains missing values",sum(is.na(metboshow$metbo_data_mbpl1$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl1$X))/(nrow(metboshow$metbo_data_mbpl1$X)*ncol(metboshow$metbo_data_mbpl1$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 1.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 1 with", nrow(metboshow$metbo_read_mbpl1), "rows and", ncol(metboshow$metbo_read_mbpl1), "columns.\n","class/factor column: ",metboshow$classM1,"\n")
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2660,7 +2637,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 2 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL2 == 'none'){cat("\nMissing sample ID column in data set 2; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM2,"\n")}
                 cat("\nThe data set 2 contains missing values",sum(is.na(metboshow$metbo_data_mbpl2$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl2$X))/(nrow(metboshow$metbo_data_mbpl2$X)*ncol(metboshow$metbo_data_mbpl2$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 2.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 2 with", nrow(metboshow$metbo_read_mbpl2), "rows and", ncol(metboshow$metbo_read_mbpl2), "columns.\n","class/factor column: ",metboshow$classM2,"\n")
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 2 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2672,7 +2649,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl3) >2000){cat("***The data set 3 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL3 == 'none'){cat("\nMissing sample ID column in data set 3; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM3,"\n")}
                 cat("\nThe data set 3 contains missing values",sum(is.na(metboshow$metbo_data_mbpl3$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl3$X))/(nrow(metboshow$metbo_data_mbpl3$X)*ncol(metboshow$metbo_data_mbpl3$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 3.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 3 with", nrow(metboshow$metbo_read_mbpl3), "rows and", ncol(metboshow$metbo_read_mbpl3), "columns.\n","class/factor column: ",metboshow$classM3,"\n")
                 if(ncol(metboshow$metbo_read_mbpl3) >2000){cat("***The data set 3 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2776,7 +2753,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL1 == 'none'){cat("\nMissing sample ID column in data set 1; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM1,"\n")}
                 cat("\nThe data set 1 contains missing values",sum(is.na(metboshow$metbo_data_mbpl1$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl1$X))/(nrow(metboshow$metbo_data_mbpl1$X)*ncol(metboshow$metbo_data_mbpl1$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 1.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 1 with", nrow(metboshow$metbo_read_mbpl1), "rows and", ncol(metboshow$metbo_read_mbpl1), "columns.\n","class/factor column: ",metboshow$classM1,"\n")
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2788,7 +2765,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 2 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL2 == 'none'){cat("\nMissing sample ID column in data set 2; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM2,"\n")}
                 cat("\nThe data set 2 contains missing values",sum(is.na(metboshow$metbo_data_mbpl2$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl2$X))/(nrow(metboshow$metbo_data_mbpl2$X)*ncol(metboshow$metbo_data_mbpl2$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 2.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 2 with", nrow(metboshow$metbo_read_mbpl2), "rows and", ncol(metboshow$metbo_read_mbpl2), "columns.\n","class/factor column: ",metboshow$classM2,"\n")
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 2 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2800,7 +2777,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl3) >2000){cat("***The data set 3 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL3 == 'none'){cat("\nMissing sample ID column in data set 3; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM3,"\n")}
                 cat("\nThe data set 3 contains missing values",sum(is.na(metboshow$metbo_data_mbpl3$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl3$X))/(nrow(metboshow$metbo_data_mbpl3$X)*ncol(metboshow$metbo_data_mbpl3$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 3.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 3 with", nrow(metboshow$metbo_read_mbpl3), "rows and", ncol(metboshow$metbo_read_mbpl3), "columns.\n","class/factor column: ",metboshow$classM3,"\n")
                 if(ncol(metboshow$metbo_read_mbpl3) >2000){cat("***The data set 3 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2812,7 +2789,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl4) >2000){cat("***The data set 4 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL4 == 'none'){cat("\nMissing sample ID column in data set 4; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM4,"\n")}
                 cat("\nThe data set 4 contains missing values",sum(is.na(metboshow$metbo_data_mbpl4$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl4$X))/(nrow(metboshow$metbo_data_mbpl4$X)*ncol(metboshow$metbo_data_mbpl4$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 4.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 4 with", nrow(metboshow$metbo_read_mbpl4), "rows and", ncol(metboshow$metbo_read_mbpl4), "columns.\n","class/factor column: ",metboshow$classM4,"\n")
                 if(ncol(metboshow$metbo_read_mbpl4) >2000){cat("***The data set 4 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2945,7 +2922,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL1 == 'none'){cat("\nMissing sample ID column in data set 1; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM1,"\n")}
                 cat("\nThe data set 1 contains missing values",sum(is.na(metboshow$metbo_data_mbpl1$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl1$X))/(nrow(metboshow$metbo_data_mbpl1$X)*ncol(metboshow$metbo_data_mbpl1$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 1.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 1 with", nrow(metboshow$metbo_read_mbpl1), "rows and", ncol(metboshow$metbo_read_mbpl1), "columns.\n","class/factor column: ",metboshow$classM1,"\n")
                 if(ncol(metboshow$metbo_read_mbpl1) >2000){cat("***The data set 1 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2957,7 +2934,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 2 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL2 == 'none'){cat("\nMissing sample ID column in data set 2; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM2,"\n")}
                 cat("\nThe data set 2 contains missing values",sum(is.na(metboshow$metbo_data_mbpl2$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl2$X))/(nrow(metboshow$metbo_data_mbpl2$X)*ncol(metboshow$metbo_data_mbpl2$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 2.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 2 with", nrow(metboshow$metbo_read_mbpl2), "rows and", ncol(metboshow$metbo_read_mbpl2), "columns.\n","class/factor column: ",metboshow$classM2,"\n")
                 if(ncol(metboshow$metbo_read_mbpl2) >2000){cat("***The data set 2 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2969,7 +2946,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl3) >2000){cat("***The data set 3 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL3 == 'none'){cat("\nMissing sample ID column in data set 3; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM3,"\n")}
                 cat("\nThe data set 3 contains missing values",sum(is.na(metboshow$metbo_data_mbpl3$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl3$X))/(nrow(metboshow$metbo_data_mbpl3$X)*ncol(metboshow$metbo_data_mbpl3$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 3.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 3 with", nrow(metboshow$metbo_read_mbpl3), "rows and", ncol(metboshow$metbo_read_mbpl3), "columns.\n","class/factor column: ",metboshow$classM3,"\n")
                 if(ncol(metboshow$metbo_read_mbpl3) >2000){cat("***The data set 3 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2981,7 +2958,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl4) >2000){cat("***The data set 4 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL4 == 'none'){cat("\nMissing sample ID column in data set 4; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM4,"\n")}
                 cat("\nThe data set 4 contains missing values",sum(is.na(metboshow$metbo_data_mbpl4$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl4$X))/(nrow(metboshow$metbo_data_mbpl4$X)*ncol(metboshow$metbo_data_mbpl4$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 4.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 4 with", nrow(metboshow$metbo_read_mbpl4), "rows and", ncol(metboshow$metbo_read_mbpl4), "columns.\n","class/factor column: ",metboshow$classM4,"\n")
                 if(ncol(metboshow$metbo_read_mbpl4) >2000){cat("***The data set 4 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -2993,7 +2970,7 @@ server = function(input, output, session) {
                 if(ncol(metboshow$metbo_read_mbpl5) >2000){cat("***The data set 5 is too large (>2000 column), the analysis might take very long time!!!!")}
                 if(input$idMBPL5 == 'none'){cat("\nMissing sample ID column in data set 5; Assuming samples are independent.\n")}else{cat("ID column: ",metboshow$idM5,"\n")}
                 cat("\nThe data set 5 contains missing values",sum(is.na(metboshow$metbo_data_mbpl5$X)), "(",round((sum(is.na(metboshow$metbo_data_mbpl5$X))/(nrow(metboshow$metbo_data_mbpl5$X)*ncol(metboshow$metbo_data_mbpl5$X)))*100,2),"%) missing values.\n")
-                cat("\nPlease impute missing values in data set 5.\n")
+                cat("\nThe analysis can be performed after missing value imputation.\n")
               }else{
                 cat("\nUploaded data set 5 with", nrow(metboshow$metbo_read_mbpl5), "rows and", ncol(metboshow$metbo_read_mbpl5), "columns.\n","class/factor column: ",metboshow$classM5,"\n")
                 if(ncol(metboshow$metbo_read_mbpl5) >2000){cat("***The data set 5 is too large (>2000 column), the analysis might take very long time!!!!")}
@@ -3125,81 +3102,41 @@ server = function(input, output, session) {
       isolate({
         if(!is.null(metboshow$metbo_data_mbpl1)){
           if(sum(is.na(metboshow$metbo_data_mbpl1$X)) > 0){
+            cat("\nImpute missing values in data set 1:\n")
             metboshow$metbo_data_mbpl1_m <- impute_missing_data(metboshow$metbo_data_mbpl1, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
             # shinyjs::hide("txtbox.QCnorm")
-            if (input$reall == TRUE){
-              cat("\nRemove all variables with missing values in data set 1.\n")
-            }else{
-              if(input$missCheck_m=="min"){
-                cat("\nImpute missing values in data set 1 with a chosen method.\n")
-              }else{
-                cat("\nImpute missing values in data set 1 with a chosen method.\n")
-              }
-            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl2)){
           if(sum(is.na(metboshow$metbo_data_mbpl2$X)) > 0){
+            cat("\nImpute missing values in data set 2:\n")
             metboshow$metbo_data_mbpl2_m <- impute_missing_data(metboshow$metbo_data_mbpl2, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
             # shinyjs::hide("txtbox.QCnorm")
-            if (input$reall == TRUE){
-              cat("\nRemove all variables with missing values in data set 2.\n")
-            }else{
-              if(input$missCheck_m=="min"){
-                cat("\nImpute missing values in data set 2 with a chosen method.\n")
-              }else{
-                cat("\nImpute missing values in data set 2 with a chosen method.\n")
-              }
-            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl3)){
           if(sum(is.na(metboshow$metbo_data_mbpl3$X)) > 0){
+            cat("\nImpute missing values in data set 3:\n")
             metboshow$metbo_data_mbpl3_m <- impute_missing_data(metboshow$metbo_data_mbpl3, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
             # shinyjs::hide("txtbox.QCnorm")
-            if (input$reall == TRUE){
-              cat("\nRemove all variables with missing values in data set 3.\n")
-            }else{
-              if(input$missCheck_m=="min"){
-                cat("\nImpute missing values in data set 3 with a chosen method.\n")
-              }else{
-                cat("\nImpute missing values in data set 3 with a chosen method.\n")
-              }
-            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl4)){
           if(sum(is.na(metboshow$metbo_data_mbpl4$X)) > 0){
+            cat("\nImpute missing values in data set 4:\n")
             metboshow$metbo_data_mbpl4_m <- impute_missing_data(metboshow$metbo_data_mbpl4, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
             # shinyjs::hide("txtbox.QCnorm")
-            if (input$reall == TRUE){
-              cat("\nRemove all variables with missing values in data set 4.\n")
-            }else{
-              if(input$missCheck_m=="min"){
-                cat("\nImpute missing values in data set 4 with a chosen method.\n")
-              }else{
-                cat("\nImpute missing values in data set 4 with a chosen method.\n")
-              }
-            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl5)){
           if(sum(is.na(metboshow$metbo_data_mbpl5$X)) > 0){
+            cat("\nImpute missing values in data set 5:\n")
             metboshow$metbo_data_mbpl5_m <- impute_missing_data(metboshow$metbo_data_mbpl5, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
             # shinyjs::hide("txtbox.QCnorm")
-            if (input$reall == TRUE){
-              cat("\nRemove all variables with missing values in data set 5.\n")
-            }else{
-              if(input$missCheck_m=="min"){
-                cat("\nImpute missing values in data set 5 with a chosen method.\n")
-              }else{
-                cat("\nImpute missing values in data set 5 with a chosen method.\n")
-              }
-            }
           }
         }
         shinybusy::remove_modal_spinner()

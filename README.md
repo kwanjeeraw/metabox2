@@ -52,6 +52,11 @@ We provide the following servers for the online version
 
 Updates
 =========
+#### version 2.9 (SEP 2024)
+* Exclude liwong and LOESS normalization
+* New messages
+* install.packages('MetNorm') for ruv
+* New check_serrf input data
 #### version 2.8 (AUG 2024)
 * Change number of QC for normalization by QC-based methods
 #### version 2.7 (APR 2024)

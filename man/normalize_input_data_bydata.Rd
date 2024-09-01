@@ -9,7 +9,7 @@ normalize_input_data_bydata(METBObj, method="median", ref=NULL)
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
 
-\item{method}{name of normalization method. Choose one from the list: contrast, cubic, eigenms, linear, liwong, loess, mean, median, pqn, quantile, sum, vsn. Default is median.}
+\item{method}{name of normalization method. Choose one from the list: contrast, cubic, eigenms, linear, loess, mean, median, pqn, quantile, sum, vsn. Default is median.}
 
 \item{ref}{a row number/index or a vector of row numbers of reference/control sample(s) in the \code{METBObj$inputdata} data frame.
 This parameter is required for pqn method.}
@@ -40,8 +40,6 @@ Bethanne M.Warrack, et al. MSTUS (2009) \url{https://doi.org/10.1016/j.jchromb.2
 Sandrine Dudoit, et al. cyclic loess (2002) \url{https://wwwf.imperial.ac.uk/~das01/BioinformaticsMSc/Papers/sinica.final.pdf}.
 
 Christopher Workman, et al. cubic spline (2002) \url{https://genomebiology.biomedcentral.com/articles/10.1186/gb-2002-3-9-research0048}.
-
-Cheng Li, et al. liwong (2001) \url{https://doi.org/10.1186/gb-2001-2-8-research0032}.
 
 Chetwynd, AJ, et al. MSTUS (2016) \url{https://doi.org/10.1016/j.chroma.2015.12.056}.
 

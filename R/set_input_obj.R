@@ -79,15 +79,17 @@ set_input_obj <- function(inputdata, idCol=1, classCol=2, xCol=3){
   unikID = ID[unik] #list of ids; for MUVR
   isRepeated = (!identical(unikID,ID)) #boolean of repeated experiment
 
-  cat("\nUploaded data contains:\n-",
+  printtxt = paste("\nData summary:\n-",
       nrow(X), "samples and", ncol(X), "variables.\n-",
       "repeated samples =",isRepeated,".\n-",
       "class/factor with",nlevels(Y), "levels.\n-",
-      sum(apply(X, 2, function(x) { sum(x<0) }),na.rm = TRUE)," negative variables.\n-",
-      sum(is.na(X)), "(",round((sum(is.na(X))/(nrow(X)*ncol(X)))*100,2),"%) missing values.\n")
+      sum(apply(X, 2, function(x) { sum(x<0) }),na.rm = TRUE),"negative variables.\n-",
+      sum(is.na(X)), "(",round((sum(is.na(X))/(nrow(X)*ncol(X)))*100,2),"% ) missing values.\n")
+  cat(printtxt)
 
   input_obj$inputdata = inputdata; input_obj$ID = ID;  input_obj$orgID = orgID; input_obj$unik = unik; input_obj$unikID = unikID; input_obj$idCol = idCol;
   input_obj$xCol = xCol; input_obj$classCol = classCol; input_obj$X = X; input_obj$Y = Y; input_obj$isRepeated = isRepeated; input_obj$details = list();
+  input_obj$text = printtxt;
   class(input_obj)=c('METBObj')
   return(input_obj)
 }

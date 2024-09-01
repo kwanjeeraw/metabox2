@@ -22,7 +22,7 @@ read_input_data <- function(filename){
     })
 
   if(any(dim(dat) == 0) || ncol(dat) == 1){
-    cat("\nERROR! Fail to read the input data.\n"
+    cat("Fail! to read the input data.\n"
                  ,"Check the following guidelines:\n"
                  ,"- the input data is a table of comma separated values with .csv file format.\n"
                  ,"- samples are in rows and variables/features are in columns.\n"

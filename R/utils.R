@@ -1,5 +1,39 @@
 ## Utility functions ##
 
+#'Check serrf input
+#'@description The function check input data for serrf normalization.
+#'@usage check_serrf(p)
+#'@param p data.table of sample information
+#'@details The function is used inside normalize_input_data_byqc.
+#'@return text message
+#'@examples
+#'#check_serrf(samp_info)
+#'@export
+check_serrf <- function(p){
+  outtxt = ""
+  # check if 'qc' or 'sample' is not in sampleType
+  if(any(!c('qc','sample') %in% p$sampleType)){
+    outtxt = paste0(outtxt,"\nThe 'sampleType' must contain at least 'qc' and 'sample'. See example data for more information.")
+  }
+  # check if time is in the datasheet
+  if(!"time" %in% colnames(p)){
+    outtxt = paste0(outtxt,"\nYour data must have 'injectionOrder'. See example data for more information.")
+  }
+  # check if time has duplicated value.
+  if(any(duplicated(p$time))){
+    outtxt = paste0(outtxt,"\nData has duplicated 'injectionOrder' values. 'injectionOrder' of each sample should be unique.")
+  }
+  # check if batch is in the datasheet
+  if(!"batch" %in% colnames(p)){
+    outtxt = paste0(outtxt,"\nYour data must have 'batch'. See example data for more information.")
+  }
+  # check if any batch has too little qc
+  if(any(table(p$batch, p$sampleType)[,'qc']<2)){
+    outtxt = paste0(outtxt,"\nSome batches has a small number of QC that is not enough for training model. Each batch should have at least 2 QCs.")
+  }
+  return(outtxt)
+}
+
 #'Combine p-values
 #'@description The function can combine p-values using Fisher's method.
 #'@usage combine_pvals(x)
@@ -756,49 +790,57 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
   dat = METBObj$X #working data
   metadat = METBObj$inputdata[,1:METBObj$xCol-1]
   nmetada = ncol(metadat); xpc = nmetada+1; ypc = nmetada+2; #plot 2 PCs
-  pca = prcomp(dat, center = TRUE, scale. = scale)
-  pcadata = cbind(metadat, pca$x[,c(px,py)]) #for ggplot
-  if(is.null(classCol)){#METBObj$classCol
-    colnames(pcadata)[METBObj$classCol] = 'ClassCol' #class column
-  }else{#other classCol
-    colnames(pcadata)[classCol] = 'ClassCol' #class column
-  }
-  xlabel=colnames(pcadata)[xpc]; ylabel=colnames(pcadata)[ypc] #x,y label
-  colnames(pcadata)[METBObj$idCol] = 'Sample_ID'; colnames(pcadata)[xpc] = 'PCX'; colnames(pcadata)[ypc] = 'PCY' #change column name
-  prop.pca = summary(pca)
-  #Check type of category/factor column
-  if (is.numeric(pcadata$ClassCol)) {#plot regression
-    Y = pcadata$ClassCol #working data
-    ggplot(pcadata, aes(PCX, PCY, color=ClassCol, key=Sample_ID)) + geom_point(size=ptsize) +
-      #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
-      stat_ellipse(type = "norm", color='grey70', size=0.3) +
-      scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) + theme_minimal() + ggtitle(plot_title) +
-      theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
-      labs(col = legend_title, x = paste(xlabel, "[", round(prop.pca$importance[2,px]*100, 2), "%]", sep=""),
-           y = paste(ylabel, "[", round(prop.pca$importance[2,py]*100, 2), "%]", sep=""))
-  }else{#plot category/factor
-    Y = as.factor(pcadata$ClassCol) #working data
-    numlevels = nlevels(Y) #no. of levels
-    if(numlevels <= 8){
-      grcolors = mbcolors
-    }else{
-      grcolors = colorRampPalette(mbcolors)(numlevels)
+  out_data = tryCatch({
+    pca = prcomp(dat, center = TRUE, scale. = scale)
+    pcadata = cbind(metadat, pca$x[,c(px,py)]) #for ggplot
+    if(is.null(classCol)){#METBObj$classCol
+      colnames(pcadata)[METBObj$classCol] = 'ClassCol' #class column
+    }else{#other classCol
+      colnames(pcadata)[classCol] = 'ClassCol' #class column
     }
-    if(!is.null(shapeCol) && shapeCol != which(colnames(pcadata) == "ClassCol")){# check shapeCol
-      colnames(pcadata)[shapeCol] = 'shapeCol' #shape column
-      pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=shapeCol, key=Sample_ID))
-    }else if(!is.null(shapeCol) && shapeCol == which(colnames(pcadata) == "ClassCol")){# check shapeCol
-      pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=ClassCol, key=Sample_ID))
-    }else{
-      pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, key=Sample_ID))
-    }
+    xlabel=colnames(pcadata)[xpc]; ylabel=colnames(pcadata)[ypc] #x,y label
+    colnames(pcadata)[METBObj$idCol] = 'Sample_ID'; colnames(pcadata)[xpc] = 'PCX'; colnames(pcadata)[ypc] = 'PCY' #change column name
+    prop.pca = summary(pca)
+    #Check type of category/factor column
+    if (is.numeric(pcadata$ClassCol)) {#plot regression
+      Y = pcadata$ClassCol #working data
+      ggplot(pcadata, aes(PCX, PCY, color=ClassCol, key=Sample_ID)) + geom_point(size=ptsize) +
+        #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
+        stat_ellipse(type = "norm", color='grey70', size=0.3) +
+        scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) + theme_minimal() + ggtitle(plot_title) +
+        theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+        labs(col = legend_title, x = paste(xlabel, "[", round(prop.pca$importance[2,px]*100, 2), "%]", sep=""),
+             y = paste(ylabel, "[", round(prop.pca$importance[2,py]*100, 2), "%]", sep=""))
+    }else{#plot category/factor
+      Y = as.factor(pcadata$ClassCol) #working data
+      numlevels = nlevels(Y) #no. of levels
+      if(numlevels <= 8){
+        grcolors = mbcolors
+      }else{
+        grcolors = colorRampPalette(mbcolors)(numlevels)
+      }
+      if(!is.null(shapeCol) && shapeCol != which(colnames(pcadata) == "ClassCol")){# check shapeCol
+        colnames(pcadata)[shapeCol] = 'shapeCol' #shape column
+        pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=shapeCol, key=Sample_ID))
+      }else if(!is.null(shapeCol) && shapeCol == which(colnames(pcadata) == "ClassCol")){# check shapeCol
+        pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=ClassCol, key=Sample_ID))
+      }else{
+        pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, key=Sample_ID))
+      }
       #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
       pl + geom_point(size=ptsize) + stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) +
-      scale_color_manual(values = grcolors) + theme_minimal() + ggtitle(plot_title) +
-      theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
-      labs(col=legend_title, shape="", x = paste(xlabel, "[", round(prop.pca$importance[2,px]*100, 2), "%]", sep=""),
-           y = paste(ylabel, "[", round(prop.pca$importance[2,py]*100, 2), "%]", sep=""))
-  }
+        scale_color_manual(values = grcolors) + theme_minimal() + ggtitle(plot_title) +
+        theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+        labs(col=legend_title, shape="", x = paste(xlabel, "[", round(prop.pca$importance[2,px]*100, 2), "%]", sep=""),
+             y = paste(ylabel, "[", round(prop.pca$importance[2,py]*100, 2), "%]", sep=""))
+    }
+  },
+  error=function(e){
+    cat(e$message)
+    #message(e)
+    ggplot()+ggtitle(label=paste("Could not generate a plot:",e$message))+theme(plot.title = element_text(color = "red"))
+  })
+  return(out_data)
 }
 
 #'p-value plot

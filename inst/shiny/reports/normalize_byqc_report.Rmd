@@ -23,7 +23,6 @@ Date Processing Summary
 **For serrf and loess methods**\
 **Sample type column index:** `r params$METBObj$details$normalize_byqc$sampleType`\
 **Injection order column index:** `r params$METBObj$details$normalize_byqc$injectionOrder`\
-**Batch column index:** `r params$METBObj$details$normalize_byqc$batch`
+**Batch column index:** `r params$METBObj$details$normalize_byqc$batch`\
 
-**Note**\
-`r params$note`
+**Note** `r params$METBObj$text`

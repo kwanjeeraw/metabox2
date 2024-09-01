@@ -1,7 +1,7 @@
 Package: metabox2
 Type: Package
 Title: metabox2
-Version: 2.8
+Version: 2.9
 Author: Kwanjeera W
 Maintainer: The package maintainer <kwanjeera.wan@mahidol.ac.th>
 Description: Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation.
