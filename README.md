@@ -7,21 +7,23 @@ Installation
 ============
 * Install metabox2 and required packages using the following commands
 ```
-##Install metabox2 ##
-if (!require("remotes"))
-  install.packages("remotes")
-remotes::install_github("kwanjeeraw/metabox2")
-
 ##Install R dependencies ##
-remotes::install_gitlab("CarlBrunius/MUVR")
 if (!require("BiocManager"))
     install.packages("BiocManager")
-BiocManager::install("pcaMethods")
-BiocManager::install("affy")
-BiocManager::install("preprocessCore")
-BiocManager::install("vsn")
-BiocManager::install("ropls")
-BiocManager::install("piano")
+if (!require("remotes"))
+  install.packages("remotes")
+BiocManager::install("affy", update=FALSE, version="3.18")
+BiocManager::install("pcaMethods", update=FALSE, version="3.18")
+BiocManager::install("preprocessCore", update=FALSE, version="3.18")
+BiocManager::install('impute', update=FALSE, version='3.18')
+BiocManager::install("vsn", update=FALSE, version="3.18")
+BiocManager::install("ropls", update=FALSE, version="3.18")
+remotes::install_version('igraph',version='2.0.3',repos='https://cran.rstudio.org/')
+BiocManager::install("piano", update=FALSE, version="3.18")
+remotes::install_gitlab("CarlBrunius/MUVR")
+
+##Install metabox2 ##
+remotes::install_github("kwanjeeraw/metabox2")
 
 ##Run metabox2
 library(metabox2)
