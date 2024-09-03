@@ -21,6 +21,7 @@ BiocManager::install("ropls", update=FALSE, version="3.18")
 remotes::install_version('igraph',version='2.0.3',repos='https://cran.rstudio.org/')
 BiocManager::install("piano", update=FALSE, version="3.18")
 remotes::install_gitlab("CarlBrunius/MUVR")
+install.packages("https://cran.r-project.org/src/contrib/Archive/MetNorm/MetNorm_0.1.tar.gz", repo=NULL, method = "libcurl")
 
 ##Install metabox2 ##
 remotes::install_github("kwanjeeraw/metabox2")
