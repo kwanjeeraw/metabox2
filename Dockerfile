@@ -21,10 +21,10 @@ RUN R -e "remotes::install_gitlab('CarlBrunius/MUVR', dependencies = 'Imports', 
 RUN R -e "remotes::install_github('kwanjeeraw/metabox2', dependencies = 'Imports', force = FALSE, upgrade ='never')"
 
 COPY MetNorm_0.1.tar.gz /home/metaboxr/MetNorm_0.1.tar.gz
-RUN R -e "install.packages('/home/metaboxr/MetNorm_0.1.tar.gz', dependencies = 'Imports', repos = NULL, type = 'source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/MetNorm/MetNorm_0.1.tar.gz', dependencies = 'Imports', repos = NULL, type = 'source')"
 
-COPY DiscriMiner_0.1-29.tar.gz /home/metaboxr/DiscriMiner_0.1-29.tar.gz
-RUN R -e "install.packages('/home/metaboxr/DiscriMiner_0.1-29.tar.gz', dependencies = 'Imports', repos = NULL, type = 'source')"
+# COPY DiscriMiner_0.1-29.tar.gz /home/metaboxr/DiscriMiner_0.1-29.tar.gz
+# RUN R -e "install.packages('http://cran.nexr.com/src/contrib/DiscriMiner_0.1-29.tar.gz', dependencies = 'Imports', repos = NULL, type = 'source')"
 
 # Copy the Shiny app code
 COPY metaboxweb/ /srv/shiny-server/metaboxweb/
