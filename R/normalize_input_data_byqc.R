@@ -55,101 +55,71 @@ normalize_input_data_byqc <- function(METBObj, method="nomis", istd=NULL, factor
   #IS-based normalization methods
   if (method == "ccmn"){#ccmn
     if(!is.null(factorCol) && !is.null(istd)){
-      inst_pkg = NULL
-      if(!requireNamespace("crmn", quietly = TRUE)){#check and install required package
-        cat("\nMissing the required package 'crmn', trying to install the package ...\n")
-        inst_pkg = install_pkgs('crmn')
-      }
-      if(length(unlist(inst_pkg))){
-        new_dat = dat
-        printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'crmn'. Data was not normalized.\nReturning unprocessed data ...\n")
-      }else{
-        inputdat = METBObj$inputdata #working data
-        G = model.matrix(~-1+. , data=data.frame(inputdat[,factorCol])) #biological factors, G
-        m_dat = t(dat)
-        colnames(m_dat) = rownames(dat)
-        isIS = logical(ncol(dat))
-        isIS[istd] = TRUE #IS list
-        istdls = colnames(dat)[isIS] = paste0("STD_",colnames(dat)[isIS]) #rename IS
-        new_dat = tryCatch({
-          ccmn_data = crmn::normalize(m_dat, "crmn", factors=G, standards=isIS, ncomp=2, lg=TRUE)
-          printtxt = paste0(printtxt,"\nData normalization with 'ccmn'.\n")
-          cbind(dat[isIS],data.frame(t(ccmn_data), check.names = FALSE)) #output includes unadjusted IS columns
-        },
-        error=function(e){
-          message(e)
-          printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
-          dat
-        })
-      }
+      inputdat = METBObj$inputdata #working data
+      G = model.matrix(~-1+. , data=data.frame(inputdat[,factorCol])) #biological factors, G
+      m_dat = t(dat)
+      colnames(m_dat) = rownames(dat)
+      isIS = logical(ncol(dat))
+      isIS[istd] = TRUE #IS list
+      istdls = colnames(dat)[isIS] = paste0("STD_",colnames(dat)[isIS]) #rename IS
+      new_dat = tryCatch({
+        ccmn_data = crmn::normalize(m_dat, "crmn", factors=G, standards=isIS, ncomp=2, lg=TRUE)
+        printtxt = paste0(printtxt,"\nData normalization with 'ccmn'.\n")
+        cbind(dat[isIS],data.frame(t(ccmn_data), check.names = FALSE)) #output includes unadjusted IS columns
+      },
+      error=function(e){
+        message(e)
+        printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
+        dat
+      })
     }else{new_dat = dat; printtxt = paste0(printtxt,"\nERROR! Argument 'factorCol' and 'istd' are required for ccmn method.\nData was not normalized.\nReturning unprocessed data ...\n")}
   }
   if (method == "nomis"){#nomis
     if(!is.null(istd)){
-      inst_pkg = NULL
-      if(!requireNamespace("crmn", quietly = TRUE)){#check and install required package
-        cat("\nMissing the required package 'crmn', trying to install the package ...\n")
-        inst_pkg = install_pkgs('crmn')
-      }
-      if(length(unlist(inst_pkg))){
-        new_dat = dat
-        printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'crmn'. Data was not normalized.\nReturning unprocessed data ...\n")
-      }else{
-        m_dat = t(dat)
-        colnames(m_dat) = rownames(dat)
-        isIS = logical(ncol(dat))
-        isIS[istd] = TRUE #IS list
-        istdls = colnames(dat)[isIS] = paste0("STD_",colnames(dat)[isIS]) #rename IS
-        new_dat = tryCatch({
-          nomis_data = crmn::normalize(m_dat, "nomis", standards=isIS, lg=TRUE)
-          printtxt = paste0(printtxt,"\nData normalization with 'nomis'.\n")
-          cbind(dat[isIS],data.frame(t(nomis_data), check.names = FALSE)) #output includes unadjusted IS columns
-        },
-        error=function(e){
-          message(e)
-          printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
-          dat
-        })
-      }
+      m_dat = t(dat)
+      colnames(m_dat) = rownames(dat)
+      isIS = logical(ncol(dat))
+      isIS[istd] = TRUE #IS list
+      istdls = colnames(dat)[isIS] = paste0("STD_",colnames(dat)[isIS]) #rename IS
+      new_dat = tryCatch({
+        nomis_data = crmn::normalize(m_dat, "nomis", standards=isIS, lg=TRUE)
+        printtxt = paste0(printtxt,"\nData normalization with 'nomis'.\n")
+        cbind(dat[isIS],data.frame(t(nomis_data), check.names = FALSE)) #output includes unadjusted IS columns
+      },
+      error=function(e){
+        message(e)
+        printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
+        dat
+      })
     }else{new_dat = dat; printtxt = paste0(printtxt,"\nERROR! Argument 'istd' are required for nomis method.\nData was not normalized.\nReturning unprocessed data ...\n")}
   }
   if (method == "ruvrand"){#RUVRand
     if(!is.null(istd)){
-      inst_pkg = NULL
-      if(!requireNamespace("MetNorm", quietly = TRUE)){#check and install required package
-        cat("\nMissing the required package 'MetNorm', trying to install the package ...\n")
-        install.packages("https://cran.r-project.org/src/contrib/Archive/MetNorm/MetNorm_0.1.tar.gz",repos=NULL, method="libcurl")
+      m_dat = log2(data.matrix(dat, rownames.force = T)) #log abundances of the metabolites
+      isIS = log2(dat[,istd])
+      istdls = colnames(m_dat)[istd] = paste0("STD_",colnames(m_dat)[istd]) #rename IS
+      if(length(istd)>1){
+        printtxt = paste0(printtxt,"\nUse the average of the internal standards.\n")
+        #if multiple internal standards are available,
+        #simply find those which correlate highly with the internal standard or the average of the internal standards
+        isIS = rowMeans(isIS)
       }
-      if(!("MetNorm" %in% installed.packages()[,"Package"])){
-        new_dat = dat
-        printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'MetNorm'. Data was not normalized.\nReturning unprocessed data ...\n")
-      }else{
-        m_dat = log2(data.matrix(dat, rownames.force = T)) #log abundances of the metabolites
-        isIS = log2(dat[,istd])
-        istdls = colnames(m_dat)[istd] = paste0("STD_",colnames(m_dat)[istd]) #rename IS
-        if(length(istd)>1){
-          printtxt = paste0(printtxt,"\nUse the average of the internal standards.\n")
-          #if multiple internal standards are available,
-          #simply find those which correlate highly with the internal standard or the average of the internal standards
-          isIS = rowMeans(isIS)
-        }
-        r = numeric(dim(m_dat)[2])
-        for(j in 1:length(r)){
-          r[j] = cor(isIS, m_dat[,j])
-        }
-        ctl = logical(length(r))
-        ctl[which(r>round(quantile(r,0.7,na.rm = TRUE),2))] = TRUE
-        new_dat = tryCatch({
-          ruv_data = MetNorm::NormalizeRUVRand(Y=m_dat, ctl=ctl, k=1, lambda=0.03, plotk = FALSE)
-          printtxt = paste0(printtxt,"\nData normalization with 'RUV-random'.\n")
-          data.frame(2^(ruv_data$newY), check.names = FALSE) #output includes adjusted IS columns, anti-log
-        },
-        error=function(e){
-          message(e)
-          printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
-          dat
-        })
+      r = numeric(dim(m_dat)[2])
+      for(j in 1:length(r)){
+        r[j] = cor(isIS, m_dat[,j])
       }
+      ctl = logical(length(r))
+      ctl[which(r>round(quantile(r,0.7,na.rm = TRUE),2))] = TRUE
+      new_dat = tryCatch({
+        ruv_data = MetNorm::NormalizeRUVRand(Y=m_dat, ctl=ctl, k=1, lambda=0.03, plotk = FALSE)
+        printtxt = paste0(printtxt,"\nData normalization with 'RUV-random'.\n")
+        data.frame(2^(ruv_data$newY), check.names = FALSE) #output includes adjusted IS columns, anti-log
+      },
+      error=function(e){
+        message(e)
+        printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
+        dat
+      })
     }else{new_dat = dat; printtxt = paste0(printtxt,"\nERROR! Argument 'istd' are required for nomis method.\nData was not normalized.\nReturning unprocessed data ...\n")}
   }
   # if (method == "ruv2"){#RUV2

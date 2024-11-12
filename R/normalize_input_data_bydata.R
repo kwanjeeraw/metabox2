@@ -56,47 +56,28 @@ normalize_input_data_bydata <- function(METBObj, method="median", ref=NULL){
     })), check.names=FALSE)
     printtxt = paste0(printtxt,"\nData normalization with 'sum'.\n")
   }
-
   if (method == "contrast"){#contrast
-    inst_pkg = NULL
-    if(!requireNamespace("affy", quietly = TRUE)){#check and install required package
-      cat("\nMissing the required package 'affy', trying to install the package ...\n")
-      inst_pkg = install_pkgs('affy')
-    }
-    if(length(unlist(inst_pkg))){
-      new_dat = dat
-      printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'affy'. Data was not normalized.\nReturning unprocessed data ...\n")
-    }else{
-      m_dat = data.frame(t(dat))
-      threshold = 1e-11
-      m_dat[m_dat <= 0] = threshold
-      new_dat = tryCatch({
-        contrast_data = affy::maffy.normalize(data.matrix(m_dat), subset = 1:nrow(m_dat), span = 0.75, verbose = TRUE, family = "gaussian", log.it = FALSE)
-        subtract <- function(x){
-          t(t(x)-apply(x,2,quantile,0.1,na.rm = TRUE))
-        }
-        printtxt = paste0(printtxt,"\nData normalization with 'contrast normalization'.\n")
-        ct_dat = data.frame(t(subtract(contrast_data)), row.names = c(1:nrow(dat)))
-        colnames(ct_dat) = colnames(dat)
-        ct_dat
-      },
-      error=function(e){
-        message(e)
-        printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
-        dat
-      })
-    }
+    m_dat = data.frame(t(dat))
+    threshold = 1e-11
+    m_dat[m_dat <= 0] = threshold
+    new_dat = tryCatch({
+      contrast_data = affy::maffy.normalize(data.matrix(m_dat), subset = 1:nrow(m_dat), span = 0.75, verbose = TRUE, family = "gaussian", log.it = FALSE)
+      subtract <- function(x){
+        t(t(x)-apply(x,2,quantile,0.1,na.rm = TRUE))
+      }
+      printtxt = paste0(printtxt,"\nData normalization with 'contrast normalization'.\n")
+      ct_dat = data.frame(t(subtract(contrast_data)), row.names = c(1:nrow(dat)))
+      colnames(ct_dat) = colnames(dat)
+      ct_dat
+    },
+    error=function(e){
+      message(e)
+      printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
+      dat
+    })
   }
   if (method == "cubic"){#cubic
-    inst_pkg = NULL
-    if(!requireNamespace("affy", quietly = TRUE)){#check and install required package
-      cat("\nMissing the required package 'affy', trying to install the package ...\n")
-      inst_pkg = install_pkgs('affy')
-    }
-    if(length(unlist(inst_pkg))){
-      new_dat = dat
-      printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'affy'. Data was not normalized.\nReturning unprocessed data ...\n")
-    }else if(ncol(dat) < 35){
+    if(ncol(dat) < 35){
       new_dat = dat
       printtxt = paste0(printtxt,"\nERROR! Number of variables/features must be more than 35 variables. Data was not normalized.\nReturning unprocessed data ...\n")
     }else{
@@ -193,29 +174,19 @@ normalize_input_data_bydata <- function(METBObj, method="median", ref=NULL){
   #   }
   # }
   if (method == "loess"){#loess
-    inst_pkg = NULL
-    if(!requireNamespace("affy", quietly = TRUE)){#check and install required package
-      cat("\nMissing the required package 'affy', trying to install the package ...\n")
-      inst_pkg = install_pkgs('affy')
-    }
-    if(length(unlist(inst_pkg))){
-      new_dat = dat
-      printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'affy'. Data was not normalized.\nReturning unprocessed data ...\n")
-    }else{
-      m_dat = data.frame(t(dat))
-      new_dat = tryCatch({
-        loess_data = affy::normalize.loess(m_dat, subset = 1:nrow(m_dat), log.it = TRUE, verbose = TRUE, span = 0.75, family.loess = "gaussian")
-        printtxt = paste0(printtxt,"\nData normalization with 'cyclic locally weighted regression'.\n")
-        lo_dat = data.frame(t(loess_data), row.names = c(1:nrow(dat)))
-        colnames(lo_dat) = colnames(dat)
-        lo_dat
-      },
-      error=function(e){
-        message(e)
-        printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
-        dat
-      })
-    }
+    m_dat = data.frame(t(dat))
+    new_dat = tryCatch({
+      loess_data = affy::normalize.loess(m_dat, subset = 1:nrow(m_dat), log.it = TRUE, verbose = TRUE, span = 0.75, family.loess = "gaussian")
+      printtxt = paste0(printtxt,"\nData normalization with 'cyclic locally weighted regression'.\n")
+      lo_dat = data.frame(t(loess_data), row.names = c(1:nrow(dat)))
+      colnames(lo_dat) = colnames(dat)
+      lo_dat
+    },
+    error=function(e){
+      message(e)
+      printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
+      dat
+    })
   }
   if (method == "pqn"){#pqn
     #Probabilistic quotient normalization (PQN)
@@ -239,50 +210,30 @@ normalize_input_data_bydata <- function(METBObj, method="median", ref=NULL){
       dat
     })
   }
-  if (method == "quantile"){#quantile
-    inst_pkg = NULL
-    if(!requireNamespace("preprocessCore", quietly = TRUE)){#check and install required package
-      cat("\nMissing the required package 'preprocessCore', trying to install the package ...\n")
-      inst_pkg = install_pkgs('preprocessCore')
-    }
-    if(length(unlist(inst_pkg))){
-      new_dat = dat
-      printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'preprocessCore'. Data was not normalized.\nReturning unprocessed data ...\n")
-    }else{
-      new_dat = tryCatch({
-        printtxt = paste0(printtxt,"\nData normalization with 'quantile normalization'.\n")
-        qn_data = data.frame(t(preprocessCore::normalize.quantiles(t(dat), copy=FALSE)), check.names=FALSE)
-        qn_data
-      },
-      error=function(e){
-        message(e)
-        printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
-        dat
-      })
-    }
+  if (method == "quantile"){#quantile; BiocManager::install("preprocessCore", configure.args=c(preprocessCore = "--disable-threading")) for linux?
+    new_dat = tryCatch({
+      printtxt = paste0(printtxt,"\nData normalization with 'quantile normalization'.\n")
+      qn_data = data.frame(t(preprocessCore::normalize.quantiles(t(dat), copy=FALSE)), check.names=FALSE)
+      qn_data
+    },
+    error=function(e){
+      message(e)
+      printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
+      dat
+    })
   }
   if (method == "vsn"){#vsn
-    inst_pkg = NULL
-    if(!requireNamespace("vsn", quietly = TRUE)){#check and install required package
-      cat("\nMissing the required package 'vsn', trying to install the package ...\n")
-      inst_pkg = install_pkgs('vsn')
-    }
-    if(length(unlist(inst_pkg))){
-      new_dat = dat
-      printtxt = paste0(printtxt,"\nERROR! Could not install the required package 'vsn'. Data was not normalized.\nReturning unprocessed data ...\n")
-    }else{
-      new_dat = tryCatch({
-        printtxt = paste0(printtxt,"\nData normalization and transformation with 'vsn'.\n")
-        vsn_model = vsn::vsn2(t(dat),minDataPointsPerStratum=5L)
-        vsn_data = vsn::predict(vsn_model, t(dat))
-        data.frame(t(vsn_data), check.names=FALSE)
-      },
-      error=function(e){
-        message(e)
-        printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
-        dat
-      })
-    }
+    new_dat = tryCatch({
+      printtxt = paste0(printtxt,"\nData normalization and transformation with 'vsn'.\n")
+      vsn_model = vsn::vsn2(t(dat),minDataPointsPerStratum=5L)
+      vsn_data = vsn::predict(vsn_model, t(dat))
+      data.frame(t(vsn_data), check.names=FALSE)
+    },
+    error=function(e){
+      message(e)
+      printtxt = paste0(printtxt,e$message,"\nERROR! Data was not normalized.\nReturning unprocessed data ...\n")
+      dat
+    })
   }
   printtxt = paste(printtxt,"\nData summary:\n*",
                    nrow(new_dat), "samples and", ncol(new_dat), "variables.\n**",

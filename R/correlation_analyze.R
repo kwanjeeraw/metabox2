@@ -39,15 +39,6 @@ correlation_analyze <- function(METBObj, y=NULL, method="pearson"){
   correlation_result = list(); methodls = list(); #Working data
   dat = as.matrix(METBObj$X); #Working data
   cat("\nChecking essential parameters ...")
-  inst_pkg = NULL
-  if(!requireNamespace("ropls", quietly = TRUE)){#check and install required package
-    cat("\nMissing the required package 'ropls', trying to install the package ...\n")
-    inst_pkg = install_pkgs('ropls')
-  }
-  if(length(unlist(inst_pkg))){
-    cat("\nERROR! Could not install the required package 'ropls'. Data was not analyzed.\n")
-    return(FALSE)
-  }
   #Correltation analysis
   cat("\n\nPerforming correltation analysis ...\n")
   if(is.null(y)){
