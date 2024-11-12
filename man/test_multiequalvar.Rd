@@ -16,5 +16,5 @@ list of test results.
 Perform Box's M-test on all variables.
 }
 \examples{
-#test_multiequalvar(METBObj)
+#test_multiequalvar(METBObj) #Not exported function
 }

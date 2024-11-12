@@ -16,5 +16,5 @@ list of test results.
 Perform Shapiro-Wilk test on all variables.
 }
 \examples{
-#test_multinormality(METBObj)
+#test_multinormality(METBObj) #Not exported function
 }
