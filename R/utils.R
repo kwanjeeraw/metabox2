@@ -762,6 +762,44 @@ multiv_vipplot <- function(vip_data, plot_title=""){
           axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
+#'VIP and loading plot
+#'@description Provide combined VIP and loading plot for multivariate analysis.
+#'@usage multiv_viploadingplot(vip_data, loading_data, oloading_data=NULL, plot_title="")
+#'@param vip_data a numerical vector of VIP.
+#'@param loading_data a numerical matrix or a data frame of x loadings, see details.
+#'@param oloading_data a numerical matrix or a data frame of orthogonal loadings, for OPLS only. Default is \code{NULL}.
+#'@param plot_title text indicating plot title.
+#'@return ggplot object.
+#'@examples
+#'#adipose_dt = set_input_obj(adipose,2,3,4)
+#'#out=multiv_analyze(adipose_dt, method="pls", scale="standard")
+#'#multiv_viploadingplot(out$vip_val,out$loading_data)
+#'@import ggplot2
+#'@export
+multiv_viploadingplot <- function(vip_data, loading_data, oloading_data=NULL, plot_title=""){
+  if(!is.vector(vip_data)){
+    cat("\nError! vip_data must be a a numerical vector.\nReturn no plot.\n")
+    return(FALSE)
+  }
+  if(!is.data.frame(loading_data)){
+    loading_data = data.frame(loading_data)
+  }
+  if(is.null(oloading_data)){
+    plotdata = loading_data #for ggplot
+  }else{
+    plotdata = cbind(loading_data, oloading_data) #orthogonal loadings for ggplot
+  }
+  plotdata = cbind(rownames(loading_data),plotdata)
+  xlabel=colnames(plotdata)[2]; ylabel=colnames(plotdata)[3] #x,y label
+  colnames(plotdata)[1] = 'Sample_ID'; colnames(plotdata)[2] = 'PCX'; colnames(plotdata)[3] = 'PCY' #change column name
+  vipdata = data.frame(vname=names(vip_data),VIP=vip_data) #for ggplot
+  plotdata = merge(plotdata,vipdata,by.x = "Sample_ID",by.y="vname")
+  ggplot(plotdata, aes(PCX, PCY, label=Sample_ID)) + geom_point(aes(fill=VIP,size=VIP), alpha=0.5, shape=21) +
+    geom_hline(yintercept=0, linetype=1) + geom_vline(xintercept = 0, linetype=1) + theme_minimal() + ggtitle("plot_title") +
+    theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+    labs(x = xlabel, y = ylabel)+scale_fill_gradientn(colours=rev(heat.colors(16)))
+}
+
 #'PCA plot
 #'@description Provide PCA plot overview by category/factor.
 #'@usage pcaplot_overview(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2,
