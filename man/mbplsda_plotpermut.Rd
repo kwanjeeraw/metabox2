@@ -4,7 +4,7 @@
 \alias{mbplsda_plotpermut}
 \title{Permutation testing plot}
 \usage{
-mbplsda_plotpermut(x_input,plot_title="",ptsize=2)
+mbplsda_plotpermut(x_input,plot_title="",ptsize=3)
 }
 \arguments{
 \item{x_input}{\code{res_permut} object result from \code{mbplsda_analyze()}.}

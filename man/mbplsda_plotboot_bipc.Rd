@@ -4,7 +4,7 @@
 \alias{mbplsda_plotboot_bipc}
 \title{Block importance plot}
 \usage{
-mbplsda_plotboot_bipc(x_input,plot_title="",ptsize=2)
+mbplsda_plotboot_bipc(x_input,plot_title="",ptsize=3)
 }
 \arguments{
 \item{x_input}{\code{res_boot} object result from \code{mbplsda_analyze()}.}

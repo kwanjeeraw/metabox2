@@ -4,7 +4,7 @@
 \alias{mbplsda_plotboot_coeff}
 \title{Regression coefficient plot by factor level}
 \usage{
-mbplsda_plotboot_coeff(x_input,lv=1,plot_title="",ptsize=2,propbestvar=0.5)
+mbplsda_plotboot_coeff(x_input,lv=1,plot_title="",ptsize=3,propbestvar=0.5)
 }
 \arguments{
 \item{x_input}{\code{res_boot} object result from \code{mbplsda_analyze()}.}

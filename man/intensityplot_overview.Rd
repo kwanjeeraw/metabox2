@@ -5,7 +5,7 @@
 \title{Intensity plot}
 \usage{
 intensityplot_overview(METBObj, xCol=1, classCol=NULL,
-legend_title="Group", ptsize=2, plot_title="")
+legend_title="Group", ptsize=3, plot_title="")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}

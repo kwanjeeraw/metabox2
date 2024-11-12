@@ -5,7 +5,7 @@
 \title{Score plot}
 \usage{
 multiv_scoreplot(METBObj,score_data,pcx=0,pcy=0,oscore_data=NULL,
-legend_title="Group", ptsize=2, plot_title="")
+legend_title="Group", ptsize=3, plot_title="")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}

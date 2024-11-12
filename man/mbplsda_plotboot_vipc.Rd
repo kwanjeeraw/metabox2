@@ -4,7 +4,7 @@
 \alias{mbplsda_plotboot_vipc}
 \title{Variable importance plot}
 \usage{
-mbplsda_plotboot_vipc(x_input,plot_title="",ptsize=2,propbestvar=0.5)
+mbplsda_plotboot_vipc(x_input,plot_title="",ptsize=3,propbestvar=0.5)
 }
 \arguments{
 \item{x_input}{\code{res_boot} object result from \code{mbplsda_analyze()}.}

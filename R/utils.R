@@ -269,8 +269,7 @@ test_uninormality <- function(METBObj){
 #'@param METBObj METBObj object contains list of data.
 #'@return list of test results.
 #'@examples
-#'#test_multinormality(METBObj)
-#'@export
+#'#test_multinormality(METBObj) #Not exported function
 test_multinormality <- function(METBObj){
   dat = cbind(METBObj$inputdata[,METBObj$classCol], METBObj$X) #working data
   mvn_all = tryCatch({
@@ -319,8 +318,7 @@ test_uniequalvar <- function(METBObj){
 #'@param METBObj METBObj object contains list of data.
 #'@return list of test results.
 #'@examples
-#'#test_multiequalvar(METBObj)
-#'@export
+#'#test_multiequalvar(METBObj) #Not exported function
 test_multiequalvar <- function(METBObj){
   dat = METBObj$X #Working data
   F1 = factor(METBObj$Y) #Working data
@@ -522,7 +520,7 @@ densityplot_overview <- function(x_input, plotvar=TRUE, plot_title=""){
 #'Intensity plot
 #'@description Provide intensity plot of a variable/feature
 #'@usage intensityplot_overview(METBObj, xCol=1, classCol=NULL,
-#'legend_title="Group", ptsize=2, plot_title="")
+#'legend_title="Group", ptsize=3, plot_title="")
 #'@param METBObj METBObj object contains list of data.
 #'@param xCol a column number or column name indicating which variable/feature in the \code{METBObj$X} data frame to be plotted.
 #'@param classCol a column number/index of category/factor column to show on the plot.
@@ -536,7 +534,7 @@ densityplot_overview <- function(x_input, plotvar=TRUE, plot_title=""){
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title="Group", ptsize=2, plot_title=""){
+intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title="Group", ptsize=3, plot_title=""){
   dat = data.frame(value=METBObj$X[,xCol]) #working data
   if(is.null(classCol)){#METBObj$classCol
     plotdata = cbind(Sample_ID=(METBObj$ID), data.frame(ClassCol=METBObj$inputdata[,METBObj$classCol]), dat) #for ggplot
@@ -569,7 +567,7 @@ intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title=
 
 #'Interaction plot between category/factor F1 and F2
 #'@description Provide interaction plot between category/factor F1 and F2.
-#'@usage interactionplot_byF1F2(x_input, xCol=1, factorLv1, factorLv2, ptsize=2)
+#'@usage interactionplot_byF1F2(x_input, xCol=1, factorLv1, factorLv2, ptsize=3)
 #'@param x_input data frame of variables/features. Variables are in columns and samples are in rows.
 #'@param xCol a column number or column name indicating which variable/feature in the \code{x_input} data frame to be plotted.
 #'@param factorLv1 a vector of F1 category/factor levels.
@@ -582,7 +580,7 @@ intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title=
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize=2){
+interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize=3){
   if(!is.data.frame(x_input)){
     cat("\nError! x_input must be a data frame.\nReturn no plot.\n")
     return(FALSE)
@@ -625,7 +623,7 @@ interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize
 
 #'Loading plot
 #'@description Provide loading plot for multivariate analysis.
-#'@usage multiv_loadingplot(loading_data, oloading_data=NULL, ptsize=2, plot_title="")
+#'@usage multiv_loadingplot(loading_data, oloading_data=NULL, ptsize=3, plot_title="")
 #'@param loading_data a numerical matrix or a data frame of x loadings, see details.
 #'@param oloading_data a numerical matrix or a data frame of orthogonal loadings, for OPLS only. Default is \code{NULL}.
 #'@param ptsize a number of geom_point size.
@@ -639,7 +637,7 @@ interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-multiv_loadingplot <- function(loading_data, oloading_data=NULL, ptsize=2, plot_title=""){
+multiv_loadingplot <- function(loading_data, oloading_data=NULL, ptsize=3, plot_title=""){
   if(!is.data.frame(loading_data)){
     loading_data = data.frame(loading_data)
   }
@@ -684,7 +682,7 @@ multiv_loadingplot_bypc <- function(loading_data, pc=1, plot_title=""){
 #'Score plot
 #'@description Provide score plot for multivariate analysis.
 #'@usage multiv_scoreplot(METBObj,score_data,pcx=0,pcy=0,oscore_data=NULL,
-#'legend_title="Group", ptsize=2, plot_title="")
+#'legend_title="Group", ptsize=3, plot_title="")
 #'@param METBObj METBObj object contains list of data.
 #'@param score_data a numerical matrix or a data frame of x scores, see details.
 #'@param pcx a number indicating variance explained by a principal component (x-axis).
@@ -703,7 +701,7 @@ multiv_loadingplot_bypc <- function(loading_data, pc=1, plot_title=""){
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL, legend_title="Group", ptsize=2, plot_title=""){
+multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL, legend_title="Group", ptsize=3, plot_title=""){
   dat = METBObj$X #working data
   if(is.null(oscore_data)){
     plotdata = cbind(Sample_ID=METBObj$ID, data.frame(ClassCol=METBObj$inputdata[,METBObj$classCol]), score_data) #for ggplot
@@ -716,7 +714,7 @@ multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL
   #Check type of category/factor column
   if (is.numeric(plotdata$ClassCol)) {#plot regression
     Y = plotdata$ClassCol #working data
-    ggplot(plotdata, aes(PCX, PCY, color = ClassCol, label=Sample_ID)) + geom_point(size=2) +
+    ggplot(plotdata, aes(PCX, PCY, color = ClassCol, label=Sample_ID)) + geom_point(size=ptsize, alpha=0.75) +
       stat_ellipse(type = "norm", color='grey70', size=0.3) + scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) +
       theme_minimal() + ggtitle(plot_title) +
       theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
@@ -729,7 +727,7 @@ multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL
     }else{
       grcolors = colorRampPalette(mbcolors)(numlevels)
     }
-    ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, label=Sample_ID)) + geom_point(size=ptsize) +
+    ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, label=Sample_ID)) + geom_point(size=ptsize, alpha=0.75) +
       stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) + scale_color_manual(values = grcolors) +
       theme_minimal() + ggtitle(plot_title) +
       theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
@@ -767,7 +765,7 @@ multiv_vipplot <- function(vip_data, plot_title=""){
 #'PCA plot
 #'@description Provide PCA plot overview by category/factor.
 #'@usage pcaplot_overview(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2,
-#'scale=FALSE, legend_title="Group", ptsize=2, plot_title="")
+#'scale=FALSE, legend_title="Group", ptsize=3, plot_title="")
 #'@param METBObj METBObj object contains list of data.
 #'@param classCol a column number/index of category/factor column to show on the plot.
 #'If not specified, \code{METBObj$classCol} is used by default.
@@ -786,7 +784,7 @@ multiv_vipplot <- function(vip_data, plot_title=""){
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, scale=FALSE, legend_title="Group", ptsize=2, plot_title=""){
+pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, scale=FALSE, legend_title="Group", ptsize=3, plot_title=""){
   dat = METBObj$X #working data
   metadat = METBObj$inputdata[,1:METBObj$xCol-1]
   nmetada = ncol(metadat); xpc = nmetada+1; ypc = nmetada+2; #plot 2 PCs
@@ -804,7 +802,7 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
     #Check type of category/factor column
     if (is.numeric(pcadata$ClassCol)) {#plot regression
       Y = pcadata$ClassCol #working data
-      ggplot(pcadata, aes(PCX, PCY, color=ClassCol, key=Sample_ID)) + geom_point(size=ptsize) +
+      ggplot(pcadata, aes(PCX, PCY, color=ClassCol, key=Sample_ID)) + geom_point(size=ptsize, alpha=0.75) +
         #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
         stat_ellipse(type = "norm", color='grey70', size=0.3) +
         scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) + theme_minimal() + ggtitle(plot_title) +
@@ -828,7 +826,7 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
         pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, key=Sample_ID))
       }
       #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
-      pl + geom_point(size=ptsize) + stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) +
+      pl + geom_point(size=ptsize, alpha=0.75) + stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) +
         scale_color_manual(values = grcolors) + theme_minimal() + ggtitle(plot_title) +
         theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
         labs(col=legend_title, shape="", x = paste(xlabel, "[", round(prop.pca$importance[2,px]*100, 2), "%]", sep=""),
@@ -846,7 +844,7 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
 #'p-value plot
 #'@description Provide p-value plot overview.
 #'@usage pvalplot_overview(x_input, cutoff=0.05,
-#'plot_title="", ptsize=2)
+#'plot_title="", ptsize=3)
 #'@param x_input data frame of p-values/adjusted p-values. A data frame contains only one column using variables as \code{row.names}.
 #'@param cutoff a number indicating statistical significance.
 #'@param plot_title text indicating the plot title.
@@ -859,7 +857,7 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-pvalplot_overview <- function(x_input, cutoff=0.05, plot_title="", ptsize=2){
+pvalplot_overview <- function(x_input, cutoff=0.05, plot_title="", ptsize=3){
   if(!is.data.frame(x_input)){
     cat("\nError! x_input must be a data frame.\nReturn no plot.\n")
     return(FALSE)

@@ -4,7 +4,7 @@
 \alias{interactionplot_byF1F2}
 \title{Interaction plot between category/factor F1 and F2}
 \usage{
-interactionplot_byF1F2(x_input, xCol=1, factorLv1, factorLv2, ptsize=2)
+interactionplot_byF1F2(x_input, xCol=1, factorLv1, factorLv2, ptsize=3)
 }
 \arguments{
 \item{x_input}{data frame of variables/features. Variables are in columns and samples are in rows.}

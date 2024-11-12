@@ -5,7 +5,7 @@
 \title{PCA plot}
 \usage{
 pcaplot_overview(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2,
-scale=FALSE, legend_title="Group", ptsize=2, plot_title="")
+scale=FALSE, legend_title="Group", ptsize=3, plot_title="")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}

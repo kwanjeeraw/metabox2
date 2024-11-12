@@ -5,7 +5,7 @@
 \title{p-value plot}
 \usage{
 pvalplot_overview(x_input, cutoff=0.05,
-plot_title="", ptsize=2)
+plot_title="", ptsize=3)
 }
 \arguments{
 \item{x_input}{data frame of p-values/adjusted p-values. A data frame contains only one column using variables as \code{row.names}.}

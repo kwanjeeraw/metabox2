@@ -4,7 +4,7 @@
 \alias{multiv_loadingplot}
 \title{Loading plot}
 \usage{
-multiv_loadingplot(loading_data, oloading_data=NULL, ptsize=2, plot_title="")
+multiv_loadingplot(loading_data, oloading_data=NULL, ptsize=3, plot_title="")
 }
 \arguments{
 \item{loading_data}{a numerical matrix or a data frame of x loadings, see details.}

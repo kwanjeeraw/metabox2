@@ -4,7 +4,7 @@
 \alias{mbplsda_plotboot_loading}
 \title{Loading plot by PC}
 \usage{
-mbplsda_plotboot_loading(x_input,pc=1,plot_title="",ptsize=2,propbestvar=0.5)
+mbplsda_plotboot_loading(x_input,pc=1,plot_title="",ptsize=3,propbestvar=0.5)
 }
 \arguments{
 \item{x_input}{\code{res_boot} object result from \code{mbplsda_analyze()}.}

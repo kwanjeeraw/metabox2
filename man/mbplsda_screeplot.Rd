@@ -4,7 +4,7 @@
 \alias{mbplsda_screeplot}
 \title{Scree plot}
 \usage{
-mbplsda_screeplot(x_input,plot_title="",ptsize=2)
+mbplsda_screeplot(x_input,plot_title="",ptsize=3)
 }
 \arguments{
 \item{x_input}{numeric vectors of eigenvalues.}

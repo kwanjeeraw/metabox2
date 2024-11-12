@@ -4,7 +4,7 @@
 \alias{mbplsda_plottestdim}
 \title{Prediction error rate plot}
 \usage{
-mbplsda_plottestdim(x_input,plotvalida=TRUE,ptsize=2)
+mbplsda_plottestdim(x_input,plotvalida=TRUE,ptsize=3)
 }
 \arguments{
 \item{x_input}{\code{res_optimal} object result from \code{mbplsda_analyze()}.}
