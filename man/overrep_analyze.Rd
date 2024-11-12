@@ -33,7 +33,7 @@ details = a list of analysis details: univsize, bgsize, testMethod, pAdjusted, i
 perform overrepresentation analysis to retrieve overrepresented annotation terms of the input entities. The function wraps around the main functions of \pkg{\link{piano}}.
 }
 \details{
-For pathway analysis, Metabox uses KEGG ID (e.g.C12078) for compounds, UniProt entry (e.g.P0C9J6) for proteins, Ensembl (e.g.ENSG00000139618) for genes.
+For pathway analysis, Metabox uses KEGG ID (e.g.C12078) for compounds, UniProt entry (e.g.P0C9J6) for proteins, NCBI-GeneID (e.g.10327) for genes.
 For chemical class analysis, HMDB ID (e.g.HMDB0000001) is used for compounds.
 }
 \examples{
@@ -47,7 +47,7 @@ Fisher R. (1932) Statistical methods for research workers. Oliver and Boyd, Edin
 Väremo L., Nielsen J., and Nookaew I. (2013) Enriching the gene set analysis of genome-wide data by incorporating directionality of gene expression and combining statistical hypotheses and methods. Nucleic Acids Research, 41(8), pp. 4378-4391.
 }
 \seealso{
-\code{\link[piano:loadGSC]{piano::loadGSC()}}, \code{\link[piano:runGSAhyper]{piano::runGSAhyper()}}, \code{\link[piano:GSAsummaryTable]{piano::GSAsummaryTable()}}
+\pkg{\link{piano}}, \code{\link[piano:loadGSC]{piano::loadGSC()}}, \code{\link[piano:runGSAhyper]{piano::runGSAhyper()}}, \code{\link[piano:GSAsummaryTable]{piano::GSAsummaryTable()}}
 }
 \author{
 Kwanjeera W \email{kwanjeera.wan@mahidol.ac.th}

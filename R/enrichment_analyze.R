@@ -10,7 +10,7 @@
 #'@param settype a string specifying a set type. It can be one of pathway (default), chemicalclass.
 #'@param organism a string specifying organism code from KEGG database, the parameter will not be used for \code{settype = "chemicalclass"}. Choose one from hsa (default), tdc.
 #'@param size a number specifying the minimum number of members in each annotation term to be used in the analysis. Default = 3.
-#'@details For pathway analysis, Metabox uses KEGG ID (e.g.C12078) for compounds, UniProt entry (e.g.P0C9J6) for proteins, Ensembl (e.g.ENSG00000139618) for genes.
+#'@details For pathway analysis, Metabox uses KEGG ID (e.g.C12078) for compounds, UniProt entry (e.g.P0C9J6) for proteins, NCBI-GeneID (e.g.10327) for genes.
 #'For chemical class analysis, HMDB ID (e.g.HMDB0000001) is used for compounds.
 #'For \code{input_data}, 1st column = list of variable/feature IDs, 2nd column = statistics and 3rd column = directions (if applicable).
 #'@return a list of the following components:
@@ -25,7 +25,7 @@
 #'@references Patil K. and Nielsen J. (2005) Uncovering transcriptional regulation of metabolism by using metabolic network topology. Proceedings of the National Academy of Sciences of the United States of America 102(8), 2685.
 #'@references Oliveira A., Patil K., and Nielsen J. (2008) Architecture of transcriptional regulatory circuits is knitted over the topology of bio-molecular interaction networks. BMC Systems Biology 2(1), 17.
 #'@references Väremo L., Nielsen J., and Nookaew I. (2013) Enriching the gene set analysis of genome-wide data by incorporating directionality of gene expression and combining statistical hypotheses and methods. Nucleic Acids Research, 41(8), pp. 4378-4391.
-#'@seealso \code{\link[piano:loadGSC]{piano::loadGSC()}}, \code{\link[piano:runGSAhyper]{piano::runGSAhyper()}}, \code{\link[piano:GSAsummaryTable]{piano::GSAsummaryTable()}}
+#'@seealso \pkg{\link{piano}}, \code{\link[piano:loadGSC]{piano::loadGSC()}}, \code{\link[piano:runGSA]{piano::runGSA()}}, \code{\link[piano:GSAsummaryTable]{piano::GSAsummaryTable()}}
 #'@examples
 #'#out=enrichment_analyze(fnanal_data$compound_data, pcol=5, fccol=6)
 #'#piano::networkPlot(out$network,class="non",significance=0.05)
@@ -76,6 +76,9 @@ enrichment_analyze <- function(input_data, pcol=2, fccol=NULL, method="reporter"
     if(nodetype == "compound"){
       mg = merge(data.frame(GID=unlist(rtable$member)), compound_databox, by.x="GID", by.y=nodeid, sort=FALSE)
       mg$name
+    }else if(nodetype == "gene"){#use ncbi-geneid
+      mg = merge(data.frame(GID=unlist(rtable$member)), meta_dat[[tolower(nodetype)]], by.x="GID", by.y="xref", sort=FALSE)
+      mg$name
     }else{
       mg = merge(data.frame(GID=unlist(rtable$member)), meta_dat[[tolower(nodetype)]], sort=FALSE)
       mg$name
@@ -83,66 +86,56 @@ enrichment_analyze <- function(input_data, pcol=2, fccol=NULL, method="reporter"
   }
 
   cat("\nExecuting function ...\n")
-  inst_pkg = NULL
-  if(!requireNamespace("piano", quietly = TRUE)){#check and install required package
-    cat("\nMissing the required package 'piano', trying to install the package ...\n")
-    inst_pkg = install_pkgs('piano')
-  }
-  if(length(unlist(inst_pkg))){
-    enr_res = list(enrichment = data.frame(), network = data.frame())
-    cat("\nERROR! Could not install the required package 'piano'. Data was not analyzed.\n")
-  }else{
-    enr_res = tryCatch({
-      gs = piano::loadGSC(gsc, type="data.frame")
-      pval = input_data[,pcol]
-      pval = as.numeric(pval)
-      names(pval) = input_data[,1]
-      fc = NULL
-      if(!is.null(fccol) && fccol !=''){
-        fc = input_data[,fccol]
-        fc = as.numeric(fc)
-        names(fc) = input_data[,1]
-      }
-      gsaRes = piano::runGSA(geneLevelStats=pval, directions=fc, gsc=gs, geneSetStat=method, gsSizeLim=c(size,Inf))
-      methodls$univsize = length(unique(gsc$from))
-      resTab = piano::GSAsummaryTable(gsaRes)
-      if(nrow(resTab)>0){
-        ## output
-        cat("Formatting output ...\n")
-        colnames(resTab) = gsub("Name","id",colnames(resTab))
-        resTab = merge(resTab,meta_dat[[tolower(settype)]], by.x = 'id', by.y = 'GID')
-        sumz = data.frame(table(gsc['to']))
-        colnames(sumz) = c("to","freq")
-        resTab = merge(resTab,sumz, by.x='id', by.y='to')
-        resTab$member = lapply(resTab$id, function(x) names(piano::geneSetSummary(gsaRes, geneSet=x)$geneLevelStats)) #get members
-        colnames(resTab) = gsub("Genes \\(tot\\)","hits",colnames(resTab))
-        colnames(resTab) = gsub("Genes \\(up\\)","up",colnames(resTab))
-        colnames(resTab) = gsub("Genes \\(down\\)","down",colnames(resTab))
-        colnames(resTab) = gsub("freq","total",colnames(resTab))
-        drops = c("id","name","total","hits","up","down")
-        resTab = resTab[ ,c(drops, colnames(resTab)[!(colnames(resTab) %in% drops)])] #rearrange columns
-        resTab = resTab[ ,c(1:(ncol(resTab)-3),ncol(resTab))]
-        colnames(resTab) = gsub("\\.","_",colnames(resTab))
-        colnames(resTab) = gsub("p adj","p_adj",colnames(resTab))
-        resTab$membername = apply(resTab,1,formatMembername, nodetype=nodetype) #get member names
-        resTab[is.na(resTab)] = '' #replace NA
-        resTab$member = vapply(resTab$member, paste, collapse = ", ", character(1L)) #format list into a character vector
-        resTab$membername = vapply(resTab$membername, paste, collapse = " | ", character(1L)) #format list into a character vector
-        cat("Returning ",nrow(resTab)," enrichment sets ...\n")
-        list(enrichment = resTab, network = gsaRes[-32])
-      }else{
-        list(enrichment = data.frame(), network = data.frame())
-      }
-    },
-    error=function(e){
-      cat(e$message)
-      #message(e)
-      cat("\nERROR! Data was not analyzed.\n")
+  enr_res = tryCatch({
+    gs = piano::loadGSC(gsc, type="data.frame")
+    pval = input_data[,pcol]
+    pval = as.numeric(pval)
+    names(pval) = input_data[,1]
+    fc = NULL
+    if(!is.null(fccol) && fccol !=''){
+      fc = input_data[,fccol]
+      fc = as.numeric(fc)
+      names(fc) = input_data[,1]
+    }
+    gsaRes = piano::runGSA(geneLevelStats=pval, directions=fc, gsc=gs, geneSetStat=method, gsSizeLim=c(size,Inf))
+    methodls$univsize = length(unique(gsc$from))
+    resTab = piano::GSAsummaryTable(gsaRes)
+    if(nrow(resTab)>0){
+      ## output
+      cat("Formatting output ...\n")
+      colnames(resTab) = gsub("Name","id",colnames(resTab))
+      resTab = merge(resTab,meta_dat[[tolower(settype)]], by.x = 'id', by.y = 'GID')
+      sumz = data.frame(table(gsc['to']))
+      colnames(sumz) = c("to","freq")
+      resTab = merge(resTab,sumz, by.x='id', by.y='to')
+      resTab$member = lapply(resTab$id, function(x) names(piano::geneSetSummary(gsaRes, geneSet=x)$geneLevelStats)) #get members
+      colnames(resTab) = gsub("Genes \\(tot\\)","hits",colnames(resTab))
+      colnames(resTab) = gsub("Genes \\(up\\)","up",colnames(resTab))
+      colnames(resTab) = gsub("Genes \\(down\\)","down",colnames(resTab))
+      colnames(resTab) = gsub("freq","total",colnames(resTab))
+      drops = c("id","name","total","hits","up","down")
+      resTab = resTab[ ,c(drops, colnames(resTab)[!(colnames(resTab) %in% drops)])] #rearrange columns
+      resTab = resTab[ ,c(1:(ncol(resTab)-3),ncol(resTab))]
+      colnames(resTab) = gsub("\\.","_",colnames(resTab))
+      colnames(resTab) = gsub("p adj","p_adj",colnames(resTab))
+      resTab$membername = apply(resTab,1,formatMembername, nodetype=nodetype) #get member names
+      resTab[is.na(resTab)] = '' #replace NA
+      resTab$member = vapply(resTab$member, paste, collapse = ", ", character(1L)) #format list into a character vector
+      resTab$membername = vapply(resTab$membername, paste, collapse = " | ", character(1L)) #format list into a character vector
+      cat("Returning ",nrow(resTab)," enrichment sets ...\n")
+      list(enrichment = resTab, network = gsaRes[-32])
+    }else{
       list(enrichment = data.frame(), network = data.frame())
-    })
-    methodls$testMethod = paste(settype, "enrichment analysis by", method); methodls$inputsize=nrow(input_data);
-    methodls$numsets=nrow(enr_res$enrichment); methodls$minsize=size;  methodls$pAdjusted = "Benjamini & Hochberg or FDR";
-  }
+    }
+  },
+  error=function(e){
+    cat(e$message)
+    #message(e)
+    cat("\nERROR! Data was not analyzed.\n")
+    list(enrichment = data.frame(), network = data.frame())
+  })
+  methodls$testMethod = paste(settype, "enrichment analysis by", method); methodls$inputsize=nrow(input_data);
+  methodls$numsets=nrow(enr_res$enrichment); methodls$minsize=size;  methodls$pAdjusted = "Benjamini & Hochberg or FDR";
   enrich_result$enrichment = enr_res$enrichment; enrich_result$network = enr_res$network; enrich_result$details = methodls;
   return(enrich_result)
 }
