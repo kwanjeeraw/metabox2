@@ -132,12 +132,7 @@ univ_analyze <- function(METBObj, var.equal = FALSE, ispara = FALSE, factor2Col 
       p_value = sapply(aov_data, function(x) {x$p.value})
       p_adj = p.adjust(p_value, method="fdr")
       if(doposthoc){#posthoc test
-        inst_pkg = NULL
-        if(!requireNamespace("FSA", quietly = TRUE)){#check and install required package
-          cat("\nMissing the required package 'FSA', trying to install the package ...\n")
-          inst_pkg = install_pkgs('FSA')
-        }
-        if(length(unlist(inst_pkg))){
+        if("FSA" %in% installed.packages()[,"Package"]){
           posthoc_data = apply(dat, 2, function(x) {pairwise.wilcox.test(x, F1, p.adjust.method = "fdr", paired = FALSE)}) #posthoc; independent samples
           #Format posthoc table
           posthoc_mx = lapply(posthoc_data, function(x) {reshape2::melt(x$p.value, varnames = c("lv1", "lv2"), na.rm = TRUE)})
@@ -147,7 +142,7 @@ univ_analyze <- function(METBObj, var.equal = FALSE, ispara = FALSE, factor2Col 
           row.names(posthoc_table) = posthoc_table[,1]
           posthoc_table = posthoc_table[,-1]
           posthocTest = "Pairwise comparisons using Wilcoxon rank sum exact test; P-adjustment method: fdr"
-          cat("\nERROR! Could not install the required package 'FSA'. Post-hoc test for independent samples was calculated.\n")
+          cat("\nWarning! Could not find the required package 'FSA'. Wilcoxon rank sum exact test was calculated.\n")
         }else{
           posthoc_data = apply(dat, 2, function(x) {FSA::dunnTest(x ~ F1, method="bh")$res}) #Dunn test
           #Format posthoc table
@@ -253,11 +248,6 @@ univ_analyze <- function(METBObj, var.equal = FALSE, ispara = FALSE, factor2Col 
       }
       testmethod = "aov(formula = x ~ F1 * F2)"
     }else{#nonparametric test
-      inst_pkg = NULL
-      if(!requireNamespace("rcompanion", quietly = TRUE)){#check and install required package
-        cat("\nMissing the required package 'rcompanion', trying to install the package ...\n")
-        inst_pkg = install_pkgs('rcompanion')
-      }
       aov_data = apply(dat, 2, function(x) {rcompanion::scheirerRayHare(y=x,x1=F1,x2=F2, verbose = FALSE)})
       p_value = sapply(aov_data, function(x){
         x[1:3,4]
