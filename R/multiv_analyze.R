@@ -51,15 +51,6 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   multiv_result = list(); methodls = list(); #Working data
   dat = METBObj$X; #Working data
   cat("\nChecking essential parameters ...")
-  inst_pkg = NULL
-  if(!requireNamespace("ropls", quietly = TRUE)){#check and install required package
-    cat("\nMissing the required package 'ropls', trying to install the package ...\n")
-    inst_pkg = install_pkgs('ropls')
-  }
-  if(length(unlist(inst_pkg))){
-    cat("\nERROR! Could not install the required package 'ropls'. Data was not analyzed.\n")
-    return(FALSE)
-  }
   #Check type of category/factor column
   if (is.factor(METBObj$Y)) {
     Y = METBObj$Y #working data
@@ -76,7 +67,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   cat("\n\nPerforming multivariate analysis ...\n")
   if (method == "pca"){#PCA
     out_data = tryCatch({
-      ropls::opls(x=dat, fig.pdfC="none", scaleC=scale, crossvalI=6)
+      ropls::opls(x=dat, predI = 5, fig.pdfC="none", scaleC=scale, crossvalI=6)
     },
     error=function(e){
       cat(e$message)
