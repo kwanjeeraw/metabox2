@@ -74,69 +74,55 @@ mbplsda_analyze <- function(class_data, input_data, scale=TRUE, option="none", n
   if(optdim > nf){maxOpt = maxCmp}else if(optdim < 0 || optdim > 10){maxOpt = maxCmp}else{maxOpt = optdim} #optimal no. of components
 
   cat("\nExecuting function ...\n")
-  inst_pkg = NULL
-  if(!requireNamespace("ade4", quietly = TRUE)){#check and install required package
-    cat("\nMissing the required package 'ade4', trying to install the package ...\n")
-    inst_pkg = install_pkgs('ade4')
-  }
-  if(!requireNamespace("packMBPLSDA", quietly = TRUE)){#check and install required package
-    cat("\nMissing the required package 'packMBPLSDA', trying to install the package ...\n")
-    inst_pkg = install_pkgs('packMBPLSDA')
-  }
-  if(length(unlist(inst_pkg))){
-    mbplsda_res = list()
-    cat("\nERROR! Could not install the required packages. Data was not analyzed.\n")
+  require(ade4, quietly=TRUE); require(packMBPLSDA, quietly=TRUE);
+  base_mb = tryCatch({
+    cat("* Calculating base model ...\n")
+    ls_X = ktab.list.df(input_data)
+    dj_table = disjunctive(F1)
+    dudi_pca = dudi.pca(dj_table , center = FALSE, scale = FALSE, scannf = FALSE)
+    nlev = ncol(dj_table)
+    mbplsda(dudi_pca, ls_X, scale = scale, option = option, scannf = FALSE, nf = maxCmp)
+  },error=function(e){
+    cat(e$message)
+    #message(e)
+    cat("\nERROR! when calculating base model, could not compute base model.\n")
+    list()
+  })
+  if(testmodel){
+    test_dim = tryCatch({
+      cat("** Testing model components, this process might take long time ...\n")
+      testdim_mbplsda(object = base_mb, nrepet = nrepet, threshold = threshold, bloY = nlev, cpus = cpus, algo = c("max"), outputs = c("ER"))
+    },error=function(e){
+      cat(e$message)
+      #message(e)
+      cat("\nERROR! when testing model components, could not test model components.\n")
+      list()
+    })
+    test_perm = tryCatch({
+      cat("*** Performing permutation testing, this process might take long time ...\n")
+      permut_mbplsda(base_mb, nrepet = nrepet, npermut = npermut, optdim = maxOpt, bloY = nlev, nbObsPermut = 10, cpus = cpus, algo = c("max"), outputs = c("ER"))
+    },error=function(e){
+      cat(e$message)
+      #message(e)
+      cat("\nERROR! when performing permutation testing, could not perform permutation testing.\n")
+      list()
+    })
   }else{
-    require(ade4, quietly=TRUE); require(packMBPLSDA, quietly=TRUE);
-    base_mb = tryCatch({
-      cat("* Calculating base model ...\n")
-      ls_X = ktab.list.df(input_data)
-      dj_table = disjunctive(F1)
-      dudi_pca = dudi.pca(dj_table , center = FALSE, scale = FALSE, scannf = FALSE)
-      nlev = ncol(dj_table)
-      mbplsda(dudi_pca, ls_X, scale = scale, option = option, scannf = FALSE, nf = maxCmp)
-    },error=function(e){
-      cat(e$message)
-      #message(e)
-      cat("\nERROR! when calculating base model, could not compute base model.\n")
-      list()
-    })
-    if(testmodel){
-      test_dim = tryCatch({
-        cat("** Testing model components, this process might take long time ...\n")
-        testdim_mbplsda(object = base_mb, nrepet = nrepet, threshold = threshold, bloY = nlev, cpus = cpus, algo = c("max"), outputs = c("ER"))
-      },error=function(e){
-        cat(e$message)
-        #message(e)
-        cat("\nERROR! when testing model components, could not test model components.\n")
-        list()
-      })
-      test_perm = tryCatch({
-        cat("*** Performing permutation testing, this process might take long time ...\n")
-        permut_mbplsda(base_mb, nrepet = nrepet, npermut = npermut, optdim = maxOpt, bloY = nlev, nbObsPermut = 10, cpus = cpus, algo = c("max"), outputs = c("ER"))
-      },error=function(e){
-        cat(e$message)
-        #message(e)
-        cat("\nERROR! when performing permutation testing, could not perform permutation testing.\n")
-        list()
-      })
-    }else{
-      test_dim=list();test_perm=list();
-    }
-    test_boot = tryCatch({
-      cat("**** Performing bootstrapping ...\n")
-      boot_mbplsda(base_mb, optdim = maxOpt, nrepet = nboot, cpus=cpus)
-    },error=function(e){
-      cat(e$message)
-      #message(e)
-      cat("\nERROR! when performing bootstrapping, could not perform bootstrapping.\n")
-      list()
-    })
-    mbplsda_res = list(base_model = base_mb, res_optimal = test_dim, res_permut = test_perm, res_boot = test_boot)
-    methodls$testMethod = "Multi-block partial least squares discriminant analysis"; methodls$nclass=nlevels(F1[,1]); methodls$inputsize=length(input_data);
-    methodls$cpus = cpus; methodls$testmodel = testmodel;
-    methodls$ncomp=mbplsda_res$base_model$nf; methodls$noptcomp=maxOpt;  methodls$call=match.call();
+    test_dim=list();test_perm=list();
   }
+  test_boot = tryCatch({
+    cat("**** Performing bootstrapping ...\n")
+    boot_mbplsda(base_mb, optdim = maxOpt, nrepet = nboot, cpus=cpus)
+  },error=function(e){
+    cat(e$message)
+    #message(e)
+    cat("\nERROR! when performing bootstrapping, could not perform bootstrapping.\n")
+    list()
+  })
+  mbplsda_res = list(base_model = base_mb, res_optimal = test_dim, res_permut = test_perm, res_boot = test_boot)
+  methodls$testMethod = "Multi-block partial least squares discriminant analysis"; methodls$nclass=nlevels(F1[,1]); methodls$inputsize=length(input_data);
+  methodls$cpus = cpus; methodls$testmodel = testmodel;
+  methodls$ncomp=mbplsda_res$base_model$nf; methodls$noptcomp=maxOpt;  methodls$call=match.call();
   mbplsda_result$result = mbplsda_res; mbplsda_result$details = methodls;
   unloadNamespace("packMBPLSDA"); unloadNamespace("ade4")
   return(mbplsda_result)
