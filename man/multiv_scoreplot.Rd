@@ -5,7 +5,7 @@
 \title{Score plot}
 \usage{
 multiv_scoreplot(METBObj,score_data,pcx=0,pcy=0,oscore_data=NULL,
-ptsize=3, plot_title="", legend_title="Color", shape_title="Shape")
+shapeCol=NULL, ptsize=3, plot_title="", legend_title="Color", shape_title="Shape")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
@@ -17,6 +17,9 @@ ptsize=3, plot_title="", legend_title="Color", shape_title="Shape")
 \item{pcy}{a number indicating variance explained by a principal component (y-axis).}
 
 \item{oscore_data}{a numerical matrix or a data frame of orthogonal scores, for OPLS only. Default is \code{NULL}.}
+
+\item{shapeCol}{a column number/index of category/factor column to show as different point shapes on the plot.
+If not specified, a filled circle is used by default.}
 
 \item{ptsize}{a number of geom_point size.}
 

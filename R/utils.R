@@ -644,6 +644,9 @@ multiv_loadingplot <- function(loading_data, oloading_data=NULL, ptsize=3, plot_
   if(is.null(oloading_data)){
     plotdata = loading_data #for ggplot
   }else{
+    if(!is.data.frame(oloading_data)){
+      oloading_data = data.frame(oloading_data)
+    }
     plotdata = cbind(loading_data, oloading_data) #orthogonal loadings for ggplot
   }
   plotdata = cbind(rownames(loading_data),plotdata)
@@ -682,12 +685,14 @@ multiv_loadingplot_bypc <- function(loading_data, pc=1, plot_title=""){
 #'Score plot
 #'@description Provide score plot for multivariate analysis.
 #'@usage multiv_scoreplot(METBObj,score_data,pcx=0,pcy=0,oscore_data=NULL,
-#'ptsize=3, plot_title="", legend_title="Color", shape_title="Shape")
+#'shapeCol=NULL, ptsize=3, plot_title="", legend_title="Color", shape_title="Shape")
 #'@param METBObj METBObj object contains list of data.
 #'@param score_data a numerical matrix or a data frame of x scores, see details.
 #'@param pcx a number indicating variance explained by a principal component (x-axis).
 #'@param pcy a number indicating variance explained by a principal component (y-axis).
 #'@param oscore_data a numerical matrix or a data frame of orthogonal scores, for OPLS only. Default is \code{NULL}.
+#'@param shapeCol a column number/index of category/factor column to show as different point shapes on the plot.
+#'If not specified, a filled circle is used by default.
 #'@param ptsize a number of geom_point size.
 #'@param plot_title text indicating plot title.
 #'@param legend_title text indicating the legend title.
@@ -702,21 +707,32 @@ multiv_loadingplot_bypc <- function(loading_data, pc=1, plot_title=""){
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL, ptsize=3, plot_title="", legend_title="Color", shape_title="Shape"){
+multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL, shapeCol=NULL, ptsize=3, plot_title="", legend_title="Color", shape_title="Shape"){
   dat = METBObj$X #working data
   if(is.null(oscore_data)){
-    plotdata = cbind(Sample_ID=METBObj$ID, data.frame(ClassCol=METBObj$inputdata[,METBObj$classCol]), score_data) #for ggplot
+    plotdata = cbind(Sample_ID=METBObj$ID, data.frame(ClassCol=METBObj$inputdata[,METBObj$classCol], shapeCol=METBObj$inputdata[,shapeCol]), score_data) #for ggplot
   }else{
-    plotdata = cbind(Sample_ID=METBObj$ID, data.frame(ClassCol=METBObj$inputdata[,METBObj$classCol]), score_data, oscore_data) #orthogonal scores for ggplot
+    plotdata = cbind(Sample_ID=METBObj$ID, data.frame(ClassCol=METBObj$inputdata[,METBObj$classCol], shapeCol=METBObj$inputdata[,shapeCol]), score_data, oscore_data) #orthogonal scores for ggplot
   }
-  xlabel=colnames(plotdata)[3]; ylabel=colnames(plotdata)[4] #x,y label
-  colnames(plotdata)[3] = 'PCX'; colnames(plotdata)[4] = 'PCY' #change column name
-
+  if(is.null(shapeCol)){
+    xlabel=colnames(plotdata)[3]; ylabel=colnames(plotdata)[4] #x,y label
+    colnames(plotdata)[3] = 'PCX'; colnames(plotdata)[4] = 'PCY' #change column name
+  }else{
+    xlabel=colnames(plotdata)[4]; ylabel=colnames(plotdata)[5] #x,y label
+    colnames(plotdata)[4] = 'PCX'; colnames(plotdata)[5] = 'PCY' #change column name
+  }
   #Check type of category/factor column
   if (is.numeric(plotdata$ClassCol)) {#plot regression
     Y = plotdata$ClassCol #working data
-    ggplot(plotdata, aes(PCX, PCY, color = ClassCol, label=Sample_ID)) + geom_point(size=ptsize, alpha=0.75) +
-      stat_ellipse(type = "norm", color='grey70', size=0.3) + scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) +
+    if(!is.null(shapeCol) && shapeCol != which(colnames(plotdata) == "ClassCol")){# check shapeCol
+      pl = ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=shapeCol, label=Sample_ID))
+    }else if(!is.null(shapeCol) && shapeCol == which(colnames(plotdata) == "ClassCol")){# check shapeCol
+      pl = ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=ClassCol, label=Sample_ID))
+    }else{
+      pl = ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, label=Sample_ID))
+    }
+    pl + geom_point(size=ptsize, alpha=0.75) +
+      scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) +
       theme_minimal() + ggtitle(plot_title) +
       theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
       labs(col=legend_title, shape=shape_title, x = paste(xlabel,"[", round(pcx*100, 2), "%]", sep=""), y = paste(ylabel,"[", round(pcy*100, 2), "%]", sep=""))
@@ -728,7 +744,14 @@ multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL
     }else{
       grcolors = colorRampPalette(mbcolors)(numlevels)
     }
-    ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, label=Sample_ID)) + geom_point(size=ptsize, alpha=0.75) +
+    if(!is.null(shapeCol) && shapeCol != which(colnames(plotdata) == "ClassCol")){# check shapeCol
+      pl = ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=shapeCol, label=Sample_ID))
+    }else if(!is.null(shapeCol) && shapeCol == which(colnames(plotdata) == "ClassCol")){# check shapeCol
+      pl = ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=ClassCol, label=Sample_ID))
+    }else{
+      pl = ggplot(plotdata, aes(PCX, PCY, group=ClassCol, color = ClassCol, label=Sample_ID))
+    }
+    pl + geom_point(size=ptsize, alpha=0.75) +
       stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) + scale_color_manual(values = grcolors) +
       theme_minimal() + ggtitle(plot_title) +
       theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
@@ -788,6 +811,9 @@ multiv_viploadingplot <- function(vip_data, loading_data, oloading_data=NULL, pl
   if(is.null(oloading_data)){
     plotdata = loading_data #for ggplot
   }else{
+    if(!is.data.frame(oloading_data)){
+      oloading_data = data.frame(oloading_data)
+    }
     plotdata = cbind(loading_data, oloading_data) #orthogonal loadings for ggplot
   }
   plotdata = cbind(rownames(loading_data),plotdata)
@@ -844,9 +870,11 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
       Y = pcadata$ClassCol #working data
       if(!is.null(shapeCol) && shapeCol != which(colnames(pcadata) == "ClassCol")){# check shapeCol
         colnames(pcadata)[shapeCol] = 'shapeCol' #shape column
-        pl = ggplot(pcadata, aes(PCX, PCY, color=ClassCol, shape=shapeCol, key=Sample_ID))
+        pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=shapeCol, key=Sample_ID))
+      }else if(!is.null(shapeCol) && shapeCol == which(colnames(pcadata) == "ClassCol")){# check shapeCol
+        pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, shape=ClassCol, key=Sample_ID))
       }else{
-        pl = ggplot(pcadata, aes(PCX, PCY, color=ClassCol, key=Sample_ID))
+        pl = ggplot(pcadata, aes(PCX, PCY, group=ClassCol, color = ClassCol, key=Sample_ID))
       }
       #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
       pl + geom_point(size=ptsize, alpha=0.75) +
