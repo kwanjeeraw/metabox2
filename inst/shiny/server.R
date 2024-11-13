@@ -3687,7 +3687,7 @@ server = function(input, output, session) {
   ex_mis <- function(){
     if(!is.null(metboshow$metbo_missing)){
       generate_report(metboshow$metbo_missing,reportfile="impute_data_report")
-      write.csv(cbind(metboshow$metbo_missing$inputdata[,1:metboshow$firstV-1],metboshow$metbo_missing$X),"imputed_output_table.csv")
+      write.csv(cbind(metboshow$metbo_missing$inputdata[,1:metboshow$firstV-1],metboshow$metbo_missing$X),"imputed_output_table.csv",row.names = F)
       files <- c("impute_data_report.pdf","imputed_output_table.csv")
       return(files)
     }else(return(NULL))
@@ -3696,7 +3696,7 @@ server = function(input, output, session) {
   ex_ISnorm <- function(){
     if(!is.null(metboshow$metbo_QCnorm)){
       generate_report(metboshow$metbo_QCnorm,reportfile="normalize_byqc_report")
-      write.csv(cbind(metboshow$metbo_QCnorm$inputdata[,1:metboshow$firstV-1],metboshow$metbo_QCnorm$X),"ISQC_normalization_output_table.csv")
+      write.csv(cbind(metboshow$metbo_QCnorm$inputdata[,1:metboshow$firstV-1],metboshow$metbo_QCnorm$X),"ISQC_normalization_output_table.csv",row.names = F)
       dt_plot = list();
       dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before processing", legend_title="")
       dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing", legend_title="")
@@ -3726,7 +3726,7 @@ server = function(input, output, session) {
       if(!is.null(metboshow$metbo_tran)){
         generate_report(metboshow$metbo_tran,reportfile="transform_data_report")
       }
-      write.csv(cbind(metboshow$keepValueMP$inputdata[,1:metboshow$firstV-1],metboshow$keepValueMP$X),"Data_normalization_output_table.csv")
+      write.csv(cbind(metboshow$keepValueMP$inputdata[,1:metboshow$firstV-1],metboshow$keepValueMP$X),"Data_normalization_output_table.csv",row.names = F)
       dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before processing", legend_title="")
       if(!is.null(metboshow$metbo_scal)){
         generate_report(metboshow$metbo_scal,reportfile="scale_data_report")
