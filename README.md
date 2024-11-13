@@ -55,6 +55,16 @@ We provide the following servers for the online version
 
 Updates
 =========
+#### version 2.10 (NOV 2024)
+* New multiv_viploadingplot function
+* New scoreplot with shape for command version
+* Update annotation data
+* Remove test_multinormality and test_multiequalvar functions
+* Fix bugs for enrichment and ORA analysis
+* Change default no. of predI to 5
+* Change default ptsize to 3
+* Change transparency of score plot
+* Update and bugs fix for GUI version
 #### version 2.9 (SEP 2024)
 * Exclude liwong and LOESS normalization
 * New messages
