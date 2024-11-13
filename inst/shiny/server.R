@@ -3703,8 +3703,8 @@ server = function(input, output, session) {
       generate_report(metboshow$metbo_QCnorm,reportfile="normalize_byqc_report")
       write.csv(cbind(metboshow$metbo_QCnorm$inputdata[,1:metboshow$firstV-1],metboshow$metbo_QCnorm$X),"ISQC_normalization_output_table.csv",row.names = F)
       dt_plot = list();
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before processing", legend_title="")
-      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing", legend_title="")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before processing", legend_title="",ptsize = 4)
+      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing", legend_title="",ptsize = 4)
       dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before processing", legend_title="")
       dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After processing", legend_title="")
       # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueN, plot_title="Before processing")
@@ -3714,7 +3714,7 @@ server = function(input, output, session) {
       dt_plot[['dens_samp1']] = densityplot_overview(metboshow$keepValueN$X, plotvar=FALSE, plot_title="Before processing (samples)")
       dt_plot[['dens_samp2']] = densityplot_overview(metboshow$metbo_QCnorm$X, plotvar=FALSE, plot_title="After processing (samples)")
       ggsave("ISQC_normalization_output_figure.pdf",
-             marrangeGrob(grobs = dt_plot, nrow=1, ncol=2, as.table=TRUE), dpi = 600, units = "in", width = 18, height = 10, device = "pdf")
+             marrangeGrob(grobs = dt_plot, nrow=1, ncol=2, as.table=TRUE), dpi = 600, units = "in", width = 16, height = 8, device = "pdf")
       files <- c("normalize_byqc_report.pdf","ISQC_normalization_output_table.csv","ISQC_normalization_output_figure.pdf")
       return(files)
     }else{
@@ -3732,13 +3732,13 @@ server = function(input, output, session) {
         generate_report(metboshow$metbo_tran,reportfile="transform_data_report")
       }
       write.csv(cbind(metboshow$keepValueMP$inputdata[,1:metboshow$firstV-1],metboshow$keepValueMP$X),"Data_normalization_output_table.csv",row.names = F)
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before processing", legend_title="")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before processing", legend_title="",ptsize = 4)
       if(!is.null(metboshow$metbo_scal)){
         generate_report(metboshow$metbo_scal,reportfile="scale_data_report")
-        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing", legend_title="")
+        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing", legend_title="",ptsize = 4)
       }
       if(is.null(metboshow$metbo_scal)){
-        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing", legend_title="")
+        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing", legend_title="",ptsize = 4)
       }
       dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before processing", legend_title="")
       if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){
@@ -3753,7 +3753,7 @@ server = function(input, output, session) {
       dt_plot[['dens_samp1']] = densityplot_overview(metboshow$keepValueDP$X, plotvar=FALSE, plot_title="Before processing (samples)")
       dt_plot[['dens_samp2']] = densityplot_overview(metboshow$keepValueMP$X, plotvar=FALSE, plot_title="After processing (samples)")
       ggsave("Data_normalization_output_figure.pdf",
-             marrangeGrob(grobs = dt_plot, nrow=1, ncol=2, as.table=TRUE), dpi = 600, units = "in", width = 18, height = 10, device = "pdf")
+             marrangeGrob(grobs = dt_plot, nrow=1, ncol=2, as.table=TRUE), dpi = 600, units = "in", width = 16, height = 8, device = "pdf")
       files <- c("Data_normalization_output_table.csv","Data_normalization_output_figure.pdf")
       if(!is.null(metboshow$metbo_norm)){
         files <- c(files,"normalize_bydata_report.pdf")
@@ -3823,7 +3823,7 @@ server = function(input, output, session) {
       pvtb = data.frame(adjusted_pvalue=metboshow$univ_merge_table[,f1inx], row.names = metboshow$univ_merge_table$variable)
       pvtb = pvtb[order(pvtb$adjusted_pvalue),,drop=F]
       filtpv = head(pvtb,n=100)
-      ggsave("Univariate_analysis_output_figure.pdf", pvalplot_overview(filtpv, plot_title = "Statistical significance plot"), dpi = 600, units = "in", device = "pdf", width = 12, height = 6)
+      ggsave("Univariate_analysis_output_figure.pdf", pvalplot_overview(filtpv, plot_title = "Statistical significance plot (Showing 100 features)"), dpi = 600, units = "in", device = "pdf", width = 12, height = 6)
       if(metboshow$metbo_uni$details$posthocTest == "No test"){
         write.csv(metboshow$univ_merge_table,"Univariate_analysis_output_table.csv",row.names = T)
       }
@@ -3876,7 +3876,7 @@ server = function(input, output, session) {
       dt_plot = list();
       if((input$multiM == "pca" || input$multiM == "pls") && ncol(metboshow$metbo_multi$score_val) > 1 && input$MULScorePC2 != "NA"){#pca or pls
         dt_plot[['scpl']] = multiv_scoreplot(metboshow$keepValueM,cbind(PCx=metboshow$metbo_multi$score_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$score_val[,input$MULScorePC2]),
-                                             pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot", legend_title="")
+                                             pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot", legend_title="",ptsize = 4)
         if(input$multiM == "pca"){#pca
           dt_plot[['loadingpl']] = multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot")
         }else{#pls
@@ -3885,27 +3885,27 @@ server = function(input, output, session) {
         }
         if(input$multiM == "pls"){#vip pls
           filtvp = sort(metboshow$metbo_multi$vip_val, decreasing = TRUE)
-          dt_plot[['vippl']] = multiv_vipplot(head(filtvp,n=100))
+          dt_plot[['vippl']] = multiv_vipplot(head(filtvp,n=100), plot_title="VIP plot (Top 100 features)")
         }
         filtld = metboshow$metbo_multi$loading_val[order(abs(metboshow$metbo_multi$loading_val[,input$MULselectPC]),decreasing = TRUE),]
-        dt_plot[['loadingpc']] = multiv_loadingplot_bypc(head(filtld,n=100), pc = input$MULselectPC, plot_title="Loadings by PC")
+        dt_plot[['loadingpc']] = multiv_loadingplot_bypc(head(filtld,n=100), pc = input$MULselectPC, plot_title="Loadings by PC (Top 100 features)")
       }else if(input$multiM == "opls"){#opls
         if(all(!is.na(metboshow$metbo_multi$score_val[,1])) && all(!is.na(metboshow$metbo_multi$oscore_val[,1]))){
           dt_plot[['scpl']] = multiv_scoreplot(metboshow$keepValueM,score_data=metboshow$metbo_multi$score_val,
                                                pcx=metboshow$metbo_multi$model_summary$R2X[1],pcy=metboshow$metbo_multi$model_summary$R2X[2],
-                                               oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot", legend_title="")
+                                               oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot", legend_title="",ptsize = 4)
           dt_plot[['loadingpl']] = multiv_loadingplot(loading_data=metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val, plot_title="Loading plot")
           dt_plot[['viploadingpl']] = multiv_viploadingplot(vip_data=metboshow$metbo_multi$vip_val, loading_data=metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val, plot_title="VIP and loading plot")
           filtvp = sort(metboshow$metbo_multi$vip_val, decreasing = TRUE)
-          dt_plot[['vippl']] = multiv_vipplot(head(filtvp,n=100))
+          dt_plot[['vippl']] = multiv_vipplot(head(filtvp,n=100), plot_title="VIP plot (Top 100 features)")
           filtld = metboshow$metbo_multi$loading_val[order(abs(metboshow$metbo_multi$loading_val[,1]),decreasing = TRUE),,drop=FALSE]
-          dt_plot[['loadingpc']] = multiv_loadingplot_bypc(head(filtld,n=100), pc = 1, plot_title="Loadings of PC1")
+          dt_plot[['loadingpc']] = multiv_loadingplot_bypc(head(filtld,n=100), pc = 1, plot_title="Loadings of PC1 (Top 100 features)")
         }
       }else{#no model
         return(NULL)
       }
       ggsave("Multivariate_analysis_output_figure.pdf",
-             marrangeGrob(grobs = dt_plot, nrow=1, ncol=1, as.table=TRUE), dpi = 600, units = "in", width = 11, height = 7, device = "pdf")
+             marrangeGrob(grobs = dt_plot, nrow=1, ncol=1, as.table=TRUE), dpi = 600, units = "in", width = 8, height = 6, device = "pdf")
       files <- c("multivariate_report.pdf","Multivariate_analysis_output_table.csv","Multivariate_analysis_output_figure.pdf")
       return(files)
     }else{
@@ -4043,7 +4043,7 @@ server = function(input, output, session) {
       dt_plot[['plotvip_mid']] = MUVR_plotvip(metboshow$metbo_ml,model="mid",plot_title="VIP plot of mid-optimal model")
       dt_plot[['plotvip_max']] = MUVR_plotvip(metboshow$metbo_ml,model="max",plot_title="VIP plot of max-optimal model")
       ggsave("Biomarker_analysis_output_figure.pdf",
-             marrangeGrob(grobs = dt_plot, nrow=1, ncol=1, as.table=TRUE), dpi = 600, units = "in", width = 11, height = 7, device = "pdf")
+             marrangeGrob(grobs = dt_plot, nrow=1, ncol=1, as.table=TRUE), dpi = 600, units = "in", width = 10, height = 6, device = "pdf")
       files <- c("biomarker_report.pdf","Result_table_biomarker_min_model.csv","Result_table_biomarker_mid_model.csv","Result_table_biomarker_max_model.csv","Biomarker_analysis_output_figure.pdf")
       return(files)
     }else{
@@ -4101,7 +4101,7 @@ server = function(input, output, session) {
         file_loading <- c(file_loading,paste0("Result_table_integrative_loading_",names(metboshow$metbo_mbpl$result$res_boot$faX[axis]),".csv"))
       }
       ggsave("Integrative_analysis_output_figure.pdf",
-             marrangeGrob(grobs = dt_plot, nrow=1, ncol=1, as.table=TRUE), dpi = 450, units = "in", width = 11, height = 7, device = "pdf")
+             marrangeGrob(grobs = dt_plot, nrow=1, ncol=1, as.table=TRUE), dpi = 450, units = "in", width = 10, height = 6, device = "pdf")
       files <- c("integrative_report.pdf","Integrative_analysis_output_figure.pdf","Result_table_integrative_vip.csv","Result_table_integrative_bip.csv",file_loading)
       return(files)
     }else{
