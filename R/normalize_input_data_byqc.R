@@ -94,6 +94,7 @@ normalize_input_data_byqc <- function(METBObj, method="nomis", istd=NULL, factor
     }else{new_dat = dat; printtxt = paste0(printtxt,"\nERROR! Argument 'istd' are required for nomis method.\nData was not normalized.\nReturning unprocessed data ...\n")}
   }
   if (method == "ruvrand"){#RUVRand
+    cat("\nWARNING! RUVRand function is in log2 scale.\n")
     if(!is.null(istd)){
       m_dat = log2(data.matrix(dat, rownames.force = T)) #log abundances of the metabolites
       isIS = log2(dat[,istd])
