@@ -39,6 +39,9 @@
 #'#out = set_input_obj(adipose, 2,3,4)
 #'@export
 set_input_obj <- function(inputdata, idCol=1, classCol=2, xCol=3){
+  if (colnames(inputdata)[idCol] == "Sample_ID") {
+    cat("\nWARNING! Cannot use a column name 'Sample_ID', change it to another name and reload the data.\n")
+  }
   #Initialize parameters
   input_obj = list(); #Working data
   #Set ID; ID is numeric; for MUVR
