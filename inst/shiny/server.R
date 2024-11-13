@@ -1781,7 +1781,7 @@ server = function(input, output, session) {
       },error=function(e){
         shinybusy::remove_modal_spinner()
         message(e)
-        return()
+        return(NULL)
       })
     }else{return(NULL)}
     shinybusy::remove_modal_spinner()
