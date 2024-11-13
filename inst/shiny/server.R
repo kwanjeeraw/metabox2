@@ -876,7 +876,7 @@ server = function(input, output, session) {
       })
 
       output$plotQCoverOri <- renderPlotly({
-        p_isO <- ggplotly(pcaplot_overview(metboshow$keepValueN,scale=FALSE, plot_title="Before processing"), source = 'pca_isO')
+        p_isO <- ggplotly(pcaplot_overview(metboshow$keepValueN,scale=FALSE, plot_title="Before processing", legend_title=""), source = 'pca_isO')
         p_isO %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -889,7 +889,7 @@ server = function(input, output, session) {
       })
 
       #output$plotQCboxOri <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueN$X[,1:ncol(metboshow$keepValueN$X)<=50]))})
-      output$plotQCboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before processing")})
+      output$plotQCboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before processing", legend_title="")})
       output$plotQCdenOri <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plot_title="Before processing densityplot plot (variables)")})
       output$plotQCdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueN$X, plotvar=FALSE, plot_title="Before processing densityplot plot (samples)")})
 
@@ -903,7 +903,7 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        p_is <- ggplotly(pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing"), source = 'pca_is')
+        p_is <- ggplotly(pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing", legend_title=""), source = 'pca_is')
         p_is %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -927,7 +927,7 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
         })
-        rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After processing")})
+        rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After processing", legend_title="")})
       output$plotQCden <- renderPlot({
         isolate({
           progress <- shiny::Progress$new()
@@ -1138,7 +1138,7 @@ server = function(input, output, session) {
 
 
       output$plotNoverOri <- renderPlotly({
-        p_NO <-ggplotly(pcaplot_overview(metboshow$keepValueDP, scale=FALSE, plot_title="Before processing"), source = 'pca_NO')
+        p_NO <-ggplotly(pcaplot_overview(metboshow$keepValueDP, scale=FALSE, plot_title="Before processing", legend_title=""), source = 'pca_NO')
         p_NO %>%
           layout(dragmode = "select") %>%
           event_register("plotly_selected")
@@ -1161,7 +1161,7 @@ server = function(input, output, session) {
             }
             Sys.sleep(1)
           })
-          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale=FALSE, plot_title="After processing"), source = 'pca_N')
+          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale=FALSE, plot_title="After processing", legend_title=""), source = 'pca_N')
           p_N %>%
             layout(dragmode = "select") %>%
             event_register("plotly_selected")
@@ -1179,7 +1179,7 @@ server = function(input, output, session) {
             }
             Sys.sleep(1)
           })
-          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale = FALSE, plot_title="After processing"), source = 'pca_N')
+          p_N <- ggplotly(pcaplot_overview(metboshow$keepValueMP, scale = FALSE, plot_title="After processing", legend_title=""), source = 'pca_N')
           p_N %>%
             layout(dragmode = "select") %>%
             event_register("plotly_selected")
@@ -1194,7 +1194,7 @@ server = function(input, output, session) {
       })
 
       #output$plotNboxOri <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueDP$X[,1:ncol(metboshow$keepValueDP$X)<=50]))})
-      output$plotNboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before processing")})
+      output$plotNboxOriS <- renderPlot({rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before processing", legend_title="")})
       output$plotNdenOri <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plot_title="Before processing densityplot plot (variables)")})
       output$plotNdenOriS <- renderPlot({densityplot_overview(metboshow$keepValueDP$X, plotvar=FALSE, plot_title="Before processing densityplot plot (samples)")})
       # output$plotNbox <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueMP$X[,1:ncol(metboshow$keepValueDP$X)<=50]))})
@@ -1208,9 +1208,9 @@ server = function(input, output, session) {
           }
           Sys.sleep(1)
           if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){
-            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After processing")
+            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After processing", legend_title="")
           }else{
-            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After processing")#dolog for normalization
+            rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After processing", legend_title="")#dolog for normalization
           }
           })
       })
@@ -1523,7 +1523,7 @@ server = function(input, output, session) {
             }
             Sys.sleep(1)
             ggplotly(multiv_scoreplot(metboshow$keepValueM,cbind(PCx=metboshow$metbo_multi$score_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$score_val[,input$MULScorePC2]),
-                                      pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot"))
+                                      pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot", legend_title=""))
           })
           output$plotLoadMUL <- renderPlotly({#loading
             ggplotly(multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot"))
@@ -1572,7 +1572,7 @@ server = function(input, output, session) {
               Sys.sleep(1)
               ggplotly(multiv_scoreplot(metboshow$keepValueM,score_data=metboshow$metbo_multi$score_val,
                                         pcx=metboshow$metbo_multi$model_summary$R2X[1],pcy=metboshow$metbo_multi$model_summary$R2X[2],
-                                        oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot"))
+                                        oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot", legend_title=""))
             })
             output$plotLoadMUL <- renderPlotly({#loading
               ggplotly(multiv_loadingplot(metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val,plot_title="Loading plot"))
@@ -3698,10 +3698,10 @@ server = function(input, output, session) {
       generate_report(metboshow$metbo_QCnorm,reportfile="normalize_byqc_report")
       write.csv(cbind(metboshow$metbo_QCnorm$inputdata[,1:metboshow$firstV-1],metboshow$metbo_QCnorm$X),"ISQC_normalization_output_table.csv")
       dt_plot = list();
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before processing")
-      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing")
-      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before processing")
-      dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After processing")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueN, scale=FALSE, plot_title="Before processing", legend_title="")
+      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_QCnorm,scale=FALSE, plot_title="After processing", legend_title="")
+      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueN, limitx = TRUE, dolog = TRUE, plot_title="Before processing", legend_title="")
+      dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_QCnorm, limitx = TRUE, dolog = TRUE, plot_title="After processing", legend_title="")
       # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueN, plot_title="Before processing")
       # dt_plot[['box2']] = boxplot_overview(metboshow$metbo_QCnorm, plot_title="After processing")
       dt_plot[['dens1']] = densityplot_overview(metboshow$keepValueN$X, plot_title="Before processing (variables)")
@@ -3727,19 +3727,19 @@ server = function(input, output, session) {
         generate_report(metboshow$metbo_tran,reportfile="transform_data_report")
       }
       write.csv(cbind(metboshow$keepValueMP$inputdata[,1:metboshow$firstV-1],metboshow$keepValueMP$X),"Data_normalization_output_table.csv")
-      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before processing")
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$keepValueDP,scale=FALSE, plot_title="Before processing", legend_title="")
       if(!is.null(metboshow$metbo_scal)){
         generate_report(metboshow$metbo_scal,reportfile="scale_data_report")
-        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing")
+        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing", legend_title="")
       }
       if(is.null(metboshow$metbo_scal)){
-        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing")
+        dt_plot[['pca2']] = pcaplot_overview(metboshow$keepValueMP,scale=FALSE, plot_title="After processing", legend_title="")
       }
-      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before processing")
+      dt_plot[['rla1']] = rlaplot_overview(metboshow$keepValueDP, limitx = TRUE, dolog = TRUE, plot_title="Before processing", legend_title="")
       if(!is.null(metboshow$metbo_tran)|!is.null(metboshow$metbo_scal)){
-        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After processing")
+        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = FALSE, plot_title="After processing", legend_title="")
       }else{
-        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After processing")#dolog for normalization
+        dt_plot[['rla2']] = rlaplot_overview(metboshow$keepValueMP, limitx = TRUE, dolog = TRUE, plot_title="After processing", legend_title="")#dolog for normalization
       }
       # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueDP, plot_title="Before processing")
       # dt_plot[['box2']] = boxplot_overview(metboshow$keepValueMP, plot_title="After processing")
@@ -3871,7 +3871,7 @@ server = function(input, output, session) {
       dt_plot = list();
       if((input$multiM == "pca" || input$multiM == "pls") && ncol(metboshow$metbo_multi$score_val) > 1 && input$MULScorePC2 != "NA"){#pca or pls
         dt_plot[['scpl']] = multiv_scoreplot(metboshow$keepValueM,cbind(PCx=metboshow$metbo_multi$score_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$score_val[,input$MULScorePC2]),
-                                             pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot")
+                                             pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot", legend_title="")
         dt_plot[['loadingpl']] = multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot")
         if(input$multiM == "pls"){#vip pls
           filtvp = sort(metboshow$metbo_multi$vip_val, decreasing = TRUE)
@@ -3883,7 +3883,7 @@ server = function(input, output, session) {
         if(all(!is.na(metboshow$metbo_multi$score_val[,1])) && all(!is.na(metboshow$metbo_multi$oscore_val[,1]))){
           dt_plot[['scpl']] = multiv_scoreplot(metboshow$keepValueM,score_data=metboshow$metbo_multi$score_val,
                                                pcx=metboshow$metbo_multi$model_summary$R2X[1],pcy=metboshow$metbo_multi$model_summary$R2X[2],
-                                               oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot")
+                                               oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot", legend_title="")
           dt_plot[['loadingpl']] = multiv_loadingplot(metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val,plot_title="Loading plot")
           filtvp = sort(metboshow$metbo_multi$vip_val, decreasing = TRUE)
           dt_plot[['vippl']] = multiv_vipplot(head(filtvp,n=100))

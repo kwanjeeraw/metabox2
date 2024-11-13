@@ -174,7 +174,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                      "ccmn" = "ccmn",
                                                                                                                      "nomis" = "nomis",
                                                                                                                      "ruvrand" = "ruvrand",
-                                                                                                                     #"loess" = "loess",
+                                                                                                                     "loess" = "loess",
                                                                                                                      "serrf" = "serrf"
                                                                                                       ),selected = "none"),
                                                                                          selectInput("exdesign","Class/factor column",choices=NULL, selected=NULL),
@@ -270,7 +270,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                      ))
                                                           )),
                                                  #####Data-driven Normalization######################################
-                                                 tabPanel("Data-driven normalization", value = "norm",
+                                                 tabPanel("Data-driven processing", value = "norm",
                                                           fluidRow(width=12,
                                                                    sidebarLayout(
                                                                      column(3,
