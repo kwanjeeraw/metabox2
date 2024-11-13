@@ -44,6 +44,7 @@ The column number or the column index always begins with 1.
 Statistical analysis for independent samples will be performed for unequal sample sizes.
 The friedman.test is the non-parametric alternative to the repeated measures one-way ANOVA and
 it requires an unreplicated complete block design.
+P-adjusted values are calculated from no. of variables.
 }
 \examples{
 #sugar_dt = set_input_obj(sugar, 1,2,5)
