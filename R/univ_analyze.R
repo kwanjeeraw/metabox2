@@ -13,6 +13,7 @@
 #'Statistical analysis for independent samples will be performed for unequal sample sizes.
 #'The friedman.test is the non-parametric alternative to the repeated measures one-way ANOVA and
 #'it requires an unreplicated complete block design.
+#'P-adjusted values are calculated from no. of variables.
 #'@return a list of the following components:
 #'
 #'stat_summ = a data frame of statistical summary including median, mean, SD (sd) and fold change (fc).
