@@ -5,7 +5,7 @@
 \title{Score plot}
 \usage{
 multiv_scoreplot(METBObj,score_data,pcx=0,pcy=0,oscore_data=NULL,
-legend_title="Group", ptsize=3, plot_title="")
+ptsize=3, plot_title="", legend_title="Color", shape_title="Shape")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
@@ -18,11 +18,13 @@ legend_title="Group", ptsize=3, plot_title="")
 
 \item{oscore_data}{a numerical matrix or a data frame of orthogonal scores, for OPLS only. Default is \code{NULL}.}
 
-\item{legend_title}{text indicating the legend title.}
-
 \item{ptsize}{a number of geom_point size.}
 
 \item{plot_title}{text indicating plot title.}
+
+\item{legend_title}{text indicating the legend title.}
+
+\item{shape_title}{text indicating the shape title.}
 }
 \value{
 ggplot object.

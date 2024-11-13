@@ -5,7 +5,7 @@
 \title{PCA plot}
 \usage{
 pcaplot_overview(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2,
-scale=FALSE, legend_title="Group", ptsize=3, plot_title="")
+scale=FALSE, ptsize=3, plot_title="", legend_title="Color", shape_title="Shape")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
@@ -23,11 +23,13 @@ If not specified, a filled circle is used by default.}
 \item{scale}{a logical value indicating whether the variables should be scaled to have unit variance before the analysis.
 Default is FALSE.}
 
-\item{legend_title}{text indicating the legend title.}
-
 \item{ptsize}{a number of geom_point size.}
 
 \item{plot_title}{text indicating plot title.}
+
+\item{legend_title}{text indicating the legend title.}
+
+\item{shape_title}{text indicating the shape title.}
 }
 \value{
 ggplot object.

@@ -5,7 +5,7 @@
 \title{RLA plot}
 \usage{
 rlaplot_overview(METBObj, classCol=NULL, type="wg", dolog=TRUE,
-doavg=FALSE, limitx=FALSE, plot_title="")
+doavg=FALSE, limitx=FALSE, plot_title="", legend_title="Color")
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
@@ -24,6 +24,8 @@ removing the mean from each variable. Default is FALSE.}
 \item{limitx}{a logical value to limit no. of samples on the plot.}
 
 \item{plot_title}{text indicating plot title.}
+
+\item{legend_title}{text indicating legend title.}
 }
 \value{
 ggplot object.
