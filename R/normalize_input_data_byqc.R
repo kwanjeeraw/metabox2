@@ -113,7 +113,7 @@ normalize_input_data_byqc <- function(METBObj, method="nomis", istd=NULL, factor
       new_dat = tryCatch({
         ruv_data = MetNorm::NormalizeRUVRand(Y=m_dat, ctl=ctl, k=1, lambda=0.03, plotk = FALSE)
         printtxt = paste0(printtxt,"\nData normalization with 'RUV-random'.\n")
-        data.frame(2^(ruv_data$newY), check.names = FALSE) #output includes adjusted IS columns, anti-log
+        data.frame((ruv_data$newY), check.names = FALSE) #output includes adjusted IS columns, it is in log-scale
       },
       error=function(e){
         message(e)
