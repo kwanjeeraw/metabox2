@@ -47,7 +47,7 @@ Build a Docker image and deploy
 ===============================
 * To use metabox2 GUI version from Docker:
 1) Download and install Docker
-2) Download a Dockerfile from [here]()
+2) Download a Dockerfile from [here](https://github.com/kwanjeeraw/metabox2/blob/main/Dockerfile)
 3) Build and deploy metaboxweb Docker using the following commands:
 ```
 cd [go to Dockerfile location]
