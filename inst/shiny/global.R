@@ -21,33 +21,11 @@ reset_all_evenData <-
                               Shiny.setInputValue('plotly_click-A', 'null', {priority: 'event'});
                                                                           }"
 
-if (!requireNamespace("BiocManager", quietly = TRUE)){
-  install.packages("BiocManager")}
-
-install_pkgs('shiny')
-install_pkgs('shinydashboard')
-install_pkgs('shinyjs')
-install_pkgs('dplyr')
-install_pkgs('MUVR')
-install_pkgs('V8')
-install_pkgs('DT')
-install_pkgs('ggplot2')
-install_pkgs('plotly')
-install_pkgs('ggthemes')
-install_pkgs('shinythemes')
-install_pkgs('bslib')
-install_pkgs('stringr')
-install_pkgs('shinybusy')
-install_pkgs('shinyWidgets')
-install_pkgs('ade4')
-install_pkgs('packMBPLSDA')
-install_pkgs('gridExtra')
-
 library(shiny)
 library(shinydashboard)
 library(shinyjs)
 library(dplyr)
-library(MUVR)
+#library(MUVR)
 library(V8)
 library(DT)
 library(ggplot2)
@@ -59,6 +37,6 @@ library(bslib)
 library(stringr)
 library(shinybusy)
 library(shinyWidgets)
-library(ade4)
-library(packMBPLSDA)
+#library(ade4)
+#library(packMBPLSDA)
 library(gridExtra)
