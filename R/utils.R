@@ -822,7 +822,7 @@ multiv_viploadingplot <- function(vip_data, loading_data, oloading_data=NULL, pl
   vipdata = data.frame(vname=names(vip_data),VIP=vip_data) #for ggplot
   plotdata = merge(plotdata,vipdata,by.x = "Sample_ID",by.y="vname")
   ggplot(plotdata, aes(PCX, PCY, label=Sample_ID)) + geom_point(aes(fill=VIP,size=VIP), alpha=0.5, shape=21) +
-    geom_hline(yintercept=0, linetype=1) + geom_vline(xintercept = 0, linetype=1) + theme_minimal() + ggtitle("plot_title") +
+    geom_hline(yintercept=0, linetype=1) + geom_vline(xintercept = 0, linetype=1) + theme_minimal() + ggtitle(plot_title) +
     theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
     labs(x = xlabel, y = ylabel)+scale_fill_gradientn(colours=rev(heat.colors(16)))
 }
