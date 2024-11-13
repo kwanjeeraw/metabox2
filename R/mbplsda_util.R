@@ -152,8 +152,8 @@ mbplsda_plotboot_bipc <- function(x_input, plot_title="", ptsize=3){
         #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup, color=blocks), alpha=0.5, width=0.05, position=position_dodge(0.1)) +
         #geom_line(alpha=0.5) + geom_point(aes(color=blocks),alpha=0.5,size=ptsize) +
         geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=blocks), alpha=0.5) +
-        scale_color_manual(name="Legend",values = grcolors) +
-        labs(title = plot_title, x = "Data sets", y = "BIPc") + theme_light() +
+        scale_color_manual(values = grcolors) +
+        labs(title = plot_title, x = "Data sets", y = "BIPc", color="") + theme_light() +
         theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
               axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
     }else{#one data set
@@ -204,7 +204,7 @@ mbplsda_plotboot_vipc <- function(x_input, plot_title="", ptsize=3, propbestvar=
       #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup), alpha=0.5, width=0.1, position=position_dodge(0.1)) +
       #geom_line(alpha=0.5) +  geom_point(alpha=0.5,size=ptsize) +
       geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.5) +
-      scale_color_manual(name="Legend",values = grcolors) +
+      scale_color_manual(values = grcolors) +
       labs(title = plot_title, x = "", y = "VIPc", color = "") + theme_light() +
       theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
             axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
@@ -257,7 +257,7 @@ mbplsda_plotboot_loading <- function(x_input, pc=1, plot_title="", ptsize=3, pro
       #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup), alpha=0.5, width=0.1, position=position_dodge(0.1)) +
       #geom_line(alpha=0.5) +  geom_point(alpha=0.5,size=ptsize) +
       geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.5) +
-      scale_color_manual(name="Legend",values = grcolors) +
+      scale_color_manual(values = grcolors) +
       labs(title = plot_title, x = "", y = paste("Loading",pc), color = "") + theme_light() +
       theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
             axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
@@ -310,7 +310,7 @@ mbplsda_plotboot_coeff <- function(x_input, lv=1, plot_title="", ptsize=3, propb
       #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup), alpha=0.5, width=0.1, position=position_dodge(0.1)) +
       #geom_line(alpha=0.5) +  geom_point(alpha=0.5,size=ptsize) +
       geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.5) +
-      scale_color_manual(name="Legend",values = grcolors) +
+      scale_color_manual(values = grcolors) +
       labs(title = plot_title, x = "", y = paste0("Regression coefficients\n(",names(x_input$XYcoef)[[lv]],")"), color = "") + theme_light() +
       theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
             axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
