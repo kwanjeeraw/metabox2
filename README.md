@@ -5,26 +5,26 @@ Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and i
 
 Installation
 ============
-* Install metabox2 and required packages using the following commands
+* Install metabox2 and required packages using the following commands for R 4.4.1
 ```
 ##Install R dependencies ##
 if (!require("BiocManager"))
     install.packages("BiocManager")
 if (!require("remotes"))
   install.packages("remotes")
-BiocManager::install("affy", update=FALSE, version="3.18")
-BiocManager::install("pcaMethods", update=FALSE, version="3.18")
-BiocManager::install("preprocessCore", update=FALSE, version="3.18")
-BiocManager::install('impute', update=FALSE, version='3.18')
-BiocManager::install("vsn", update=FALSE, version="3.18")
-BiocManager::install("ropls", update=FALSE, version="3.18")
+BiocManager::install("affy", update=FALSE, version="3.20")
+BiocManager::install("pcaMethods", update=FALSE, version="3.20")
+BiocManager::install("preprocessCore", update=FALSE, version="3.20")
+BiocManager::install('impute', update=FALSE, version='3.20')
+BiocManager::install("vsn", update=FALSE, version="3.20")
+BiocManager::install("ropls", update=FALSE, version="3.20")
 remotes::install_version('igraph',version='2.0.3',repos='https://cran.rstudio.org/')
-BiocManager::install("piano", update=FALSE, version="3.18")
+BiocManager::install("piano", update=FALSE, version="3.20")
 remotes::install_gitlab("CarlBrunius/MUVR")
 install.packages("https://cran.r-project.org/src/contrib/Archive/MetNorm/MetNorm_0.1.tar.gz", repo=NULL, method = "libcurl")
 
 ##Install metabox2 ##
-remotes::install_github("kwanjeeraw/metabox2")
+remotes::install_github("kwanjeeraw/metabox2", dependencies = "Imports", force = FALSE, upgrade ="never")
 
 ##Run metabox2
 library(metabox2)
@@ -63,6 +63,7 @@ Updates
 * Fix bugs for enrichment and ORA analysis
 * Change default no. of predI to 5
 * Change default ptsize to 3
+* Change pdf size
 * Change transparency of score plot
 * Update and bugs fix for GUI version
 #### version 2.9 (SEP 2024)
