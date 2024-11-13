@@ -20,14 +20,16 @@ RUN R -e "BiocManager::install('piano', update=FALSE, version='3.18')"
 RUN R -e "remotes::install_gitlab('CarlBrunius/MUVR', dependencies = 'Imports', version = '0.0.976', force = FALSE, upgrade = 'never')"
 RUN R -e "remotes::install_github('kwanjeeraw/metabox2', dependencies = 'Imports', force = FALSE, upgrade ='never')"
 
-COPY MetNorm_0.1.tar.gz /home/metaboxr/MetNorm_0.1.tar.gz
+# COPY MetNorm_0.1.tar.gz /home/metaboxr/MetNorm_0.1.tar.gz
 RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/MetNorm/MetNorm_0.1.tar.gz', dependencies = 'Imports', repos = NULL, type = 'source')"
 
 # COPY DiscriMiner_0.1-29.tar.gz /home/metaboxr/DiscriMiner_0.1-29.tar.gz
 # RUN R -e "install.packages('http://cran.nexr.com/src/contrib/DiscriMiner_0.1-29.tar.gz', dependencies = 'Imports', repos = NULL, type = 'source')"
 
 # Copy the Shiny app code
-COPY metaboxweb/ /srv/shiny-server/metaboxweb/
+git clone https://github.com/kwanjeeraw/metaboxweb.git --depth 1 --branch=main /srv/shiny-server/metaboxweb/
+
+# COPY metaboxweb/ /srv/shiny-server/metaboxweb/
 
 RUN sudo chown -R shiny:shiny /srv/shiny-server/metaboxweb/
 
