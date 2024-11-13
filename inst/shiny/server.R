@@ -1526,7 +1526,11 @@ server = function(input, output, session) {
                                       pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot", legend_title=""))
           })
           output$plotLoadMUL <- renderPlotly({#loading
-            ggplotly(multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot"))
+            if(input$multiM == "pca"){#pca
+              ggplotly(multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot"))
+            }else{#pls
+              ggplotly(multiv_viploadingplot(vip_data=metboshow$metbo_multi$vip_val, loading_data=cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="VIP and loading plot"))
+            }
           })
           if(input$multiM == "pca"){#vip pca
             output$plotvipMUL <- renderPlotly({ggplotly(ggplot()+ggtitle("VIP wasn't calculated for PCA, showing no plot."))})
@@ -1575,7 +1579,8 @@ server = function(input, output, session) {
                                         oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot", legend_title=""))
             })
             output$plotLoadMUL <- renderPlotly({#loading
-              ggplotly(multiv_loadingplot(metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val,plot_title="Loading plot"))
+              #ggplotly(multiv_loadingplot(metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val,plot_title="Loading plot"))
+              ggplotly(multiv_viploadingplot(vip_data=metboshow$metbo_multi$vip_val, loading_data=metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val, plot_title="VIP and loading plot"))
             })
             output$plotvipMUL <- renderPlotly({#vip
               progress <- shiny::Progress$new()
@@ -3872,7 +3877,12 @@ server = function(input, output, session) {
       if((input$multiM == "pca" || input$multiM == "pls") && ncol(metboshow$metbo_multi$score_val) > 1 && input$MULScorePC2 != "NA"){#pca or pls
         dt_plot[['scpl']] = multiv_scoreplot(metboshow$keepValueM,cbind(PCx=metboshow$metbo_multi$score_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$score_val[,input$MULScorePC2]),
                                              pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot", legend_title="")
-        dt_plot[['loadingpl']] = multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot")
+        if(input$multiM == "pca"){#pca
+          dt_plot[['loadingpl']] = multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot")
+        }else{#pls
+          dt_plot[['loadingpl']] = multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot")
+          dt_plot[['viploadingpl']] = multiv_viploadingplot(vip_data=metboshow$metbo_multi$vip_val, loading_data=cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="VIP and loading plot")
+        }
         if(input$multiM == "pls"){#vip pls
           filtvp = sort(metboshow$metbo_multi$vip_val, decreasing = TRUE)
           dt_plot[['vippl']] = multiv_vipplot(head(filtvp,n=100))
@@ -3884,7 +3894,8 @@ server = function(input, output, session) {
           dt_plot[['scpl']] = multiv_scoreplot(metboshow$keepValueM,score_data=metboshow$metbo_multi$score_val,
                                                pcx=metboshow$metbo_multi$model_summary$R2X[1],pcy=metboshow$metbo_multi$model_summary$R2X[2],
                                                oscore_data=metboshow$metbo_multi$oscore_val, plot_title="Score plot", legend_title="")
-          dt_plot[['loadingpl']] = multiv_loadingplot(metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val,plot_title="Loading plot")
+          dt_plot[['loadingpl']] = multiv_loadingplot(loading_data=metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val, plot_title="Loading plot")
+          dt_plot[['viploadingpl']] = multiv_viploadingplot(vip_data=metboshow$metbo_multi$vip_val, loading_data=metboshow$metbo_multi$loading_val,oloading_data=metboshow$metbo_multi$oloading_val, plot_title="VIP and loading plot")
           filtvp = sort(metboshow$metbo_multi$vip_val, decreasing = TRUE)
           dt_plot[['vippl']] = multiv_vipplot(head(filtvp,n=100))
           filtld = metboshow$metbo_multi$loading_val[order(abs(metboshow$metbo_multi$loading_val[,1]),decreasing = TRUE),,drop=FALSE]
