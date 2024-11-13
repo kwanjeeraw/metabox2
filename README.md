@@ -3,9 +3,9 @@ Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and i
 
 ![demo](metabox2_img.png)
 
-Installation
-============
-* Install metabox2 and required packages using the following commands for R 4.4.1
+Install as an R package
+=======================
+* Install R package metabox2 and required packages using the following commands for R 4.4.1:
 ```
 ##Install R dependencies ##
 if (!require("BiocManager"))
@@ -43,7 +43,18 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 launch_gui()
 ```
 
-Using the online version
+Build a Docker image and deploy
+===============================
+* To use metabox2 GUI version from Docker:
+1) Download and install Docker
+2) Download a Dockerfile from [here]()
+3) Build and deploy metaboxweb Docker using the following commands:
+```
+cd [go to Dockerfile location]
+docker build --no-cache=true --platform linux/x86_64 -t metaboxweb .
+docker run --name mbdocker -p 8081:3838 metaboxweb
+```
+Use the online version
 ========================
 We provide the following servers for the online version
 
