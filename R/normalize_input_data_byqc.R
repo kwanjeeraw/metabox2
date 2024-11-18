@@ -9,7 +9,7 @@
 #'@param factorCol a column number/index of biological factors of interest in the \code{METBObj$inputdata} data frame.
 #'This parameter is required for ccmn and ruv2 methods.
 #'@param batch a column number/index of the batch information in the \code{METBObj$inputdata} data frame.
-#'This parameter is required for serrf and loess methods. Each batch must contain at least 5 qc samples.
+#'This parameter is required for serrf and loess methods. Each batch must contain at least 2 qc samples.
 #'@param sampleType a column number/index indicating sample types in the \code{METBObj$inputdata} data frame.
 #'This parameter is required for serrf and loess methods.
 #'
