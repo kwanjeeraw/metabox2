@@ -71,6 +71,7 @@ Updates
 #### version 2.10 (NOV 2024)
 * New multiv_viploadingplot function
 * New scoreplot with shape for command version
+* New impute missing values by LOD
 * Update annotation data
 * Remove test_multinormality and test_multiequalvar functions
 * Fix bugs for enrichment and ORA analysis

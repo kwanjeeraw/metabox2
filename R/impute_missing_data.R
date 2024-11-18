@@ -1,8 +1,9 @@
 #'Impute missing values
 #'@description Impute missing values in the input data.
-#'@usage impute_missing_data(METBObj, method="mean", removeall=FALSE, cutoff=FALSE)
+#'@usage impute_missing_data(METBObj, method="median", lod=NULL, removeall=FALSE, cutoff=FALSE)
 #'@param METBObj METBObj object contains list of data.
-#'@param method name of missing value imputation method. Choose one from the list: zero, halfmin, min, mean, median, knn, bpca, ppca, svd, rf. Default is median.
+#'@param method name of missing value imputation method. Choose one from the list: zero, halfmin, min, mean, median, lod, bpca, ppca, svd, knn, rf. Default is median.
+#'@param lod number such as LOD or LOQ to impute missing values. This parameter is required for lod method.
 #'@param removeall logical indicating all variables/features with missing values are removed (TRUE) or not removed (FALSE; Default).
 #'@param cutoff number indicating percent missing value cutoff (from 1 to 99; Default = FALSE). If cutoff = FALSE, it will impute any missing values with a chosen method.
 #'Or else variables with missing values > percent cutoff will be removed.
@@ -14,11 +15,11 @@
 #'@examples
 #'#out = impute_missing_data(METBObj)
 #'@export
-impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=FALSE){
+impute_missing_data <- function(METBObj, method="median", lod=NULL, removeall=FALSE, cutoff=FALSE){
   #Check argument
-  tmparg <- try(method <- match.arg(method, c("zero","halfmin","min","mean","median","knn","bpca","ppca","svd","rf"), several.ok = FALSE), silent = TRUE)
+  tmparg <- try(method <- match.arg(method, c("zero","halfmin","min","mean","median","lod","bpca","ppca","svd","knn","rf"), several.ok = FALSE), silent = TRUE)
   if (class(tmparg) == "try-error") {
-    cat("ERROR! Argument 'method' is not valid, choose one from the list: zero,halfmin,min,mean,median,knn,bpca,ppca,svd,rf.\nMissing values were not imputed.\n")
+    cat("ERROR! Argument 'method' is not valid, choose one from the list: zero,halfmin,min,mean,median,lod,bpca,ppca,svd,knn,rf.\nMissing values were not imputed.\n")
     return(METBObj)
   }
   if(sum(is.na(METBObj$X)) == 0){#No missing value to impute
@@ -58,7 +59,7 @@ impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=
         }
 
         #Impute missing values with chosen method
-        if(method=="zero"){#impute variables/features with min values
+        if(method=="zero"){#impute variables/features with zero value
           imp = apply(is.na(incl_dat), 2, sum) > 0
           imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
           new_dat = data.frame(apply(incl_dat, 2, function(x){
@@ -68,7 +69,7 @@ impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=
           }), check.names = FALSE)
           printtxt = paste0(printtxt,"\nImpute missing values with '0' value.\n")
         }
-        if(method=="halfmin"){#impute variables/features with min values
+        if(method=="halfmin"){#impute variables/features with halfmin value
           imp = apply(is.na(incl_dat), 2, sum) > 0
           imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
           new_dat = data.frame(apply(incl_dat, 2, function(x){
@@ -78,7 +79,7 @@ impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=
           }), check.names = FALSE)
           printtxt = paste0(printtxt,"\nImpute missing values with 'half of min' value of each column.\n")
         }
-        if(method=="min"){#impute variables/features with min values
+        if(method=="min"){#impute variables/features with min value
           imp = apply(is.na(incl_dat), 2, sum) > 0
           imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
           new_dat = data.frame(apply(incl_dat, 2, function(x){
@@ -88,7 +89,7 @@ impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=
           }), check.names = FALSE)
           printtxt = paste0(printtxt,"\nImpute missing values with 'min' value of each column.\n")
         }
-        if (method=="mean"){#impute variables/features with mean values
+        if (method=="mean"){#impute variables/features with mean value
           imp = apply(is.na(incl_dat), 2, sum) > 0
           imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
           new_dat = data.frame(apply(incl_dat, 2, function(x){
@@ -98,7 +99,7 @@ impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=
           }), check.names = FALSE)
           printtxt = paste0(printtxt,"\nImpute missing values with 'mean' of each column.\n")
         }
-        if (method == "median"){#impute variables/features with median values
+        if (method == "median"){#impute variables/features with median value
           imp = apply(is.na(incl_dat), 2, sum) > 0
           imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
           new_dat = data.frame(apply(incl_dat, 2, function(x){
@@ -108,11 +109,16 @@ impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=
           }), check.names = FALSE)
           printtxt = paste0(printtxt,"\nImpute missing values with 'median' of each column.\n")
         }
-        if(method == "knn"){#impute variables/features with k-nearest neighbours based on similar samples
+        if(method=="lod"){#impute variables/features with user provided value, e.g. lod
           imp = apply(is.na(incl_dat), 2, sum) > 0
           imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
-          new_dat = data.frame(impute::impute.knn(data.matrix(incl_dat))$data, check.names = FALSE)
-          printtxt = paste0(printtxt,"\nImpute missing values with 'knn' method.\n")
+          lod = ifelse(is.null(lod),0,lod) #check lod value
+          new_dat = data.frame(apply(incl_dat, 2, function(x){
+            if(sum(is.na(x)) > 0){
+              x[is.na(x)] = lod}
+            x
+          }), check.names = FALSE)
+          printtxt = paste0(printtxt,"\nImpute missing values with '",lod,"' value.\n")
         }
         if(method == "bpca"){#impute variables/features with Bayesian PCA (BPCA)
           imp = apply(is.na(incl_dat), 2, sum) > 0
@@ -131,6 +137,12 @@ impute_missing_data <- function(METBObj, method="mean", removeall=FALSE, cutoff=
           imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
           new_dat = data.frame(pcaMethods::pca(incl_dat, nPcs =5, method="svdImpute", center=T)@completeObs, check.names = FALSE)
           printtxt = paste0(printtxt,"\nImpute missing values with 'SVD' method.\n")
+        }
+        if(method == "knn"){#impute variables/features with k-nearest neighbours based on similar samples
+          imp = apply(is.na(incl_dat), 2, sum) > 0
+          imputedls = colnames(incl_dat)[imp] #keep track of imputed variables
+          new_dat = data.frame(impute::impute.knn(data.matrix(incl_dat))$data, check.names = FALSE)
+          printtxt = paste0(printtxt,"\nImpute missing values with 'knn' method.\n")
         }
         if(method == "rf"){#impute variables/features with randomForest
           imp = apply(is.na(incl_dat), 2, sum) > 0

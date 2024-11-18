@@ -4,12 +4,14 @@
 \alias{impute_missing_data}
 \title{Impute missing values}
 \usage{
-impute_missing_data(METBObj, method="mean", removeall=FALSE, cutoff=FALSE)
+impute_missing_data(METBObj, method="median", lod=NULL, removeall=FALSE, cutoff=FALSE)
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
 
-\item{method}{name of missing value imputation method. Choose one from the list: zero, halfmin, min, mean, median, knn, bpca, ppca, svd, rf. Default is median.}
+\item{method}{name of missing value imputation method. Choose one from the list: zero, halfmin, min, mean, median, lod, bpca, ppca, svd, knn, rf. Default is median.}
+
+\item{lod}{number such as LOD or LOQ to impute missing values. This parameter is required for lod method.}
 
 \item{removeall}{logical indicating all variables/features with missing values are removed (TRUE) or not removed (FALSE; Default).}
 
