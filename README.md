@@ -74,12 +74,13 @@ Updates
 * New impute missing values by LOD
 * Update annotation data
 * Remove test_multinormality and test_multiequalvar functions
-* Fix bugs for enrichment and ORA analysis
+* Change to glog2 for rlaplot
 * Change default no. of predI to 5
 * Change default ptsize to 3
-* Change pdf size
+* Change pdf size of a report
 * Change transparency of score plot
 * Update and bugs fix for GUI version
+* Fix bugs for enrichment and ORA analysis
 #### version 2.9 (SEP 2024)
 * Exclude liwong and LOESS normalization
 * New messages
