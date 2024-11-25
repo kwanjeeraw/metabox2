@@ -954,7 +954,7 @@ pvalplot_overview <- function(x_input, cutoff=0.05, plot_title="", ptsize=3){
 #'@param classCol a column number/index of category/factor column to show on the plot.
 #'If not specified, \code{METBObj$classCol} is used by default.
 #'@param type text indicating whether within group ("wg") or across group ("ag") to be plotted.
-#'@param dolog a logical value indicating whether the variables should be log2-transformed prior to plotting.
+#'@param dolog a logical value indicating whether the variables should be generalized log2-transformed (glog2) prior to plotting.
 #'Default is TRUE.
 #'@param doavg a logical value indicating whether the standardized variables should be obtained by
 #'removing the mean from each variable. Default is FALSE.
@@ -972,7 +972,7 @@ pvalplot_overview <- function(x_input, cutoff=0.05, plot_title="", ptsize=3){
 #'@export
 rlaplot_overview <- function(METBObj, classCol=NULL, type="wg", dolog=TRUE, doavg=FALSE, limitx=FALSE, plot_title="", legend_title="Color"){
   if(dolog){
-    dat = log2(METBObj$X) #working data
+    dat = transform_input_data(METBObj,method="glog2")$X #working data
   }else{
     dat = METBObj$X #working data
   }

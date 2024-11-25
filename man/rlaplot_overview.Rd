@@ -15,7 +15,7 @@ If not specified, \code{METBObj$classCol} is used by default.}
 
 \item{type}{text indicating whether within group ("wg") or across group ("ag") to be plotted.}
 
-\item{dolog}{a logical value indicating whether the variables should be log2-transformed prior to plotting.
+\item{dolog}{a logical value indicating whether the variables should be generalized log2-transformed (glog2) prior to plotting.
 Default is TRUE.}
 
 \item{doavg}{a logical value indicating whether the standardized variables should be obtained by
