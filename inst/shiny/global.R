@@ -15,6 +15,9 @@ app_jscode <-
 
 reset_all_evenData <-
     "shinyjs.resetSelected = function() { Shiny.setInputValue('plotly_selected-pca_isO', 'null', {priority: 'event'});
+                              Shiny.setInputValue('plotly_selected-pca_mi', 'null', {priority: 'event'});
+                              Shiny.setInputValue('plotly_selected-pca_miO', 'null', {priority: 'event'});
+                              Shiny.setInputValue('plotly_selected-pca_isO', 'null', {priority: 'event'});
                               Shiny.setInputValue('plotly_selected-pca_is', 'null', {priority: 'event'});
                               Shiny.setInputValue('plotly_selected-pca_NO', 'null', {priority: 'event'});
                               Shiny.setInputValue('plotly_selected-pca_N', 'null', {priority: 'event'});

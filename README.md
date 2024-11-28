@@ -71,7 +71,7 @@ Updates
 #### version 2.10 (NOV 2024)
 * New multiv_viploadingplot function
 * New scoreplot with shape for command version
-* New impute missing values by LOD
+* New impute missing values by LOD and PCA overview
 * Update annotation data
 * Remove test_multinormality and test_multiequalvar functions
 * Change to glog2 for rlaplot

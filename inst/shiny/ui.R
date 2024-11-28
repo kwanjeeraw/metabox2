@@ -66,7 +66,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                     fluidRow(width=12,
                                              sidebarLayout(
                                                column(width=3,
-                                                      sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative;",
+                                                      sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative; height: 720px;",
                                                                    h4("Start upload your data"),
                                                                    h6("*'Sample_ID' and 'ClassCol can't be used as column names."),
                                                                    br(),
@@ -85,15 +85,15 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                 fluidRow(
                                                                   column(12,id = "UPsummary",
                                                                          tabsetPanel(id = "UPsummaryT",
-                                                                                      tabPanel("Summary", value = "UPsummaryTab",
-                                                                                               div(verbatimTextOutput("txtbox"),style = "overflow-y:scroll;  max-height: 350px;")
-                                                                                      )),hr(style="border-top: 1px dashed #B5C7DA;")
+                                                                                     tabPanel("Summary", value = "UPsummaryTab",
+                                                                                              div(verbatimTextOutput("txtbox"),style = "overflow-y:scroll;  max-height: 350px;")
+                                                                                     )),hr(style="border-top: 1px dashed #B5C7DA;")
                                                                   ),
                                                                   column(12,id = "UPdata",
                                                                          tabsetPanel(id = "UPdataT",
-                                                                                      tabPanel("Data table",value = "UPdataTab",br(),
-                                                                                               div(DT::dataTableOutput('INtable'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                      ))
+                                                                                     tabPanel("Data table",value = "UPdataTab",br(),
+                                                                                              div(DT::dataTableOutput('INtable'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; "),br()
+                                                                                     ))
                                                                   )
                                                                 ))
                                                ))
@@ -131,8 +131,10 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                      "BPCA" = "bpca",
                                                                                                                      "PPCA" = "ppca",
                                                                                                                      "SVD" = "svd",
-                                                                                                                     "RF" = "rf"
+                                                                                                                     "RF" = "rf",
+                                                                                                                     "LOD (Provide a number for imputation. **The default is set to the lowest value.)" = "lod"
                                                                                                       ),selected = 'median'),
+                                                                                         numericInput("misLOD", label=NULL, min = 0, value = 0, width = 300),
                                                                                          br(),
                                                                                          actionButton("run1", "Run", class = "btn btn-primary"),
                                                                                          actionButton("back1", "Back"),
@@ -151,9 +153,61 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                         column(12, id = "MIoutput",
                                                                                                tabsetPanel(id = "MIoutputT",
-                                                                                                            tabPanel("Output table", value = "MIoutputTab",br(),
-                                                                                                                     div(DT::dataTableOutput('INtable3'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            )
+                                                                                                           tabPanel("Overview", value = "MIoverview",br(),
+                                                                                                                    column(12,
+                                                                                                                           h5("PCA score plot of the first two PCs provides the overview of the data."),hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                           column(6,
+                                                                                                                                  plotlyOutput(outputId = "plotMIoverOri",height = "480px")
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  div(verbatimTextOutput("txtbox.MIoverOri"),style = " overflow-y:scroll; max-height: 350px;")
+                                                                                                                           )
+                                                                                                                    ),
+                                                                                                                    column(12,br(),br(),
+                                                                                                                           column(6,
+                                                                                                                                  plotlyOutput(outputId = "plotMIover",height = "480px"),br()
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  h5("*Drag on the plot to select sample(s), double-click to unselect."),
+                                                                                                                                  h5("*To exclude sample(s)/outlier(s) in further analysis, click REMOVE SAMPLE."),
+                                                                                                                                  div(verbatimTextOutput("txtbox.MIover"),style = "overflow-y:scroll; max-height: 350px;"),
+                                                                                                                                  actionButton("rev_mi", "Remove sample",style="float:right;"),br()
+                                                                                                                           )
+                                                                                                                    ),
+                                                                                                           ),
+                                                                                                           tabPanel("RLA plot", value = "MIrlaplot",br(),
+                                                                                                                    column(12,
+                                                                                                                           h5("RLA plot provides the overview of the replicates within each group."),h5("*Display only the first 100 samples."),
+                                                                                                                           hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                           plotOutput(outputId = "plotMIboxOriS",height = 800)
+                                                                                                                    ),
+                                                                                                                    column(12,
+                                                                                                                           plotOutput(outputId = "plotMIboxS",height = 800)
+                                                                                                                    )
+                                                                                                           ),
+                                                                                                           tabPanel("Density", value = "MIdensity",br(),
+                                                                                                                    column(12,
+                                                                                                                           h5("Density plot provides the distribution of variables and samples."),hr(style="border-top: 1px dashed #D3D3D3;")),
+                                                                                                                    column(12,
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotMIdenOri")
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotMIden")
+                                                                                                                           )),
+                                                                                                                    column(12,br(),
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotMIdenOriS")
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotMIdenS")
+                                                                                                                           ))
+                                                                                                           ),
+                                                                                                           tabPanel("Output table", value = "MIoutputTab",br(),
+                                                                                                                    actionButton("deleteC_mi", "Delete column"),br(),
+                                                                                                                    h5("*To exclude variable(s) in further analysis, select column(s) and click DELETE COLUMN."),hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                    div(DT::dataTableOutput('INtable3'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative;"),br()
+                                                                                                           )
                                                                                                )
 
                                                                                         ))
@@ -193,9 +247,9 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                       fluidRow(
                                                                                         column(12, id = "QCsummary",
                                                                                                tabsetPanel(id = "QCsummaryT",
-                                                                                                            tabPanel("Summary", value = "QCsummaryTab",
-                                                                                                                     div(verbatimTextOutput("txtbox.QCnorm"),style = " overflow-y:scroll; max-height: 350px;")
-                                                                                                            )
+                                                                                                           tabPanel("Summary", value = "QCsummaryTab",
+                                                                                                                    div(verbatimTextOutput("txtbox.QCnorm"),style = " overflow-y:scroll; max-height: 350px;")
+                                                                                                           )
                                                                                                ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                         column(12, id = "QCplotTab",
                                                                                                tabsetPanel(id = "QCtabset",
@@ -329,88 +383,88 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                       fluidRow(
                                                                                         column(12, id = "Nsummary",
                                                                                                tabsetPanel(id = "NsummaryT",
-                                                                                                            tabPanel("Summary", value = "NsummaryTab",
-                                                                                                                     div(verbatimTextOutput("txtbox.DATnorm"),style = " overflow-y:scroll; max-height: 350px;")
-                                                                                                            )
+                                                                                                           tabPanel("Summary", value = "NsummaryTab",
+                                                                                                                    div(verbatimTextOutput("txtbox.DATnorm"),style = " overflow-y:scroll; max-height: 350px;")
+                                                                                                           )
                                                                                                ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                         column(12, id = "NplotTab",
                                                                                                tabsetPanel(id = "Ntabset",
-                                                                                                            tabPanel("Overview", value = "Noverview", br(),
-                                                                                                                     column(12,
-                                                                                                                            h5("PCA score plot of the first two PCs provides the overview of the data."),hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                            column(6,
-                                                                                                                                   plotlyOutput(outputId = "plotNoverOri",height = "480px", width = "100%")
-                                                                                                                            ),
-                                                                                                                            column(6,
-                                                                                                                                   div(verbatimTextOutput("txtbox.NoverOri"),style = "overflow-y:scroll; max-height: 350px;")
-                                                                                                                            )
-                                                                                                                     ),
-                                                                                                                     column(12,br(),br(),
-                                                                                                                            column(6,
-                                                                                                                                   plotlyOutput(outputId = "plotNover",height = "480px", width = "100%"),br()
-                                                                                                                            ),
-                                                                                                                            column(6,
-                                                                                                                                   h5("*Drag on the plot to select sample(s), double-click to unselect."),
-                                                                                                                                   h5("*To exclude sample(s)/outlier(s) in further analysis, click REMOVE SAMPLE."),
-                                                                                                                                   div(verbatimTextOutput("txtbox.Nover"),style = "overflow-y:scroll; max-height: 350px;"),
-                                                                                                                                   actionButton("rev_N", "Remove sample",style="float:right;"),br()
-                                                                                                                            )
-                                                                                                                     )
-                                                                                                            ),
-                                                                                                            # tabPanel("Boxplot", value = "Nboxplot",
-                                                                                                            #          column(6,
-                                                                                                            #                 htmltools::div(style = "display:inline-block", plotlyOutput(outputId = "plotNboxOri", width = 250, height = 400))
-                                                                                                            #          ),
-                                                                                                            #          column(6,style = "max-height:600px; overflow-y:scroll; ",
-                                                                                                            #                 plotlyOutput(outputId = "plotNbox",inline = T)
-                                                                                                            #          ),br(),
-                                                                                                            #          column(6,style = "max-height:600px; overflow-y:scroll; ",
-                                                                                                            #                 plotlyOutput(outputId = "plotNboxOriS",inline = T)
-                                                                                                            #          ),
-                                                                                                            #          column(6,style = "max-height:600px; overflow-y:scroll; ",
-                                                                                                            #                 plotlyOutput(outputId = "plotNboxS",inline = T)
-                                                                                                            #          )
-                                                                                                            # ),
-                                                                                                            # tabPanel("Boxplot", value = "Nboxplot",
-                                                                                                            #          column(12,
-                                                                                                            #                 plotlyOutput(outputId = "plotNboxOri",height = 900)
-                                                                                                            #          ),
-                                                                                                            #          column(12,
-                                                                                                            #                 plotlyOutput(outputId = "plotNbox",height = 900)
-                                                                                                            #          )),
-                                                                                                            tabPanel("RLA plot", value = "Nrlaplot",br(),
-                                                                                                                     column(12,
-                                                                                                                            h5("RLA plot provides the overview of the replicates within each group."),h5("*Display only the first 100 samples."),
-                                                                                                                            hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                            plotOutput(outputId = "plotNboxOriS",height = 800)
-                                                                                                                     ),
-                                                                                                                     column(12,
-                                                                                                                            plotOutput(outputId = "plotNboxS",height = 800)
-                                                                                                                     )
-                                                                                                            ),
-                                                                                                            tabPanel("Density", value = "Ndensity",br(),
-                                                                                                                     column(12,
-                                                                                                                            h5("Density plot provides the distribution of variables and samples."),hr(style="border-top: 1px dashed #D3D3D3;")),
-                                                                                                                     column(12,
-                                                                                                                            column(6,
-                                                                                                                                   plotOutput(outputId = "plotNdenOri")
-                                                                                                                            ),
-                                                                                                                            column(6,
-                                                                                                                                   plotOutput(outputId = "plotNden")
-                                                                                                                            )),
-                                                                                                                     column(12,br(),
-                                                                                                                            column(6,
-                                                                                                                                   plotOutput(outputId = "plotNdenOriS")
-                                                                                                                            ),
-                                                                                                                            column(6,
-                                                                                                                                   plotOutput(outputId = "plotNdenS")
-                                                                                                                            ))
-                                                                                                            ),
-                                                                                                            tabPanel("Output table", value = "NoutputTab",br(),
-                                                                                                                     actionButton("deleteC_norm", "Delete column"),br(),
-                                                                                                                     h5("*To exclude variable(s) in further analysis, select column(s) and click DELETE COLUMN."),hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                     div(DT::dataTableOutput('INtable5'), style = "overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            )
+                                                                                                           tabPanel("Overview", value = "Noverview", br(),
+                                                                                                                    column(12,
+                                                                                                                           h5("PCA score plot of the first two PCs provides the overview of the data."),hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                           column(6,
+                                                                                                                                  plotlyOutput(outputId = "plotNoverOri",height = "480px", width = "100%")
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  div(verbatimTextOutput("txtbox.NoverOri"),style = "overflow-y:scroll; max-height: 350px;")
+                                                                                                                           )
+                                                                                                                    ),
+                                                                                                                    column(12,br(),br(),
+                                                                                                                           column(6,
+                                                                                                                                  plotlyOutput(outputId = "plotNover",height = "480px", width = "100%"),br()
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  h5("*Drag on the plot to select sample(s), double-click to unselect."),
+                                                                                                                                  h5("*To exclude sample(s)/outlier(s) in further analysis, click REMOVE SAMPLE."),
+                                                                                                                                  div(verbatimTextOutput("txtbox.Nover"),style = "overflow-y:scroll; max-height: 350px;"),
+                                                                                                                                  actionButton("rev_N", "Remove sample",style="float:right;"),br()
+                                                                                                                           )
+                                                                                                                    )
+                                                                                                           ),
+                                                                                                           # tabPanel("Boxplot", value = "Nboxplot",
+                                                                                                           #          column(6,
+                                                                                                           #                 htmltools::div(style = "display:inline-block", plotlyOutput(outputId = "plotNboxOri", width = 250, height = 400))
+                                                                                                           #          ),
+                                                                                                           #          column(6,style = "max-height:600px; overflow-y:scroll; ",
+                                                                                                           #                 plotlyOutput(outputId = "plotNbox",inline = T)
+                                                                                                           #          ),br(),
+                                                                                                           #          column(6,style = "max-height:600px; overflow-y:scroll; ",
+                                                                                                           #                 plotlyOutput(outputId = "plotNboxOriS",inline = T)
+                                                                                                           #          ),
+                                                                                                           #          column(6,style = "max-height:600px; overflow-y:scroll; ",
+                                                                                                           #                 plotlyOutput(outputId = "plotNboxS",inline = T)
+                                                                                                           #          )
+                                                                                                           # ),
+                                                                                                           # tabPanel("Boxplot", value = "Nboxplot",
+                                                                                                           #          column(12,
+                                                                                                           #                 plotlyOutput(outputId = "plotNboxOri",height = 900)
+                                                                                                           #          ),
+                                                                                                           #          column(12,
+                                                                                                           #                 plotlyOutput(outputId = "plotNbox",height = 900)
+                                                                                                           #          )),
+                                                                                                           tabPanel("RLA plot", value = "Nrlaplot",br(),
+                                                                                                                    column(12,
+                                                                                                                           h5("RLA plot provides the overview of the replicates within each group."),h5("*Display only the first 100 samples."),
+                                                                                                                           hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                           plotOutput(outputId = "plotNboxOriS",height = 800)
+                                                                                                                    ),
+                                                                                                                    column(12,
+                                                                                                                           plotOutput(outputId = "plotNboxS",height = 800)
+                                                                                                                    )
+                                                                                                           ),
+                                                                                                           tabPanel("Density", value = "Ndensity",br(),
+                                                                                                                    column(12,
+                                                                                                                           h5("Density plot provides the distribution of variables and samples."),hr(style="border-top: 1px dashed #D3D3D3;")),
+                                                                                                                    column(12,
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotNdenOri")
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotNden")
+                                                                                                                           )),
+                                                                                                                    column(12,br(),
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotNdenOriS")
+                                                                                                                           ),
+                                                                                                                           column(6,
+                                                                                                                                  plotOutput(outputId = "plotNdenS")
+                                                                                                                           ))
+                                                                                                           ),
+                                                                                                           tabPanel("Output table", value = "NoutputTab",br(),
+                                                                                                                    actionButton("deleteC_norm", "Delete column"),br(),
+                                                                                                                    h5("*To exclude variable(s) in further analysis, select column(s) and click DELETE COLUMN."),hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                    div(DT::dataTableOutput('INtable5'), style = "overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                           )
                                                                                                )
                                                                                         ))
                                                                             )
@@ -466,29 +520,29 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                      fluidRow(
                                                                                        column(12, id = "UNIsummary",
                                                                                               tabsetPanel(id = "UNIsummaryT",
-                                                                                                           tabPanel("Summary", value = "UNIsummaryTab",
-                                                                                                                    div(verbatimTextOutput("txtbox.uni"),style = "overflow-y:scroll;  max-height: 350px;")
-                                                                                                           )
+                                                                                                          tabPanel("Summary", value = "UNIsummaryTab",
+                                                                                                                   div(verbatimTextOutput("txtbox.uni"),style = "overflow-y:scroll;  max-height: 350px;")
+                                                                                                          )
                                                                                               ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                        column(12, id = "UNIplotTab",
                                                                                               tabsetPanel(id = "UNItabset",
-                                                                                                           tabPanel("Overview", value = "UNIoverview",br(),
-                                                                                                                    column(12,
-                                                                                                                           h5("Statistical significance plot provides the -log10(adjusted p-value) of each variable.
+                                                                                                          tabPanel("Overview", value = "UNIoverview",br(),
+                                                                                                                   column(12,
+                                                                                                                          h5("Statistical significance plot provides the -log10(adjusted p-value) of each variable.
                                                                                                                                Dashed line represents statistical significance cutoff (adjusted p-value < 0.05)."),
-                                                                                                                           h5("*Display only the top 100 variables, sorte by adjusted p-values. Click on a dot to toggle its boxplot."),
-                                                                                                                           hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                           plotlyOutput(outputId = "plotPvalUNI",height = "480px")
-                                                                                                                    ),
-                                                                                                                    column(12,
-                                                                                                                           plotlyOutput(outputId = "plotBoxUNI",height = "480px")
-                                                                                                                    )
-                                                                                                           ),
-                                                                                                           tabPanel("Output table", value = "UNIoutputTab",
-                                                                                                                    h5("*For 2-level factor/class, fold change (fc) = level1/level2, for more than 2 levels, fc = each_level/all_mean. Statistical significance for post hoc test is adjusted p-value < 0.05."),
-                                                                                                                    div(DT::dataTableOutput('INtableUNI'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),
-                                                                                                                    br()
-                                                                                                           )
+                                                                                                                          h5("*Display only the top 100 variables, sorte by adjusted p-values. Click on a dot to toggle its boxplot."),
+                                                                                                                          hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                          plotlyOutput(outputId = "plotPvalUNI",height = "480px")
+                                                                                                                   ),
+                                                                                                                   column(12,
+                                                                                                                          plotlyOutput(outputId = "plotBoxUNI",height = "480px")
+                                                                                                                   )
+                                                                                                          ),
+                                                                                                          tabPanel("Output table", value = "UNIoutputTab",
+                                                                                                                   h5("*For 2-level factor/class, fold change (fc) = level1/level2, for more than 2 levels, fc = each_level/all_mean. Statistical significance for post hoc test is adjusted p-value < 0.05."),
+                                                                                                                   div(DT::dataTableOutput('INtableUNI'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),
+                                                                                                                   br()
+                                                                                                          )
 
                                                                                               )
                                                                                        )
@@ -533,42 +587,42 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                               ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                        column(12, id = "MULplotTab",
                                                                                               tabsetPanel(id = "MULtabset",
-                                                                                                           tabPanel("Overview", value = "MULoverview",br(),
-                                                                                                                    column(12,
-                                                                                                                           h5("Score and loading plots of 2 principal components (PC)."),
-                                                                                                                           hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                           column(3,selectInput("MULScorePC1","Select PC to display on x-axis (PCX)",choices=NULL, selected=NULL)),
-                                                                                                                           column(3,selectInput("MULScorePC2","Select PC to display on y-axis (PCY)",choices=NULL, selected=NULL)),br()
-                                                                                                                    ),
-                                                                                                                    column(6,
-                                                                                                                           plotlyOutput(outputId = "plotScoreMUL",height = "480px"),br()
-                                                                                                                    ),
-                                                                                                                    column(6,
-                                                                                                                           plotlyOutput(outputId = "plotLoadMUL",height = "480px"),br()
-                                                                                                                    )
-                                                                                                           ),
-                                                                                                           tabPanel("Loading", value = "MULloading",br(),
-                                                                                                                    h5("Loading plot of a principal component (PC)."),
-                                                                                                                    h5("*Display only the top 100 variables, sorted by loading values."),
-                                                                                                                    hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                    selectInput("MULselectPC","Select PC to display",choices=NULL, selected=NULL),
-                                                                                                                    column(12,
-                                                                                                                           plotlyOutput(outputId = "plotPCloadMUL",height = "480px")
-                                                                                                                    )
-                                                                                                           ),
-                                                                                                           tabPanel("VIP", value = "MULvip",br(),
-                                                                                                                    column(12,
-                                                                                                                           h5("Variable importance in projection (VIP) plot."),
-                                                                                                                           h5("*Display only the top 100 variables, sorted by VIP values."),
-                                                                                                                           hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                           plotlyOutput(outputId = "plotvipMUL",height = "480px")
-                                                                                                                    )
-                                                                                                           ),
-                                                                                                           tabPanel("Output table", value = "MULoutputTab",br(),
-                                                                                                                    h5("Output table contains loading values of variables in each PC and VIP values for PLS and OPLS."),
-                                                                                                                    hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                    div(DT::dataTableOutput('INtableMUL'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                           )
+                                                                                                          tabPanel("Overview", value = "MULoverview",br(),
+                                                                                                                   column(12,
+                                                                                                                          h5("Score and loading plots of 2 principal components (PC)."),
+                                                                                                                          hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                          column(3,selectInput("MULScorePC1","Select PC to display on x-axis (PCX)",choices=NULL, selected=NULL)),
+                                                                                                                          column(3,selectInput("MULScorePC2","Select PC to display on y-axis (PCY)",choices=NULL, selected=NULL)),br()
+                                                                                                                   ),
+                                                                                                                   column(6,
+                                                                                                                          plotlyOutput(outputId = "plotScoreMUL",height = "480px"),br()
+                                                                                                                   ),
+                                                                                                                   column(6,
+                                                                                                                          plotlyOutput(outputId = "plotLoadMUL",height = "480px"),br()
+                                                                                                                   )
+                                                                                                          ),
+                                                                                                          tabPanel("Loading", value = "MULloading",br(),
+                                                                                                                   h5("Loading plot of a principal component (PC)."),
+                                                                                                                   h5("*Display only the top 100 variables, sorted by loading values."),
+                                                                                                                   hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                   selectInput("MULselectPC","Select PC to display",choices=NULL, selected=NULL),
+                                                                                                                   column(12,
+                                                                                                                          plotlyOutput(outputId = "plotPCloadMUL",height = "480px")
+                                                                                                                   )
+                                                                                                          ),
+                                                                                                          tabPanel("VIP", value = "MULvip",br(),
+                                                                                                                   column(12,
+                                                                                                                          h5("Variable importance in projection (VIP) plot."),
+                                                                                                                          h5("*Display only the top 100 variables, sorted by VIP values."),
+                                                                                                                          hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                          plotlyOutput(outputId = "plotvipMUL",height = "480px")
+                                                                                                                   )
+                                                                                                          ),
+                                                                                                          tabPanel("Output table", value = "MULoutputTab",br(),
+                                                                                                                   h5("Output table contains loading values of variables in each PC and VIP values for PLS and OPLS."),
+                                                                                                                   hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                   div(DT::dataTableOutput('INtableMUL'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          )
 
                                                                                               )
                                                                                        )
@@ -612,19 +666,19 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                               ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                        column(12, id = "CORplotTab",
                                                                                               tabsetPanel(id = "CORtabset",
-                                                                                                           tabPanel("Overview", value = "CORoverview",br(),
-                                                                                                                    column(12,
-                                                                                                                           h5("*Drag on the plot to zoom, double-click to reset."),
-                                                                                                                           h5("*Plotting will take awhile for a lot of variables."),br(),
-                                                                                                                           plotlyOutput(outputId = "plotHeatCOR", height = "680px")
-                                                                                                                    )
+                                                                                                          tabPanel("Overview", value = "CORoverview",br(),
+                                                                                                                   column(12,
+                                                                                                                          h5("*Drag on the plot to zoom, double-click to reset."),
+                                                                                                                          h5("*Plotting will take awhile for a lot of variables."),br(),
+                                                                                                                          plotlyOutput(outputId = "plotHeatCOR", height = "680px")
+                                                                                                                   )
 
-                                                                                                           ),
-                                                                                                           tabPanel("Output table", value = "CORoutputTab",br(),
-                                                                                                                    h5("Output table contains correlation coefficient, p-value and adjusted p-value between two variables."),
-                                                                                                                    hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                    div(DT::dataTableOutput('INtableCOR'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                           )
+                                                                                                          ),
+                                                                                                          tabPanel("Output table", value = "CORoutputTab",br(),
+                                                                                                                   h5("Output table contains correlation coefficient, p-value and adjusted p-value between two variables."),
+                                                                                                                   hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                   div(DT::dataTableOutput('INtableCOR'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          )
                                                                                               )
                                                                                        )
 
@@ -665,11 +719,11 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                               ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                        column(12, id = "LMEplotTab",
                                                                                               tabsetPanel(id = "LMEtabset",
-                                                                                                           tabPanel("Output table", value = "LMEoutputTab",br(),
-                                                                                                                    h5("Output table contains Intercept, coefficients and chi-square test results for significant fixed effects."),
-                                                                                                                    hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                                                    div(DT::dataTableOutput('INtableLME'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                           )
+                                                                                                          tabPanel("Output table", value = "LMEoutputTab",br(),
+                                                                                                                   h5("Output table contains Intercept, coefficients and chi-square test results for significant fixed effects."),
+                                                                                                                   hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                                                   div(DT::dataTableOutput('INtableLME'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          )
                                                                                               )
                                                                                        )
                                                                                      )
@@ -720,27 +774,27 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                 fluidRow(
                                                                   column(12, id = "MUVsummary",
                                                                          tabsetPanel(id = "MUVsummaryT",
-                                                                                      tabPanel("Summary",value = "MUVsummaryTab",
-                                                                                               div(verbatimTextOutput("txtbox.muv"),style = "overflow-y:scroll;  max-height: 350px;")
-                                                                                      )
+                                                                                     tabPanel("Summary",value = "MUVsummaryTab",
+                                                                                              div(verbatimTextOutput("txtbox.muv"),style = "overflow-y:scroll;  max-height: 350px;")
+                                                                                     )
                                                                          ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                   column(12, id = "MUVplotTab",
                                                                          tabsetPanel(id = "MUVtabset",
-                                                                                      tabPanel("VIP plot", value = "MUVplotVIP",br(),
-                                                                                               column(12,
-                                                                                                      plotlyOutput(outputId = "plotVIP", width = "100%", height = "650px")
-                                                                                               )
-                                                                                      ),
-                                                                                      tabPanel("Model evaluation", value = "MUVplotVAL1",br(),
-                                                                                               column(12,
-                                                                                                      plotlyOutput(outputId = "plotVAL1", width = "100%", height = "650px")
-                                                                                               )
-                                                                                      ),
-                                                                                      tabPanel("Output table", value = "MUVoutputTab",br(),
-                                                                                               h5("Output table contains order and average VIP rank of variables in minimal-optimal model."),
-                                                                                               hr(style="border-top: 1px dashed #D3D3D3;"),
-                                                                                               div(DT::dataTableOutput('INtableVIP'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                      )
+                                                                                     tabPanel("VIP plot", value = "MUVplotVIP",br(),
+                                                                                              column(12,
+                                                                                                     plotlyOutput(outputId = "plotVIP", width = "100%", height = "650px")
+                                                                                              )
+                                                                                     ),
+                                                                                     tabPanel("Model evaluation", value = "MUVplotVAL1",br(),
+                                                                                              column(12,
+                                                                                                     plotlyOutput(outputId = "plotVAL1", width = "100%", height = "650px")
+                                                                                              )
+                                                                                     ),
+                                                                                     tabPanel("Output table", value = "MUVoutputTab",br(),
+                                                                                              h5("Output table contains order and average VIP rank of variables in minimal-optimal model."),
+                                                                                              hr(style="border-top: 1px dashed #D3D3D3;"),
+                                                                                              div(DT::dataTableOutput('INtableVIP'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                     )
                                                                          )
                                                                   )
 
@@ -754,226 +808,233 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                            ###################################################################
                            tabPanel("", value = "mbpl",
                                     tabsetPanel(id = "MBPLTabset",
-                                                 ###upload data###
-                                                 tabPanel("Upload data", value = "mbplUP",
-                                                          fluidRow(width=12,
-                                                                   sidebarLayout(
-                                                                     column(3,
-                                                                            ##text input data set name
-                                                                            sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative; height: 750px;",
-                                                                                         h4("Start upload your data"),
-                                                                                         br(),
-                                                                                         selectInput("MBPLdmun","Number of data sets",choices=c(2,3,4,5), selected=2,multiple = F, width = 300),
-                                                                                         h6("*The data must be in a CSV file, limit to 5 data sets."),
-                                                                                         actionButton("NextMBPL1", "Data set 1",style="color: #464546; background-color: #c5d7d9;"),
-                                                                                         fileInput("INfileMBPL1",h5("Upload a csv file of data set 1")),
-                                                                                         textInput("nameMBPL1",label=h5("Data set name")),
-                                                                                         selectInput("idMBPL1","Sample ID column",choices=NULL, selected=NULL),
-                                                                                         selectInput("classMBPL1","Class/response column (Y)",choices=NULL, selected=NULL),
-                                                                                         selectInput("firstMBPL1","1st variable/feature column (X)",choices=NULL, selected=NULL),
-                                                                                         br(),
-                                                                                         actionButton("NextMBPL2", "Data set 2",style="color: #464546; background-color: #c5d7d9;"),
-                                                                                         fileInput("INfileMBPL2",h5("Upload a csv file of data set 2")),
-                                                                                         textInput("nameMBPL2",label=h5("Data set name")),
-                                                                                         selectInput("idMBPL2","Sample ID column",choices=NULL, selected=NULL),
-                                                                                         selectInput("classMBPL2","Class/response column (Y)",choices=NULL, selected=NULL),
-                                                                                         selectInput("firstMBPL2","1st variable/feature column (X)",choices=NULL, selected=NULL),
-                                                                                         br(),
-                                                                                         actionButton("NextMBPL3", "Data set 3",style="color: #464546; background-color: #c5d7d9;"),
-                                                                                         fileInput("INfileMBPL3",h5("PUpload a csv file of data set 3")),
-                                                                                         textInput("nameMBPL3",label=h5("Data set name")),
-                                                                                         selectInput("idMBPL3","Sample ID column",choices=NULL, selected=NULL),
-                                                                                         selectInput("classMBPL3","Class/response column (Y)",choices=NULL, selected=NULL),
-                                                                                         selectInput("firstMBPL3","1st variable/feature column (X)",choices=NULL, selected=NULL),
-                                                                                         br(),
-                                                                                         actionButton("NextMBPL4", "Data set 4",style="color: #464546; background-color: #c5d7d9;"),
-                                                                                         fileInput("INfileMBPL4",h5("Upload a csv file of data set 4")),
-                                                                                         textInput("nameMBPL4",label=h5("Data set name")),
-                                                                                         selectInput("idMBPL4","Sample ID column",choices=NULL, selected=NULL),
-                                                                                         selectInput("classMBPL4","Class/response column (Y)",choices=NULL, selected=NULL),
-                                                                                         selectInput("firstMBPL4","1st variable/feature column (X)",choices=NULL, selected=NULL),
-                                                                                         br(),
-                                                                                         actionButton("NextMBPL5", "Data set 5",style="color: #464546; background-color: #c5d7d9;"),
-                                                                                         fileInput("INfileMBPL5",h5("Upload a csv file of data set 5")),
-                                                                                         textInput("nameMBPL5",label=h5("Data set name")),
-                                                                                         selectInput("idMBPL5","Sample ID column",choices=NULL, selected=NULL),
-                                                                                         selectInput("classMBPL5","Class/response column (Y)",choices=NULL, selected=NULL),
-                                                                                         selectInput("firstMBPL5","1st variable/feature column (X)",choices=NULL, selected=NULL),
-                                                                                         br(),br(),
-                                                                                         actionButton("UploadMBPL", "Upload", class = "btn btn-primary"),
-                                                                                         actionButton("BackMBPL", "Back"),
-                                                                                         actionButton("NextMBPL", "Next"),
-                                                                                         br(),br(),
-                                                                            )),
-                                                                     column(9,
-                                                                            mainPanel(width=12,br(),
-                                                                                      fluidRow(
-                                                                                        column(12, id = "MBPLsummary",
-                                                                                               tabsetPanel(id = "MBPLsummaryT",
-                                                                                                            tabPanel("Summary",value = "MBPLsummaryTab",
-                                                                                                                     div(verbatimTextOutput("txtbox.mbpl"),style = "overflow-y:scroll; max-height: 350px;")
-                                                                                                            )
-                                                                                               ),hr(style="border-top: 1px dashed #B5C7DA;")),
-                                                                                        column(12, id = "MBPLplotTab",
-                                                                                               tabsetPanel(id = "MBPLtabDat",
-                                                                                                            tabPanel("Data set 1", value = "MBPLdatS1",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL1'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 2", value = "MBPLdatS2",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL2'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 3", value = "MBPLdatS3",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL3'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 4", value = "MBPLdatS4",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL4'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 5", value = "MBPLdatS5",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL5'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            )
-                                                                                               )
-                                                                                        )
-                                                                                      )
+                                                ###upload data###
+                                                tabPanel("Upload data", value = "mbplUP",
+                                                         fluidRow(width=12,
+                                                                  sidebarLayout(
+                                                                    column(3,
+                                                                           ##text input data set name
+                                                                           sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative; height: 750px;",
+                                                                                        h4("Start upload your data"),
+                                                                                        br(),
+                                                                                        selectInput("MBPLdmun","Number of data sets",choices=c(2,3,4,5), selected=2,multiple = F, width = 300),
+                                                                                        h6("*The data must be in a CSV file, limit to 5 data sets."),
+                                                                                        actionButton("NextMBPL1", "Data set 1",style="color: #464546; background-color: #c5d7d9;"),
+                                                                                        fileInput("INfileMBPL1",h5("Upload a csv file of data set 1")),
+                                                                                        textInput("nameMBPL1",label=h5("Data set name")),
+                                                                                        selectInput("idMBPL1","Sample ID column",choices=NULL, selected=NULL),
+                                                                                        selectInput("classMBPL1","Class/response column (Y)",choices=NULL, selected=NULL),
+                                                                                        selectInput("firstMBPL1","1st variable/feature column (X)",choices=NULL, selected=NULL),
+                                                                                        br(),
+                                                                                        actionButton("NextMBPL2", "Data set 2",style="color: #464546; background-color: #c5d7d9;"),
+                                                                                        fileInput("INfileMBPL2",h5("Upload a csv file of data set 2")),
+                                                                                        textInput("nameMBPL2",label=h5("Data set name")),
+                                                                                        selectInput("idMBPL2","Sample ID column",choices=NULL, selected=NULL),
+                                                                                        selectInput("classMBPL2","Class/response column (Y)",choices=NULL, selected=NULL),
+                                                                                        selectInput("firstMBPL2","1st variable/feature column (X)",choices=NULL, selected=NULL),
+                                                                                        br(),
+                                                                                        actionButton("NextMBPL3", "Data set 3",style="color: #464546; background-color: #c5d7d9;"),
+                                                                                        fileInput("INfileMBPL3",h5("PUpload a csv file of data set 3")),
+                                                                                        textInput("nameMBPL3",label=h5("Data set name")),
+                                                                                        selectInput("idMBPL3","Sample ID column",choices=NULL, selected=NULL),
+                                                                                        selectInput("classMBPL3","Class/response column (Y)",choices=NULL, selected=NULL),
+                                                                                        selectInput("firstMBPL3","1st variable/feature column (X)",choices=NULL, selected=NULL),
+                                                                                        br(),
+                                                                                        actionButton("NextMBPL4", "Data set 4",style="color: #464546; background-color: #c5d7d9;"),
+                                                                                        fileInput("INfileMBPL4",h5("Upload a csv file of data set 4")),
+                                                                                        textInput("nameMBPL4",label=h5("Data set name")),
+                                                                                        selectInput("idMBPL4","Sample ID column",choices=NULL, selected=NULL),
+                                                                                        selectInput("classMBPL4","Class/response column (Y)",choices=NULL, selected=NULL),
+                                                                                        selectInput("firstMBPL4","1st variable/feature column (X)",choices=NULL, selected=NULL),
+                                                                                        br(),
+                                                                                        actionButton("NextMBPL5", "Data set 5",style="color: #464546; background-color: #c5d7d9;"),
+                                                                                        fileInput("INfileMBPL5",h5("Upload a csv file of data set 5")),
+                                                                                        textInput("nameMBPL5",label=h5("Data set name")),
+                                                                                        selectInput("idMBPL5","Sample ID column",choices=NULL, selected=NULL),
+                                                                                        selectInput("classMBPL5","Class/response column (Y)",choices=NULL, selected=NULL),
+                                                                                        selectInput("firstMBPL5","1st variable/feature column (X)",choices=NULL, selected=NULL),
+                                                                                        br(),br(),
+                                                                                        actionButton("UploadMBPL", "Upload", class = "btn btn-primary"),
+                                                                                        actionButton("BackMBPL", "Back"),
+                                                                                        actionButton("NextMBPL", "Next"),
+                                                                                        br(),
+                                                                           )),
+                                                                    column(9,
+                                                                           mainPanel(width=12,br(),
+                                                                                     fluidRow(
+                                                                                       column(12, id = "MBPLsummary",
+                                                                                              tabsetPanel(id = "MBPLsummaryT",
+                                                                                                          tabPanel("Summary",value = "MBPLsummaryTab",
+                                                                                                                   div(verbatimTextOutput("txtbox.mbpl"),style = "overflow-y:scroll; max-height: 350px;")
+                                                                                                          )
+                                                                                              ),hr(style="border-top: 1px dashed #B5C7DA;")),
+                                                                                       column(12, id = "MBPLplotTab",
+                                                                                              tabsetPanel(id = "MBPLtabDat",
+                                                                                                          tabPanel("Data set 1", value = "MBPLdatS1",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL1'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 2", value = "MBPLdatS2",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL2'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 3", value = "MBPLdatS3",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL3'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 4", value = "MBPLdatS4",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL4'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 5", value = "MBPLdatS5",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL5'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          )
+                                                                                              )
+                                                                                       )
+                                                                                     )
 
-                                                                            )
-                                                                     )
-                                                                   ))
-                                                 ),
-                                                 ###impute missing value before MBPLS-DA###
-                                                 tabPanel("Missing value imputation", value = "missing_m",
-                                                          fluidRow(width=12,
-                                                                   sidebarLayout(
-                                                                     column(width=3,
-                                                                            sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative;",
-                                                                                         h4("Missing value imputation"),
-                                                                                         radioButtons("reall_m",
-                                                                                                      h5("Remove all variables with missing values?"),
-                                                                                                      choices = list("Remove all" = 'TRUE',
-                                                                                                                     "Not Remove all" = 'FALSE'
-                                                                                                      ),
-                                                                                                      selected = 'FALSE'),
-                                                                                         br(),
-                                                                                         sliderInput("remPercent_m", h5("Remove variables with missing values > (%)"),
-                                                                                                     min = 1, max = 99, value = 30),
-                                                                                         br(),
-                                                                                         radioButtons("missCheck_m", h5("Choose imputation method"),
-                                                                                                      choices = list("Replace by zero" = "zero",
-                                                                                                                     "Half-minimum" = "halfmin",
-                                                                                                                     "Minimum" = "min",
-                                                                                                                     "Mean" = "mean",
-                                                                                                                     "Median" = "median",
-                                                                                                                     "KNN" = "knn",
-                                                                                                                     "BPCA" = "bpca",
-                                                                                                                     "PPCA" = "ppca",
-                                                                                                                     "SVD" = "svd",
-                                                                                                                     "RF" = "rf"
-                                                                                                      ),selected = 'median'),
-                                                                                         br(),
-                                                                                         actionButton("run_m", "Run", class = "btn btn-primary"),
-                                                                                         actionButton("back_m", "Back"),
-                                                                                         actionButton("next_m", "Next")
+                                                                           )
+                                                                    )
+                                                                  ))
+                                                ),
+                                                ###impute missing value before MBPLS-DA###
+                                                tabPanel("Missing value imputation", value = "missing_m",
+                                                         fluidRow(width=12,
+                                                                  sidebarLayout(
+                                                                    column(width=3,
+                                                                           sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative;",
+                                                                                        h4("Missing value imputation"),
+                                                                                        radioButtons("reall_m",
+                                                                                                     h5("Remove all variables with missing values?"),
+                                                                                                     choices = list("Remove all" = 'TRUE',
+                                                                                                                    "Not Remove all" = 'FALSE'
+                                                                                                     ),
+                                                                                                     selected = 'FALSE'),
+                                                                                        br(),
+                                                                                        sliderInput("remPercent_m", h5("Remove variables with missing values > (%)"),
+                                                                                                    min = 1, max = 99, value = 30),
+                                                                                        br(),
+                                                                                        radioButtons("missCheck_m", h5("Choose imputation method"),
+                                                                                                     choices = list("Replace by zero" = "zero",
+                                                                                                                    "Half-minimum" = "halfmin",
+                                                                                                                    "Minimum" = "min",
+                                                                                                                    "Mean" = "mean",
+                                                                                                                    "Median" = "median",
+                                                                                                                    "BPCA" = "bpca",
+                                                                                                                    "PPCA" = "ppca",
+                                                                                                                    "SVD" = "svd",
+                                                                                                                    "KNN" = "knn",
+                                                                                                                    "RF" = "rf",
+                                                                                                                    "LOD (Provide a number for imputation. **The default is set to the lowest value.)" = "lod"
+                                                                                                     ),selected = 'median'),
+                                                                                        numericInput("misLOD_m1", h5("Data set 1"), min = 0, value = 0, width = 300),
+                                                                                        numericInput("misLOD_m2", h5("Data set 2"), min = 0, value = 0, width = 300),
+                                                                                        numericInput("misLOD_m3", h5("Data set 3"), min = 0, value = 0, width = 300),
+                                                                                        numericInput("misLOD_m4", h5("Data set 4"), min = 0, value = 0, width = 300),
+                                                                                        numericInput("misLOD_m5", h5("Data set 5"), min = 0, value = 0, width = 300),
 
-                                                                            )),
-                                                                     column(width=9,
-                                                                            mainPanel(width=12,br(),
-                                                                                      fluidRow(
-                                                                                        column(12,id = "MIsummary_m",
-                                                                                               tabsetPanel(id = "MIsummaryT_m",
-                                                                                                            tabPanel("Summary",value = "MIsummaryTab_m",
-                                                                                                                     div(verbatimTextOutput("txtbox.missing_m"),style = "overflow-y:scroll; max-height: 350px;")
-                                                                                                            )
-                                                                                               ),hr(style="border-top: 1px dashed #B5C7DA;")),
-                                                                                        column(12, id = "MIoutput_m",
-                                                                                               tabsetPanel(id = "MIoutputT_m",
-                                                                                                            tabPanel("Data set 1", value = "MBPLdatS1_m",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL1_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 2", value = "MBPLdatS2_m",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL2_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 3", value = "MBPLdatS3_m",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL3_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 4", value = "MBPLdatS4_m",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL4_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            ),
-                                                                                                            tabPanel("Data set 5", value = "MBPLdatS5_m",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableMBPL5_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
-                                                                                                            )
-                                                                                               )
+                                                                                        br(),
+                                                                                        actionButton("run_m", "Run", class = "btn btn-primary"),
+                                                                                        actionButton("back_m", "Back"),
+                                                                                        actionButton("next_m", "Next")
 
-                                                                                        ))
-                                                                            )
-                                                                     )
-                                                                   ))
-                                                 ),
-                                                 ###MBPLS-DA Analysis###
-                                                 tabPanel("MBPLS-DA analysis", value = "mbplAna",
-                                                          fluidRow(width=12,
-                                                                   sidebarLayout(
-                                                                     column(width=3,
-                                                                            sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative; height: 750px;",
-                                                                                         h4("MBPLS-DA analysis"),
-                                                                                         tags$div(HTML("<p>*Implemented from packMBPLSDA package, see <a href='https://doi.org/10.1007/s11306-019-1598-y', target='_blank'>reference</a></p>")),
-                                                                                         h6("*It might take long execution time depended on data set size, the number of repetitions and model testing process."),br(),
-                                                                                         numericInput("MBPLnf", "Maximum number of scanned principle components", 10, min = 1, max=10),
-                                                                                         numericInput("MBPLoptdim", "Optimal number of principle components", 2, min = 1, max=10),
-                                                                                         numericInput("MBPLnboot", "Number of bootstrap replications", 10, min = 1),
-                                                                                         numericInput("MBPLnrepet", "Number of cross-validation repetitions", 3, min = 1),
-                                                                                         radioButtons("MBPLtest",
-                                                                                                      h5("Perform model components testing and permutation?"),
-                                                                                                      choices = list("Yes" = 'TRUE',
-                                                                                                                     "No" = 'FALSE'
-                                                                                                      ),
-                                                                                                      selected = 'FALSE'),
-                                                                                         numericInput("MBPLnpermut", "Number of permutations", 10, min = 1),
-                                                                                         numericInput("MBPLthreshold", "Prediction threshold (max = 1)", 0.5, min = 0, max=1, step=0.1),
-                                                                                         actionButton("RunMBPL", "Run", class = "btn btn-primary"),
-                                                                                         actionButton("BackMBPL2", "Back"),br(),br(),
-                                                                                         downloadButton("export_mbpls", "Export results", align = "center", class = "btn btn-success")
-                                                                            )),
-                                                                     column(9,
-                                                                            mainPanel(width=12,br(),
-                                                                                      fluidRow(
-                                                                                        column(12, id = "MBPLsummaryAna",
-                                                                                               tabsetPanel(id = "MBPLsummaryTAna",
-                                                                                                            tabPanel("Summary",value = "MBPLsummaryTabAna",
-                                                                                                                     div(verbatimTextOutput("txtbox.mbplAna"),style = "overflow-y:scroll; max-height: 350px;")
-                                                                                                            )
-                                                                                               ),hr(style="border-top: 1px dashed #B5C7DA;")),
-                                                                                        column(12, id = "MBPLplotTabAna",
-                                                                                               tabsetPanel(id = "MBPLtabsetAna",
-                                                                                                            tabPanel("BIP plot", value = "MBPLbipDat",br(),
+                                                                           )),
+                                                                    column(width=9,
+                                                                           mainPanel(width=12,br(),
+                                                                                     fluidRow(
+                                                                                       column(12,id = "MIsummary_m",
+                                                                                              tabsetPanel(id = "MIsummaryT_m",
+                                                                                                          tabPanel("Summary",value = "MIsummaryTab_m",
+                                                                                                                   div(verbatimTextOutput("txtbox.missing_m"),style = "overflow-y:scroll; max-height: 350px;")
+                                                                                                          )
+                                                                                              ),hr(style="border-top: 1px dashed #B5C7DA;")),
+                                                                                       column(12, id = "MIoutput_m",
+                                                                                              tabsetPanel(id = "MIoutputT_m",
+                                                                                                          tabPanel("Data set 1", value = "MBPLdatS1_m",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL1_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 2", value = "MBPLdatS2_m",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL2_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 3", value = "MBPLdatS3_m",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL3_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 4", value = "MBPLdatS4_m",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL4_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          ),
+                                                                                                          tabPanel("Data set 5", value = "MBPLdatS5_m",br(),
+                                                                                                                   div(DT::dataTableOutput('INtableMBPL5_m'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 600px; position:relative; max-height: 600px;"),br()
+                                                                                                          )
+                                                                                              )
+
+                                                                                       ))
+                                                                           )
+                                                                    )
+                                                                  ))
+                                                ),
+                                                ###MBPLS-DA Analysis###
+                                                tabPanel("MBPLS-DA analysis", value = "mbplAna",
+                                                         fluidRow(width=12,
+                                                                  sidebarLayout(
+                                                                    column(width=3,
+                                                                           sidebarPanel(width=12,style = "overflow-y:scroll; max-height: 900px; position:relative; height: 750px;",
+                                                                                        h4("MBPLS-DA analysis"),
+                                                                                        tags$div(HTML("<p>*Implemented from packMBPLSDA package, see <a href='https://doi.org/10.1007/s11306-019-1598-y', target='_blank'>reference</a></p>")),
+                                                                                        h6("*It might take long execution time depended on data set size, the number of repetitions and model testing process."),br(),
+                                                                                        numericInput("MBPLnf", "Maximum number of scanned principle components", 10, min = 1, max=10),
+                                                                                        numericInput("MBPLoptdim", "Optimal number of principle components", 2, min = 1, max=10),
+                                                                                        numericInput("MBPLnboot", "Number of bootstrap replications", 10, min = 1),
+                                                                                        numericInput("MBPLnrepet", "Number of cross-validation repetitions", 3, min = 1),
+                                                                                        radioButtons("MBPLtest",
+                                                                                                     h5("Perform model components testing and permutation?"),
+                                                                                                     choices = list("Yes" = 'TRUE',
+                                                                                                                    "No" = 'FALSE'
+                                                                                                     ),
+                                                                                                     selected = 'FALSE'),
+                                                                                        numericInput("MBPLnpermut", "Number of permutations", 10, min = 1),
+                                                                                        numericInput("MBPLthreshold", "Prediction threshold (max = 1)", 0.5, min = 0, max=1, step=0.1),
+                                                                                        actionButton("RunMBPL", "Run", class = "btn btn-primary"),
+                                                                                        actionButton("BackMBPL2", "Back"),br(),br(),
+                                                                                        downloadButton("export_mbpls", "Export results", align = "center", class = "btn btn-success")
+                                                                           )),
+                                                                    column(9,
+                                                                           mainPanel(width=12,br(),
+                                                                                     fluidRow(
+                                                                                       column(12, id = "MBPLsummaryAna",
+                                                                                              tabsetPanel(id = "MBPLsummaryTAna",
+                                                                                                          tabPanel("Summary",value = "MBPLsummaryTabAna",
+                                                                                                                   div(verbatimTextOutput("txtbox.mbplAna"),style = "overflow-y:scroll; max-height: 350px;")
+                                                                                                          )
+                                                                                              ),hr(style="border-top: 1px dashed #B5C7DA;")),
+                                                                                       column(12, id = "MBPLplotTabAna",
+                                                                                              tabsetPanel(id = "MBPLtabsetAna",
+                                                                                                          tabPanel("BIP plot", value = "MBPLbipDat",br(),
+                                                                                                                   column(12,
+                                                                                                                          plotlyOutput(outputId = "plotBipMBPL", width = "100%", height = "480px")
+                                                                                                                   )
+                                                                                                          ),
+                                                                                                          tabPanel("VIP plot", value = "MBPLvip",br(),
+                                                                                                                   column(12,
+                                                                                                                          numericInput("MBPLselectvipprop", "Select top n% of variables to display (max = 100%)", 10, min = 5, max=100, step=5),
+                                                                                                                          plotlyOutput(outputId = "plotVipMBPL", width = "100%", height = "480px")
+                                                                                                                   )
+                                                                                                          ),tabPanel("Loading plot", value = "MBPLload",br(),
                                                                                                                      column(12,
-                                                                                                                      plotlyOutput(outputId = "plotBipMBPL", width = "100%", height = "480px")
+                                                                                                                            column(6,selectInput("MBPLselectPC","Select PC to display",choices=NULL, selected=NULL)),
+                                                                                                                            column(6,numericInput("MBPLselectloadprop", "Select top n% of variables to display (max = 100%)", 10, min = 5, max=100, step=5)),
+                                                                                                                            column(12,plotlyOutput(outputId = "plotLoadMBPL", width = "100%", height = "480px"))
                                                                                                                      )
-                                                                                                            ),
-                                                                                                            tabPanel("VIP plot", value = "MBPLvip",br(),
+                                                                                                          ),tabPanel("Model validation", value = "MBPLmodelVa",br(),
                                                                                                                      column(12,
-                                                                                                                      numericInput("MBPLselectvipprop", "Select top n% of variables to display (max = 100%)", 10, min = 5, max=100, step=5),
-                                                                                                                      plotlyOutput(outputId = "plotVipMBPL", width = "100%", height = "480px")
+                                                                                                                            plotlyOutput(outputId = "plotScreeMBPL", width = "90%", height = "90%"),br(),
+                                                                                                                            plotlyOutput(outputId = "plotTestdimMBPL", width = "90%", height = "90%"),br(),
+                                                                                                                            plotlyOutput(outputId = "plotPermutMBPL", width = "90%", height = "90%"),br()
                                                                                                                      )
-                                                                                                            ),tabPanel("Loading plot", value = "MBPLload",br(),
-                                                                                                                     column(12,
-                                                                                                                      column(6,selectInput("MBPLselectPC","Select PC to display",choices=NULL, selected=NULL)),
-                                                                                                                      column(6,numericInput("MBPLselectloadprop", "Select top n% of variables to display (max = 100%)", 10, min = 5, max=100, step=5)),
-                                                                                                                      column(12,plotlyOutput(outputId = "plotLoadMBPL", width = "100%", height = "480px"))
-                                                                                                                     )
-                                                                                                            ),tabPanel("Model validation", value = "MBPLmodelVa",br(),
-                                                                                                                     column(12,
-                                                                                                                      plotlyOutput(outputId = "plotScreeMBPL", width = "90%", height = "90%"),br(),
-                                                                                                                      plotlyOutput(outputId = "plotTestdimMBPL", width = "90%", height = "90%"),br(),
-                                                                                                                      plotlyOutput(outputId = "plotPermutMBPL", width = "90%", height = "90%"),br()
-                                                                                                                     )
-                                                                                                            ),
+                                                                                                          ),
 
-                                                                                               )
-                                                                                        )
+                                                                                              )
+                                                                                       )
 
-                                                                                      )
-                                                                            )
-                                                                     ))
-                                                          ))
+                                                                                     )
+                                                                           )
+                                                                    ))
+                                                         ))
 
                                     )),
 
@@ -1021,9 +1082,9 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                       fluidRow(
                                                                                         column(12, id = "OVERsummary",
                                                                                                tabsetPanel(id = "OVERsummaryT",
-                                                                                                            tabPanel("Summary", value = "OVERsummaryTab",
-                                                                                                                     div(verbatimTextOutput("txtbox.Overr"),style = "overflow-y:scroll;  max-height: 350px;")
-                                                                                                            )
+                                                                                                           tabPanel("Summary", value = "OVERsummaryTab",
+                                                                                                                    div(verbatimTextOutput("txtbox.Overr"),style = "overflow-y:scroll;  max-height: 350px;")
+                                                                                                           )
                                                                                                ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                         column(12, id = "OVERoutput",
                                                                                                tabsetPanel( id = "OVERoutputT",
@@ -1086,15 +1147,15 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                       fluidRow(
                                                                                         column(12, id = "ENRsummary",
                                                                                                tabsetPanel(id = "ENRsummaryT",
-                                                                                                            tabPanel("Summary", value = "ENRsummaryTab",
-                                                                                                                     div(verbatimTextOutput("txtbox.ENR"),style = "overflow-y:scroll;  max-height: 350px;")
-                                                                                                            )
+                                                                                                           tabPanel("Summary", value = "ENRsummaryTab",
+                                                                                                                    div(verbatimTextOutput("txtbox.ENR"),style = "overflow-y:scroll;  max-height: 350px;")
+                                                                                                           )
                                                                                                ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                         column(12, id = "ENRoutput",
                                                                                                tabsetPanel(id = "ENRoutputT",
-                                                                                                            tabPanel("Output table", value = "ENRoutputTab",br(),
-                                                                                                                     div(DT::dataTableOutput('INtableENR'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 900px; position:relative;"),br()
-                                                                                                            )
+                                                                                                           tabPanel("Output table", value = "ENRoutputTab",br(),
+                                                                                                                    div(DT::dataTableOutput('INtableENR'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 900px; position:relative;"),br()
+                                                                                                           )
                                                                                                )
                                                                                         )
 
@@ -1125,16 +1186,16 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                       fluidRow(
                                                                                         column(12, id = "ORAsummary",
                                                                                                tabsetPanel(id = "ORAsummaryT",
-                                                                                                            tabPanel("Summary", value = "ORAsummaryTab",
-                                                                                                                     div(verbatimTextOutput("txtbox.ORA"),style = "overflow-y:scroll;  max-height: 350px;")                                                                                                            )
+                                                                                                           tabPanel("Summary", value = "ORAsummaryTab",
+                                                                                                                    div(verbatimTextOutput("txtbox.ORA"),style = "overflow-y:scroll;  max-height: 350px;")                                                                                                            )
 
                                                                                                ),hr(style="border-top: 1px dashed #B5C7DA;")),
                                                                                         column(12, id = "ORAoutput",
-                                                                                             tabsetPanel(id = "ORAoutputT",
-                                                                                                          tabPanel("Output table", value = "ORAoutputTab",br(),
-                                                                                                                   div(DT::dataTableOutput('INtableORA'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 900px; position:relative;"),br()
-                                                                                                          )
-                                                                                             )
+                                                                                               tabsetPanel(id = "ORAoutputT",
+                                                                                                           tabPanel("Output table", value = "ORAoutputTab",br(),
+                                                                                                                    div(DT::dataTableOutput('INtableORA'), style = "overflow-y:scroll; overflow-x:scroll;max-height: 900px; position:relative;"),br()
+                                                                                                           )
+                                                                                               )
                                                                                         ))
                                                                             )
                                                                      )))

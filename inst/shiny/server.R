@@ -541,15 +541,29 @@ server = function(input, output, session) {
   })
 
   ##option in impute missing value page#####
+  shinyjs::hide("misLOD")
   observe({
     shinyjs::hide("remPercent")
     req(input$reall)
     if (input$reall == FALSE){
       observeEvent(input$reall,{shinyjs::show("remPercent")
-        shinyjs::show("missCheck")} )}
+        shinyjs::show("missCheck")
+        if (input$missCheck == 'lod'){
+          shinyjs::show("misLOD")}
+        }
+)}
     if (input$reall == TRUE){
       observeEvent(input$reall,{shinyjs::hide("remPercent")
-        shinyjs::hide("missCheck")} )}
+        shinyjs::hide("missCheck")
+        shinyjs::hide("misLOD")} )}
+  })
+
+  observe({
+    req(metboshow$metbo_input)
+    if (input$missCheck == 'lod'){
+      shinyjs::show("misLOD")
+      updateNumericInput(session, "misLOD", value = min(metboshow$metbo_input$X, na.rm = T))
+                   }else{shinyjs::hide("misLOD")}
   })
 
   ##IS and QC page  page options######
@@ -658,6 +672,7 @@ server = function(input, output, session) {
 
   })
 
+
   output$txtbox <- renderPrint({
     if(is.null(metbo.input()) || is.null(metboshow$metbo_input)){ cat("")}
   })
@@ -674,7 +689,7 @@ server = function(input, output, session) {
     })
   })
 
-  #run impute missing value#####
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                #run impute missing value#####
   # hide("MIoutput")
   shinyjs::hide("next2")
   shinyjs::hide("MIsummary")
@@ -691,6 +706,8 @@ server = function(input, output, session) {
     shinyjs::hide("nextS_M3")
     shinyjs::hide("nextS_M4")
     shinyjs::hide("nextB_M")
+    shinyjs::show("MIplotTab")
+
     output$txtbox.QCnorm <- renderPrint({cat("")})
     if(!is.null(metboshow$metbo_norm)){metboshow$metbo_norm <- NULL}
     if(!is.null(metboshow$metbo_tran)){metboshow$metbo_tran <- NULL}
@@ -707,7 +724,13 @@ server = function(input, output, session) {
       }
 
       shinybusy::show_modal_spinner(color = "#3CB371", text = "Computing ...")
-      metboshow$metbo_missing <- impute_missing_data(metboshow$metbo_input, method = input$missCheck, removeall=input$reall, cutoff=input$remPercent )
+      if (input$missCheck == 'lod'){
+        metboshow$metbo_missing <- impute_missing_data(metboshow$metbo_input, method = input$missCheck, lod=input$misLOD ,removeall=input$reall, cutoff=input$remPercent )
+      }else{
+        metboshow$metbo_missing <- impute_missing_data(metboshow$metbo_input, method = input$missCheck, removeall=input$reall, cutoff=input$remPercent )
+      }
+      metboshow$metbo_missingBF <- impute_missing_data(metboshow$metbo_input, method = "zero")
+
       # shinyjs::hide("txtbox.QCnorm")
       output$txtbox.missing <- renderPrint({
         if(is.null(metboshow$metbo_missing)) { cat("")}
@@ -724,19 +747,141 @@ server = function(input, output, session) {
 
   })
 
+
+  shinyjs::hide("rev_mi")
   observe({
+    shinyjs::show("deleteC_mi")
     if(!is.null(metboshow$metbo_missing)){
-      output$INtable3 <- DT::renderDataTable({ as.data.frame(metboshow$metbo_missing$X) })
+      #output$INtable3 <- DT::renderDataTable({ as.data.frame(metboshow$metbo_missing$X) })
+      output$INtable3 <- DT::renderDataTable({
+        datatable(metboshow$metbo_missing$X, selection = list(target = "column"))
+      })
+      output$plotMIoverOri <- renderPlotly({
+        p_isO <- ggplotly(pcaplot_overview(metboshow$metbo_missingBF,scale=FALSE, plot_title="Before imputation (Pre-impute with zeros)", legend_title=""), source = 'pca_miO')
+        p_isO %>%
+          layout(dragmode = "select") %>%
+          event_register("plotly_selected")
+      })
+
+      output$txtbox.MIoverOri <- renderPrint({
+        if(!is.null(event_data("plotly_selected", source = 'pca_miO'))){
+          event_data("plotly_selected", source = 'pca_miO')
+        }
+      })
+
+      #output$plotQCboxOri <- renderPlotly({ggplotly(boxplot_overview(metboshow$keepValueN$X[,1:ncol(metboshow$keepValueN$X)<=50]))})
+      output$plotMIboxOriS <- renderPlot({rlaplot_overview(metboshow$metbo_missingBF, limitx = TRUE, dolog = TRUE, plot_title="Before imputation (Pre-impute with zeros)", legend_title="")})
+      output$plotMIdenOri <- renderPlot({densityplot_overview(metboshow$metbo_missingBF$X, plot_title="Before imputation densityplot plot (variables)")})
+      output$plotMIdenOriS <- renderPlot({densityplot_overview(metboshow$metbo_missingBF$X, plotvar=FALSE, plot_title="Before imputation densityplot plot (samples)")})
+
+      output$plotMIover <- renderPlotly({
+        isolate({
+          progress <- shiny::Progress$new()
+          on.exit(progress$close())
+          progress$set(message = "Drawing plot ", value = 0)
+          for (i in 1:10) {
+            progress$inc(0.1, detail = "...")
+          }
+          Sys.sleep(1)
+        })
+        p_is <- ggplotly(pcaplot_overview(metboshow$metbo_missing,scale=FALSE, plot_title="After imputation", legend_title=""), source = 'pca_mi')
+        p_is %>%
+          layout(dragmode = "select") %>%
+          event_register("plotly_selected")
+      })
+
+      output$txtbox.MIover <- renderPrint({
+        if(!is.null(event_data("plotly_selected", source = 'pca_mi'))){
+          shinyjs::show("rev_mi")
+          event_data("plotly_selected", source = 'pca_mi')
+        }else{shinyjs::hide("rev_mi")}
+      })
+
+      output$plotMIboxS <- renderPlot({
+        isolate({
+          progress <- shiny::Progress$new()
+          on.exit(progress$close())
+          progress$set(message = "Drawing plot ", value = 0)
+          for (i in 1:10) {
+            progress$inc(0.1, detail = "...")
+          }
+          Sys.sleep(1)
+        })
+        rlaplot_overview(metboshow$metbo_missing, limitx = TRUE, dolog = TRUE, plot_title="After imputation", legend_title="")})
+      output$plotMIden <- renderPlot({
+        isolate({
+          progress <- shiny::Progress$new()
+          on.exit(progress$close())
+          progress$set(message = "Drawing plot ", value = 0)
+          for (i in 1:10) {
+            progress$inc(0.1, detail = "...")
+          }
+          Sys.sleep(1)
+        })
+        densityplot_overview(metboshow$metbo_missing$X, plot_title="After imputation densityplot plot (variables)")})
+      output$plotMIdenS <- renderPlot({densityplot_overview(metboshow$metbo_missing$X, plotvar=FALSE, plot_title="After imputation densityplot plot (samples)")})
+
     }else{
       output$txtbox.missing <-  renderPrint({cat("")})
       shinyjs::hide("MIsummary")
       shinyjs::hide("MIoutput")
       output$INtable3 <- NULL
+      shinyjs::hide("MIplotTab")
+      shinyjs::hide("deleteC_mi")
+      shinyjs::hide("INtable3")
+      output$plotMIoverOri <- renderPlotly({plotly_empty()})
+      output$plotMIboxOri <- renderPlotly({plotly_empty()})
+      output$plotMIdenOri <- renderPlotly({plotly_empty()})
+      output$plotMIdenOriS <- renderPlotly({plotly_empty()})
+      output$plotMIover <- renderPlotly({plotly_empty()})
+      output$plotMIbox <- renderPlotly({plotly_empty()})
+      output$plotMIden <- renderPlotly({plotly_empty()})
+      output$plotMIdenS <- renderPlotly({plotly_empty()})
+    }
+
+  })
+
+  observeEvent(input$rev_mi,{
+
+    if (!is.null(event_data("plotly_selected", source = 'pca_mi'))){
+      row_rem_MI <- as.numeric(which(metboshow$metbo_missing$orgID %in% event_data("plotly_selected", source = 'pca_mi')$key))
+      if (length(row_rem_MI) != 0){
+
+        metboshow$metbo_missing$ID <- droplevels(metboshow$metbo_missing$ID[-row_rem_MI])
+        metboshow$metbo_missing$orgID <- droplevels(metboshow$metbo_missing$orgID[-row_rem_MI])
+        metboshow$metbo_missing$Y <- droplevels(metboshow$metbo_missing$Y[-row_rem_MI])
+        metboshow$metbo_missing$unikID <- droplevels(metboshow$metbo_missing$unikID[-row_rem_MI])
+        metboshow$metbo_missing$unik <- metboshow$metbo_missing$unik[-row_rem_MI]
+        metboshow$metbo_missing$inputdata <- metboshow$metbo_missing$inputdata[-row_rem_MI,]
+        metboshow$metbo_missing$X <- metboshow$metbo_missing$X[-row_rem_MI,]
+        # metboshow$metbo_miss <- as.data.frame(cbind(metboshow$metbo_missing$inputdata[,1:metboshow$firstV-1],metboshow$metbo_missing$X))
+        # metboshow$metbo_missing <- set_input_obj( metboshow$metbo_miss,metboshow$idcol,metboshow$classS,
+        #                                           metboshow$firstV)
+
+        output$txtbox.missing <- renderPrint({
+          cat("Removed sample ID:",event_data("plotly_selected", source = 'pca_mi')$key, "\n")
+        })
+      }else{
+        output$txtbox.missing <-  renderPrint({
+          cat("Select value(s) to remove", "\n")
+        })
+        return(NULL)}
+    }else{
+      output$txtbox.missing <-  renderPrint({
+        cat("Select value(s) to remove", "\n")
+      })
+      return(NULL)}
+  })
+
+  observeEvent(input$deleteC_mi,{
+    if (!is.null(input$INtable3_columns_selected)) {
+      metboshow$metbo_missing$X <- metboshow$metbo_missing$X[,-as.numeric(input$INtable3_columns_selected)]
     }
   })
 
   #set current value for is-qc normalization
   observe({
+
     if (is.null(metboshow$metbo_missing)){metboshow$keepValueN <- metboshow$metbo_input}
     if (!is.null(metboshow$metbo_missing)){metboshow$keepValueN <- metboshow$metbo_missing}
   })
@@ -970,31 +1115,31 @@ server = function(input, output, session) {
       row_rem_is <- as.numeric(which(metboshow$metbo_QCnorm$orgID %in% event_data("plotly_selected", source = 'pca_is')$key))
       if (length(row_rem_is) != 0){
 
-        metboshow$metbo_QCnorm$orgID <- metboshow$metbo_QCnorm$orgID[-row_rem_is]
-        metboshow$metbo_QCnorm$ID <- metboshow$metbo_QCnorm$ID[-row_rem_is]
-        metboshow$metbo_QCnorm$Y <- metboshow$metbo_QCnorm$Y[-row_rem_is]
-        rm_unikID_IS <- which(metboshow$metbo_QCnorm$unikID %in% unique(row_rem_is))
-        metboshow$metbo_QCnorm$unikID <- metboshow$metbo_QCnorm$unikID[-rm_unikID_IS]
+        metboshow$metbo_QCnorm$orgID <-droplevels(metboshow$metbo_QCnorm$orgID[-row_rem_is])
+        metboshow$metbo_QCnorm$ID <- droplevels(metboshow$metbo_QCnorm$ID[-row_rem_is])
+        metboshow$metbo_QCnorm$Y <- droplevels(metboshow$metbo_QCnorm$Y[-row_rem_is])
+        metboshow$metbo_QCnorm$unikID <- droplevels(metboshow$metbo_QCnorm$unikID[-row_rem_is])
         metboshow$metbo_QCnorm$unik <- metboshow$metbo_QCnorm$unik[-row_rem_is]
         metboshow$metbo_QCnorm$X <- metboshow$metbo_QCnorm$X[-row_rem_is,]
         metboshow$metbo_QCnorm$inputdata <- metboshow$metbo_QCnorm$inputdata[-row_rem_is,]
+
 
         output$txtbox.QCnorm <- renderPrint({
           cat("Removed sample ID:",event_data("plotly_selected", source = 'pca_is')$key, "\n")
         })
       }else{
         output$txtbox.QCnorm <-  renderPrint({
-          cat("Please select value to remove", "\n")
+          cat("Select value(s) to remove", "\n")
         })
         return(NULL)}
     }else{
       output$txtbox.QCnorm <-  renderPrint({
-        cat("Please select value to remove", "\n")
+        cat("Select value(s) to remove", "\n")
       })
       return(NULL)}
   })
 
-  #set current value for data preprocessing
+  #set values for data preprocessing
   observe({
     if (is.null(metboshow$metbo_missing)){metboshow$keepValueDP <- metboshow$metbo_input}
     if (!is.null(metboshow$metbo_missing)){metboshow$keepValueDP <- metboshow$metbo_missing}
@@ -1258,26 +1403,29 @@ server = function(input, output, session) {
       row_rem_N <- as.numeric(which(metboshow$keepValueMP$orgID %in% event_data("plotly_selected", source = 'pca_N')$key))
       if (length(row_rem_N) != 0){
 
-        metboshow$keepValueMP$ID <- metboshow$keepValueMP$ID[-row_rem_N]
-        metboshow$keepValueMP$orgID <- metboshow$keepValueMP$orgID[-row_rem_N]
-        metboshow$keepValueMP$Y <- metboshow$keepValueMP$Y[-row_rem_N]
-        rm_unikID_N <- which(metboshow$keepValueMP$unikID %in% unique(row_rem_N))
-        metboshow$keepValueMP$unikID <- metboshow$keepValueMP$unikID[-rm_unikID_N]
+        metboshow$keepValueMP$ID <- droplevels(metboshow$keepValueMP$ID[-row_rem_N])
+        metboshow$keepValueMP$orgID <- droplevels(metboshow$keepValueMP$orgID[-row_rem_N])
+        metboshow$keepValueMP$Y <- droplevels(metboshow$keepValueMP$Y[-row_rem_N])
+        metboshow$keepValueMP$unikID <- droplevels(metboshow$keepValueMP$unikID[-row_rem_N])
         metboshow$keepValueMP$unik <- metboshow$keepValueMP$unik[-row_rem_N]
         metboshow$keepValueMP$inputdata <- metboshow$keepValueMP$inputdata[-row_rem_N,]
         metboshow$keepValueMP$X <- metboshow$keepValueMP$X[-row_rem_N,]
+        # metboshow$keepValueMP_set <- as.data.frame(cbind(metboshow$keepValueMP$inputdata[,1:metboshow$firstV-1],metboshow$keepValueMP$X))
+        # metboshow$keepValueMP <- set_input_obj( metboshow$keepValueMP_set,metboshow$idcol,metboshow$classS,
+        #                                          metboshow$firstV)
+
 
         output$txtbox.DATnorm <- renderPrint({
           cat("Removed sample ID:",event_data("plotly_selected", source = 'pca_N')$key, "\n")
         })
       }else{
         output$txtbox.DATnorm <-  renderPrint({
-          cat("Please select value to remove", "\n")
+          cat("Select value(s) to remove", "\n")
         })
         return(NULL)}
     }else{
       output$txtbox.DATnorm <-  renderPrint({
-        cat("Please select value to remove", "\n")
+        cat("Select value(s) to remove", "\n")
       })
       return(NULL)}
   })
@@ -1292,6 +1440,7 @@ server = function(input, output, session) {
                                                                                                  colnames(metboshow$keepValueM$inputdata[1:metboshow$firstV-1]) != input$classS
                       )]
                       )))
+
   })
 
   observe({
@@ -1329,13 +1478,15 @@ server = function(input, output, session) {
 
     if(!is.null(metboshow$keepValueM)){
       metboshow$metbo_uni = tryCatch({
+
         univ_analyze(metboshow$keepValueM, var.equal = metboshow$var.equal, ispara = metboshow$ispara, doposthoc = metboshow$doposthoc, factor2Col = metboshow$factor2Col)
+
+
       }
       ,error=function(e){
         shinybusy::remove_modal_spinner()
         message(e)
-
-        #   # return(NULL)
+        return(NULL)
         # showNotification("Error:",e$message,type = "error")
         #   # return(NULL)
       }
@@ -1526,11 +1677,14 @@ server = function(input, output, session) {
                                       pcx=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol1],pcy=metboshow$metbo_multi$model_summary$R2X[metboshow$MULScoreCol2], plot_title="Score plot", legend_title=""))
           })
           output$plotLoadMUL <- renderPlotly({#loading
+
+            isolate(
             if(input$multiM == "pca"){#pca
               ggplotly(multiv_loadingplot(cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="Loading plot"))
             }else{#pls
               ggplotly(multiv_viploadingplot(vip_data=metboshow$metbo_multi$vip_val, loading_data=cbind(PCX=metboshow$metbo_multi$loading_val[,input$MULScorePC1],PCY=metboshow$metbo_multi$loading_val[,input$MULScorePC2]), plot_title="VIP and loading plot"))
             }
+            )
           })
           if(input$multiM == "pca"){#vip pca
             output$plotvipMUL <- renderPlotly({ggplotly(ggplot()+ggtitle("VIP wasn't calculated for PCA, showing no plot."))})
@@ -3080,15 +3234,169 @@ server = function(input, output, session) {
   hideTab(inputId = "MIoutputT_m", target = "MBPLdatS5_m")
 
   ##option in impute missing value page#####
+  shinyjs::hide("misLOD_m1")
+  shinyjs::hide("misLOD_m2")
+  shinyjs::hide("misLOD_m3")
+  shinyjs::hide("misLOD_m4")
+  shinyjs::hide("misLOD_m5")
   observe({
     shinyjs::hide("remPercent_m")
     req(input$reall_m)
     if (input$reall_m == FALSE){
       observeEvent(input$reall_m,{shinyjs::show("remPercent_m")
-        shinyjs::show("missCheck_m")} )}
+        shinyjs::show("missCheck_m")
+        if (input$missCheck_m == 'lod'){
+          if(input$MBPLdmun == 2){
+            shinyjs::show("misLOD_m1")
+            shinyjs::show("misLOD_m2")
+          }
+          if(input$MBPLdmun == 3){
+            shinyjs::show("misLOD_m1")
+            shinyjs::show("misLOD_m2")
+            shinyjs::show("misLOD_m3")
+          }
+          if(input$MBPLdmun == 4){
+            shinyjs::show("misLOD_m1")
+            shinyjs::show("misLOD_m2")
+            shinyjs::show("misLOD_m3")
+            shinyjs::show("misLOD_m4")
+
+          }
+          if(input$MBPLdmun == 5){
+            shinyjs::show("misLOD_m1")
+            shinyjs::show("misLOD_m2")
+            shinyjs::show("misLOD_m3")
+            shinyjs::show("misLOD_m4")
+            shinyjs::show("misLOD_m5")
+          }
+        }
+      } )}
+
     if (input$reall_m == TRUE){
       observeEvent(input$reall_m,{shinyjs::hide("remPercent_m")
-        shinyjs::hide("missCheck_m")} )}
+        shinyjs::hide("missCheck_m")
+        if (input$missCheck_m == 'lod'){
+          if(input$MBPLdmun == 2){
+            shinyjs::hide("misLOD_m1")
+            shinyjs::hide("misLOD_m2")
+          }
+          if(input$MBPLdmun == 3){
+            shinyjs::hide("misLOD_m1")
+            shinyjs::hide("misLOD_m2")
+            shinyjs::hide("misLOD_m3")
+          }
+          if(input$MBPLdmun == 4){
+            shinyjs::hide("misLOD_m1")
+            shinyjs::hide("misLOD_m2")
+            shinyjs::hide("misLOD_m3")
+            shinyjs::hide("misLOD_m4")
+
+          }
+          if(input$MBPLdmun == 5){
+            shinyjs::hide("misLOD_m1")
+            shinyjs::hide("misLOD_m2")
+            shinyjs::hide("misLOD_m3")
+            shinyjs::hide("misLOD_m4")
+            shinyjs::hide("misLOD_m5")
+          }
+        }
+      } )}
+
+  })
+
+  observe({
+    if(input$MBPLdmun == 2){
+      req(metboshow$metbo_data_mbpl1)
+      req(metboshow$metbo_data_mbpl2)
+      if (input$missCheck_m == 'lod'){
+        shinyjs::show("misLOD_m1")
+        shinyjs::show("misLOD_m2")
+        updateNumericInput(session, "misLOD_m1", value = min(metboshow$metbo_data_mbpl1$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m2", value = min(metboshow$metbo_data_mbpl2$X, na.rm = T))
+      }else{
+        shinyjs::hide("misLOD_m1")
+        shinyjs::hide("misLOD_m2")
+      }
+    }
+
+    if(input$MBPLdmun == 3){
+      req(metboshow$metbo_data_mbpl1)
+      req(metboshow$metbo_data_mbpl2)
+      req(metboshow$metbo_data_mbpl3)
+
+      if (input$missCheck_m == 'lod'){
+        shinyjs::show("misLOD_m1")
+        shinyjs::show("misLOD_m2")
+        shinyjs::show("misLOD_m3")
+
+        updateNumericInput(session, "misLOD_m1", value = min(metboshow$metbo_data_mbpl1$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m2", value = min(metboshow$metbo_data_mbpl2$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m3", value = min(metboshow$metbo_data_mbpl3$X, na.rm = T))
+
+      }else{
+        shinyjs::hide("misLOD_m1")
+        shinyjs::hide("misLOD_m2")
+        shinyjs::hide("misLOD_m3")
+
+      }
+    }
+
+    if(input$MBPLdmun == 4){
+      req(metboshow$metbo_data_mbpl1)
+      req(metboshow$metbo_data_mbpl2)
+      req(metboshow$metbo_data_mbpl3)
+      req(metboshow$metbo_data_mbpl4)
+
+      if (input$missCheck_m == 'lod'){
+        shinyjs::show("misLOD_m1")
+        shinyjs::show("misLOD_m2")
+        shinyjs::show("misLOD_m3")
+        shinyjs::show("misLOD_m4")
+
+        updateNumericInput(session, "misLOD_m1", value = min(metboshow$metbo_data_mbpl1$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m2", value = min(metboshow$metbo_data_mbpl2$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m3", value = min(metboshow$metbo_data_mbpl3$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m4", value = min(metboshow$metbo_data_mbpl4$X, na.rm = T))
+
+      }else{
+        shinyjs::hide("misLOD_m1")
+        shinyjs::hide("misLOD_m2")
+        shinyjs::hide("misLOD_m3")
+        shinyjs::hide("misLOD_m4")
+
+      }
+    }
+
+    if(input$MBPLdmun == 5){
+      req(metboshow$metbo_data_mbpl1)
+      req(metboshow$metbo_data_mbpl2)
+      req(metboshow$metbo_data_mbpl3)
+      req(metboshow$metbo_data_mbpl4)
+      req(metboshow$metbo_data_mbpl5)
+
+      if (input$missCheck_m == 'lod'){
+        shinyjs::show("misLOD_m1")
+        shinyjs::show("misLOD_m2")
+        shinyjs::show("misLOD_m3")
+        shinyjs::show("misLOD_m4")
+        shinyjs::show("misLOD_m5")
+
+        updateNumericInput(session, "misLOD_m1", value = min(metboshow$metbo_data_mbpl1$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m2", value = min(metboshow$metbo_data_mbpl2$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m3", value = min(metboshow$metbo_data_mbpl3$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m4", value = min(metboshow$metbo_data_mbpl4$X, na.rm = T))
+        updateNumericInput(session, "misLOD_m5", value = min(metboshow$metbo_data_mbpl5$X, na.rm = T))
+
+      }else{
+        shinyjs::hide("misLOD_m1")
+        shinyjs::hide("misLOD_m2")
+        shinyjs::hide("misLOD_m3")
+        shinyjs::hide("misLOD_m4")
+        shinyjs::hide("misLOD_m5")
+
+      }
+    }
+
   })
 
   observeEvent(input$run_m, {
@@ -3108,40 +3416,55 @@ server = function(input, output, session) {
         if(!is.null(metboshow$metbo_data_mbpl1)){
           if(sum(is.na(metboshow$metbo_data_mbpl1$X)) > 0){
             cat("\nImpute missing values in data set 1:\n")
-            metboshow$metbo_data_mbpl1_m <- impute_missing_data(metboshow$metbo_data_mbpl1, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
-            # shinyjs::hide("txtbox.QCnorm")
+            if (input$missCheck_m == 'lod'){
+              metboshow$metbo_data_mbpl1_m <- impute_missing_data(metboshow$metbo_data_mbpl1, method = input$missCheck_m,lod=input$misLOD_m1, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }else{
+              metboshow$metbo_data_mbpl1_m <- impute_missing_data(metboshow$metbo_data_mbpl1, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl2)){
           if(sum(is.na(metboshow$metbo_data_mbpl2$X)) > 0){
             cat("\nImpute missing values in data set 2:\n")
-            metboshow$metbo_data_mbpl2_m <- impute_missing_data(metboshow$metbo_data_mbpl2, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
-            # shinyjs::hide("txtbox.QCnorm")
+            if (input$missCheck_m == 'lod'){
+              metboshow$metbo_data_mbpl2_m <- impute_missing_data(metboshow$metbo_data_mbpl2, method = input$missCheck_m,lod=input$misLOD_m2, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }else{
+              metboshow$metbo_data_mbpl2_m <- impute_missing_data(metboshow$metbo_data_mbpl2, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl3)){
           if(sum(is.na(metboshow$metbo_data_mbpl3$X)) > 0){
             cat("\nImpute missing values in data set 3:\n")
-            metboshow$metbo_data_mbpl3_m <- impute_missing_data(metboshow$metbo_data_mbpl3, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
-            # shinyjs::hide("txtbox.QCnorm")
+            if (input$missCheck_m == 'lod'){
+              metboshow$metbo_data_mbpl3_m <- impute_missing_data(metboshow$metbo_data_mbpl3, method = input$missCheck_m,lod=input$misLOD_m3, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }else{
+              metboshow$metbo_data_mbpl3_m <- impute_missing_data(metboshow$metbo_data_mbpl3, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl4)){
           if(sum(is.na(metboshow$metbo_data_mbpl4$X)) > 0){
             cat("\nImpute missing values in data set 4:\n")
-            metboshow$metbo_data_mbpl4_m <- impute_missing_data(metboshow$metbo_data_mbpl4, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
-            # shinyjs::hide("txtbox.QCnorm")
+            if (input$missCheck_m == 'lod'){
+              metboshow$metbo_data_mbpl4_m <- impute_missing_data(metboshow$metbo_data_mbpl4, method = input$missCheck_m,lod=input$misLOD_m4, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }else{
+              metboshow$metbo_data_mbpl4_m <- impute_missing_data(metboshow$metbo_data_mbpl4, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }
           }
         }
 
         if(!is.null(metboshow$metbo_data_mbpl5)){
           if(sum(is.na(metboshow$metbo_data_mbpl5$X)) > 0){
             cat("\nImpute missing values in data set 5:\n")
-            metboshow$metbo_data_mbpl5_m <- impute_missing_data(metboshow$metbo_data_mbpl5, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
-            # shinyjs::hide("txtbox.QCnorm")
+            if (input$missCheck_m == 'lod'){
+              metboshow$metbo_data_mbpl5_m <- impute_missing_data(metboshow$metbo_data_mbpl5, method = input$missCheck_m,lod=input$misLOD_m5, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }else{
+              metboshow$metbo_data_mbpl5_m <- impute_missing_data(metboshow$metbo_data_mbpl5, method = input$missCheck_m, removeall=input$reall_m, cutoff=input$remPercent_m )
+            }
           }
         }
         shinybusy::remove_modal_spinner()
@@ -3693,7 +4016,20 @@ server = function(input, output, session) {
     if(!is.null(metboshow$metbo_missing)){
       generate_report(metboshow$metbo_missing,reportfile="impute_data_report")
       write.csv(cbind(metboshow$metbo_missing$inputdata[,1:metboshow$firstV-1],metboshow$metbo_missing$X),"imputed_output_table.csv",row.names = F)
-      files <- c("impute_data_report.pdf","imputed_output_table.csv")
+      dt_plot = list();
+      dt_plot[['pca1']] = pcaplot_overview(metboshow$metbo_missingBF, scale=FALSE, plot_title="Before imputation (Pre-impute with zeros)", legend_title="",ptsize = 4)
+      dt_plot[['pca2']] = pcaplot_overview(metboshow$metbo_missing,scale=FALSE, plot_title="After imputation", legend_title="",ptsize = 4)
+      dt_plot[['rla1']] = rlaplot_overview(metboshow$metbo_missingBF, limitx = TRUE, dolog = TRUE, plot_title="Before imputation (Pre-impute with zeros)", legend_title="")
+      dt_plot[['rla2']] = rlaplot_overview(metboshow$metbo_missing, limitx = TRUE, dolog = TRUE, plot_title="After imputation", legend_title="")
+      # dt_plot[['box1']] = boxplot_overview(metboshow$keepValueN, plot_title="Before processing")
+      # dt_plot[['box2']] = boxplot_overview(metboshow$metbo_QCnorm, plot_title="After processing")
+      dt_plot[['dens1']] = densityplot_overview(metboshow$metbo_missingBF$X, plot_title="Before imputation (variables)")
+      dt_plot[['dens2']] = densityplot_overview(metboshow$metbo_missing$X, plot_title="After imputation (variables)")
+      dt_plot[['dens_samp1']] = densityplot_overview(metboshow$metbo_missingBF$X, plotvar=FALSE, plot_title="Before imputation (samples)")
+      dt_plot[['dens_samp2']] = densityplot_overview(metboshow$metbo_missing$X, plotvar=FALSE, plot_title="After imputation (samples)")
+      ggsave("imputation_output_figure.pdf",
+             marrangeGrob(grobs = dt_plot, nrow=1, ncol=2, as.table=TRUE), dpi = 600, units = "in", width = 16, height = 8, device = "pdf")
+      files <- c("impute_data_report.pdf","imputed_output_table.csv","imputation_output_figure.pdf")
       return(files)
     }else(return(NULL))
   }
@@ -4210,6 +4546,6 @@ server = function(input, output, session) {
   onStop(function() {
     #metboshow <- NULL
     unlink(tempdir, recursive = TRUE)
-    #stopApp()
+    stopApp()
   })
 }
