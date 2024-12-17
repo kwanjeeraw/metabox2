@@ -457,6 +457,50 @@ boxplot_byF1F2 <- function(METBObj, xCol=1, factorLv1, factorLv2){
           axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
+#'Combined statistics plot
+#'@description Provide plot of outputs from 2 statistical analyses.
+#'@usage combine_statplot(x_data, y_data, x_cutoff=0, y_cutoff=0, ptsize=3, plot_title="")
+#'@param x_data a numerical vector or a data frame of statistical values from x analysis, see details.
+#'@param y_data a numerical vector or a data frame of statistical values from y analysis, see details.
+#'@param x_cutoff text indicating plot title.
+#'@param y_cutoff text indicating plot title.
+#'@param ptsize a number of geom_point size.
+#'@param plot_title text indicating plot title.
+#'@details A plot of outputs from two statistical analyses will generate.
+#'A numerical vector or a one-column data frame of statistical values (e.g. p-values or VIP)
+#'from each statistical analysis (e.g. t-test or PLS-DA) is needed for x_data and y_data.
+#'Significance of a variable is denoted by its statistical value less than x_cutoff or more than y_cutoff.
+#'@return ggplot object.
+#'@examples
+#'#sugar_dt = set_input_obj(sugar, 1,2,5)
+#'#uout=univ_analyze(sugar_dt)
+#'#mout=multiv_analyze(sugar_dt, method="pls", scale="pareto")
+#'#combine_statplot(uout$p_adj,mout$vip_val,x_cutoff = 0.05,y_cutoff = 1)
+#'@import ggplot2
+#'@export
+combine_statplot <- function(x_data, y_data, x_cutoff=0, y_cutoff=0, ptsize=3, plot_title=""){
+  if(!is.data.frame(x_data)){
+    x_data = data.frame(x_data)
+  }
+  if(!is.data.frame(y_data)){
+    y_data = data.frame(y_data)
+  }
+  plotdata = merge(x_data, y_data, by = "row.names")
+  colnames(plotdata) = c("Variable","x_stat","y_stat")
+  plotdata$x_sum = unlist(lapply(plotdata$x_stat, FUN = function(x){x < x_cutoff}))
+  plotdata$y_sum = unlist(lapply(plotdata$y_stat, FUN = function(x){x > y_cutoff}))
+  plotdata$stat_sum = factor(paste0(plotdata$x_sum,"_",plotdata$y_sum),
+                             levels = c("TRUE_TRUE", "TRUE_FALSE", "FALSE_TRUE","FALSE_FALSE"))
+  ggplot(plotdata, aes(x_stat, y_stat, label=Variable, color=stat_sum, group = stat_sum)) + geom_point(alpha=0.5, size=ptsize) +
+    geom_hline(yintercept=y_cutoff, linetype=5, colour="#3F3A65", alpha=0.7) +
+    geom_vline(xintercept = x_cutoff, linetype=5, colour="#3F3A65", alpha=0.7) +
+    scale_color_manual(name = "",
+                       values = c("TRUE_TRUE"="#FF003A", "TRUE_FALSE"="#004DDF", "FALSE_TRUE"="#00BF15","FALSE_FALSE"="#464A44"),
+                       label = c("Both","Only < x_cutoff","Only > y_cutoff","None")) +
+    theme_bw() + ggtitle(plot_title) + labs(x = "x statistics", y = "y statistics") +
+    theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10))
+}
+
 #'Correlation heatmap
 #'@description Provide correlation heatmap.
 #'@usage corrplot_heatmap(corr_data, plot_title="")

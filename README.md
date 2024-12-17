@@ -68,6 +68,9 @@ We provide the following servers for the online version
 
 Updates
 =========
+#### version 2.11 (DEC 2024)
+* New combine_statplot function for command version
+* Fix bugs for impute missing values in GUI version
 #### version 2.10 (NOV 2024)
 * New multiv_viploadingplot function
 * New scoreplot with shape for command version
