@@ -3,8 +3,13 @@ Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and i
 
 ![demo](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/first_pipeline.png)
 
-Install as an R package
-=======================
+How to use
+==========
+* [Install as a standard R package](#install-as-a-standard-r-package)
+* [Use GUI version from Docker](#build-a-docker-image-and-deploy)
+* [Use an online version](#use-an-online-version)
+
+### Install as an R package
 * Install R package metabox2 and required packages using the following commands for R 4.4.1:
 ```
 ##Install R dependencies ##
@@ -42,9 +47,7 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 ##(Optional) Use graphical user interface ##
 launch_gui()
 ```
-
-Build a Docker image and deploy
-===============================
+### Build a Docker image and deploy
 * To use metabox2 GUI version from Docker:
 1) Download and install Docker
 2) Download a Dockerfile from [here](https://github.com/kwanjeeraw/metabox2/blob/main/Dockerfile)
@@ -54,8 +57,7 @@ cd [go to Dockerfile location]
 docker build --no-cache=true --platform linux/x86_64 -t metaboxweb .
 docker run --name mbdocker -p 8081:3838 metaboxweb
 ```
-Use the online version
-========================
+### Use an online version
 We provide the following servers for the online version
 
 * [server1](http://metabox.metsysbio.com:3838/metaboxweb/)
@@ -67,7 +69,7 @@ We provide the following servers for the online version
 *Note: An online version is in high demand. Users might experience slow page loading. Currently, we are expanding our server and creating a portable docker image.*
 
 Updates
-=========
+=======
 #### version 2.11 (DEC 2024)
 * New combine_statplot function for command version
 * Fix bugs for impute missing values in GUI version
