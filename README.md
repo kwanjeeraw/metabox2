@@ -66,7 +66,7 @@ docker run --name mbdocker -p 8081:3838 metaboxweb
 * [server4](http://metabox.metsysbio.com:3838/metaboxweb4/)
 * [server5](http://metabox.metsysbio.com:3838/metaboxweb5/)
 
-*Note: An online version is in high demand. Users might experience slow page loading. Currently, we are expanding our server and creating a portable docker image.*
+*Note: An online version is in high demand. Users may experience slow page loading.*
 
 Updates
 =======
