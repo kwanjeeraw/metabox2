@@ -50,10 +50,9 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 launch_gui()
 ```
 ### Use GUI version from Docker
-* Use metabox2 GUI version from Docker:
-1) Download and install [Docker](https://www.docker.com/)
-2) Download a Dockerfile from [here](https://github.com/kwanjeeraw/metabox2/blob/main/Dockerfile)
-3) Build and deploy metaboxweb Docker using the following commands:
+* Download and install [Docker](https://www.docker.com/)
+* Download a Dockerfile from [here](https://github.com/kwanjeeraw/metabox2/blob/main/Dockerfile)
+* Build and deploy metaboxweb Docker using the following commands:
 ```
 cd [go to Dockerfile location]
 docker build --no-cache=true --platform linux/x86_64 -t metaboxweb .
