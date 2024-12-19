@@ -9,7 +9,7 @@ How to use
 * [Use GUI version from Docker](#build-a-docker-image-and-deploy)
 * [Use an online version](#use-an-online-version)
 
-### Install as an R package
+### Install as a standard R package
 * Install R package metabox2 and required packages using the following commands for R 4.4.1:
 ```
 ##Install R dependencies ##
