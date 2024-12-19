@@ -127,13 +127,13 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                      "Minimum" = "min",
                                                                                                                      "Mean" = "mean",
                                                                                                                      "Median" = "median",
-                                                                                                                     "KNN" = "knn",
                                                                                                                      "BPCA" = "bpca",
                                                                                                                      "PPCA" = "ppca",
                                                                                                                      "SVD" = "svd",
+                                                                                                                     "KNN" = "knn",
                                                                                                                      "RF" = "rf",
-                                                                                                                     "LOD (Provide a number for imputation. **The default is set to the lowest value.)" = "lod"
-                                                                                                      ),selected = 'median'),
+                                                                                                                     "LOD (Specify a number for imputation. **Default is the lowest value.)" = "lod"
+                                                                                                      ),selected = 'rf'),
                                                                                          numericInput("misLOD", label=NULL, min = 0, value = 0, width = 300),
                                                                                          br(),
                                                                                          actionButton("run1", "Run", class = "btn btn-primary"),
@@ -921,8 +921,8 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                                     "SVD" = "svd",
                                                                                                                     "KNN" = "knn",
                                                                                                                     "RF" = "rf",
-                                                                                                                    "LOD (Provide a number for imputation. **The default is set to the lowest value.)" = "lod"
-                                                                                                     ),selected = 'median'),
+                                                                                                                    "LOD (Specify a number for imputation. **Default is the lowest value.)" = "lod"
+                                                                                                     ),selected = 'rf'),
                                                                                         numericInput("misLOD_m1", h5("Data set 1"), min = 0, value = 0, width = 300),
                                                                                         numericInput("misLOD_m2", h5("Data set 2"), min = 0, value = 0, width = 300),
                                                                                         numericInput("misLOD_m3", h5("Data set 3"), min = 0, value = 0, width = 300),
