@@ -7,8 +7,8 @@ How to use
 ==========
 Here are some alternative ways to use Metabox 2.0:
 * [Install as a standard R package](#install-as-a-standard-r-package)
-* [Use GUI version from Docker](#build-a-docker-image-and-deploy)
-* [Use an online version](#use-an-online-version)
+* [Use GUI version from Docker](#use-gui-version-from-docker)
+* [Use an online version](#use-an-online-version-from-our-servers)
 
 ### Install as a standard R package
 * Download and install [R software](https://www.r-project.org/)
@@ -58,8 +58,7 @@ cd [go to Dockerfile location]
 docker build --no-cache=true --platform linux/x86_64 -t metaboxweb .
 docker run --name mbdocker -p 8081:3838 metaboxweb
 ```
-### Use an online version
-* Use an online version from our servers:
+### Use an online version from our servers
 * [server1](http://metabox.metsysbio.com:8081/metaboxweb/)
 * [server2](http://metabox.metsysbio.com:8082/metaboxweb/)
 * [server3](http://metabox.metsysbio.com:8083/metaboxweb/)
@@ -120,7 +119,7 @@ Updates
 
 References
 =========
-- Wanichthanarak K, In-On A, Fan S, Fiehn O, Wangwiwatsin A, Khoomrung S (2024) Data processing solutions to render metabolomics more quantitative: case studies in food and clinical metabolomics using Metabox 2.0. GigaScience 13(2024): [giae005](https://10.1093/gigascience/giae005)
+- Wanichthanarak K, In-On A, Fan S, Fiehn O, Wangwiwatsin A, Khoomrung S (2024) Data processing solutions to render metabolomics more quantitative: case studies in food and clinical metabolomics using Metabox 2.0. GigaScience 13(2024): [giae005](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giae005/7629842)
 - Wanichthanarak K, Fan S, Grapov D, Barupal DK, Fiehn O (2017) Metabox: A Toolbox for Metabolomic Data Analysis, Interpretation and Integrative Exploration. PLOS ONE 12(1): [e0171046](https://doi.org/10.1371/journal.pone.0171046)
 
 License
