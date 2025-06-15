@@ -64,6 +64,11 @@ docker run --name mbdocker -p 8081:3838 metaboxweb
 * [server3](http://metabox.metsysbio.com:8083/metaboxweb/)
 * [server4](http://metabox.metsysbio.com:8084/metaboxweb/)
 * [server5](http://metabox.metsysbio.com:8085/metaboxweb/)
+* [server6](http://metabox.metsysbio.com:8086/metaboxweb/)
+* [server7](http://metabox.metsysbio.com:8087/metaboxweb/)
+* [server8](http://metabox.metsysbio.com:8088/metaboxweb/)
+* [server9](http://metabox.metsysbio.com:8089/metaboxweb/)
+* [server10](http://metabox.metsysbio.com:8090/metaboxweb/)
 
 *Note: An online version is in high demand. Users may experience slow page loading.*
 
