@@ -130,3 +130,12 @@ References
 License
 =========
 [GNU General Public License (v3)](https://github.com/kwanjeeraw/metabox2/blob/master/LICENSE)
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3RQ3R1YPHH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3RQ3R1YPHH');
+</script>
