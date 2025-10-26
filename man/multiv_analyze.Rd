@@ -17,6 +17,8 @@ mean-centering only ('center') [default], mean-centering and pareto scaling ('pa
 \value{
 a list of the following components:
 
+model = an opls object.
+
 model_summary = a data frame with the model overview.
 
 score_val = a numerical matrix of x scores.

@@ -7,6 +7,8 @@
 #'mean-centering only ('center') [default], mean-centering and pareto scaling ('pareto'), or mean-centering and auto scaling ('standard').
 #'@return a list of the following components:
 #'
+#'model = an opls object.
+#'
 #'model_summary = a data frame with the model overview.
 #'
 #'score_val = a numerical matrix of x scores.
@@ -99,6 +101,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
     })
   }
   if(!is.null(out_data)){
+    multiv_result$model = out_data;
     methodls$testMethod = out_data@typeC; methodls$scale = out_data@suppLs$scaleC; multiv_result$model_summary = out_data@modelDF;
     multiv_result$score_val = out_data@scoreMN; multiv_result$loading_val = out_data@loadingMN;
     multiv_result$oscore_val = out_data@orthoScoreMN; multiv_result$oloading_val = out_data@orthoLoadingMN;
