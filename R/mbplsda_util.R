@@ -15,14 +15,15 @@
 #'#mbplsda_screeplot(out$result$base_model$eig)
 #'@import ggplot2
 #'@export
-mbplsda_screeplot <- function(x_input, plot_title="", ptsize=3) {
+mbplsda_screeplot <- function(x_input, plot_title="", ptsize=4) {
   if(!is.null(x_input)){
     dat = data.frame(pc=seq(length(x_input)), eigen=x_input) #working data
     ggplot(dat, aes(x = pc, y = eigen)) + geom_point(alpha=0.5,size=ptsize) + theme_light() +
       labs(title = plot_title, x = "PC", y = "Eigenvalues", color = "") +
       scale_x_continuous(breaks=dat$pc) +
-      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=10))
+      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12))
   }else{
     ggplot()+labs(title = "Could not compute model,no plot returned")
   }
@@ -46,7 +47,7 @@ mbplsda_screeplot <- function(x_input, plot_title="", ptsize=3) {
 #'#mbplsda_plottestdim(out$result$res_optimal)
 #'@import ggplot2
 #'@export
-mbplsda_plottestdim <- function (x_input, plotvalida=TRUE, ptsize=3){
+mbplsda_plottestdim <- function (x_input, plotvalida=TRUE, ptsize=4){
   if(length(x_input)>0){
     if(plotvalida){#plot validation graph
       ERvM.mean = data.frame(globalERvM=x_input$ErrorRateVglobal.max[x_input$ErrorRateVglobal.max$variable=="global","mean"], stringsAsFactors = TRUE)
@@ -70,11 +71,12 @@ mbplsda_plottestdim <- function (x_input, plotvalida=TRUE, ptsize=3){
     ggplot(dat, aes(x=pc, y=mean_val)) +
       #geom_errorbar(aes(ymin=mean_val-ciinf, ymax=mean_val+cisup), alpha=0.5, width=0.05, position=position_dodge(0.1)) +
       #geom_line(alpha=0.5) +  geom_point(alpha=0.5,size=ptsize) +
-      geom_pointrange(aes(ymin=mean_val-ciinf, ymax=mean_val+cisup), alpha=0.5) +
+      geom_pointrange(aes(ymin=mean_val-ciinf, ymax=mean_val+cisup), alpha=0.6, size=1.5) +
       scale_x_continuous(breaks=dat$pc) +
       labs(title = plot_title, x = "PC", y = "Error rate", color = "") + theme_light() +
-      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=10))
+      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12))
   }else{
     ggplot()+labs(title = "Could not compute model,no plot returned")
   }
@@ -99,7 +101,7 @@ mbplsda_plottestdim <- function (x_input, plotvalida=TRUE, ptsize=3){
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-mbplsda_plotpermut <- function(x_input, plot_title="", ptsize=3){
+mbplsda_plotpermut <- function(x_input, plot_title="", ptsize=4){
   if(length(x_input)>0){
     npermut = nrow(x_input$RV.YYpermut.values)-1
     perm_type = factor(c("No permutation",rep("Permutation", times=npermut)))
@@ -110,8 +112,9 @@ mbplsda_plotpermut <- function(x_input, plot_title="", ptsize=3){
     ggplot(dat, aes(x=mod_val, y=mean_val, color=mod_type)) + geom_point(alpha=0.5,size=ptsize) +
       geom_smooth(method=lm, se=FALSE, formula = y ~ x, fullrange=TRUE, size=0.5) + lims(x= c(0,1), y = c(0,1)) +
       labs(title = plot_title, x = "% Modified values", y = "Mean error rate", color = "") + theme_light() + scale_color_manual(values = grcolors) +
-      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=10))
+      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12))
   }else{
     ggplot()+labs(title = "Could not test model,no plot returned")
   }
@@ -136,7 +139,7 @@ mbplsda_plotpermut <- function(x_input, plot_title="", ptsize=3){
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-mbplsda_plotboot_bipc <- function(x_input, plot_title="", ptsize=3){
+mbplsda_plotboot_bipc <- function(x_input, plot_title="", ptsize=4){
   if(length(x_input)>0){
     dat = x_input$bipc #working data
     if(nrow(dat)>1){#two or more data sets
@@ -151,11 +154,12 @@ mbplsda_plotboot_bipc <- function(x_input, plot_title="", ptsize=3){
       ggplot(dat, aes(x=blocks, y=mean, color=blocks)) +
         #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup, color=blocks), alpha=0.5, width=0.05, position=position_dodge(0.1)) +
         #geom_line(alpha=0.5) + geom_point(aes(color=blocks),alpha=0.5,size=ptsize) +
-        geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=blocks), alpha=0.5) +
+        geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=blocks), alpha=0.6, size=1.5) +
         scale_color_manual(values = grcolors) +
         labs(title = plot_title, x = "Data sets", y = "BIPc", color="") + theme_light() +
-        theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-              axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+        theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+              legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+              axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
     }else{#one data set
       cat("\nThere is only one data set. The plot can't be generated.\n")
       NULL
@@ -203,11 +207,12 @@ mbplsda_plotboot_vipc <- function(x_input, plot_title="", ptsize=3, propbestvar=
     ggplot(vipcBest, aes(x=variables, y=mean, color=block)) +
       #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup), alpha=0.5, width=0.1, position=position_dodge(0.1)) +
       #geom_line(alpha=0.5) +  geom_point(alpha=0.5,size=ptsize) +
-      geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.5) +
+      geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.6, size=1.5) +
       scale_color_manual(values = grcolors) +
       labs(title = plot_title, x = "", y = "VIPc", color = "") + theme_light() +
-      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
   }else{
     ggplot()+labs(title = "Could not compute model,no plot returned")
   }
@@ -234,7 +239,7 @@ mbplsda_plotboot_vipc <- function(x_input, plot_title="", ptsize=3, propbestvar=
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-mbplsda_plotboot_loading <- function(x_input, pc=1, plot_title="", ptsize=3, propbestvar=0.5){
+mbplsda_plotboot_loading <- function(x_input, pc=1, plot_title="", ptsize=4, propbestvar=0.5){
   if(length(x_input)>0){
     #Check argument
     if (length(x_input$faX) < pc){
@@ -256,11 +261,12 @@ mbplsda_plotboot_loading <- function(x_input, pc=1, plot_title="", ptsize=3, pro
     ggplot(faXBest, aes(x=variables, y=mean, color=block)) +
       #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup), alpha=0.5, width=0.1, position=position_dodge(0.1)) +
       #geom_line(alpha=0.5) +  geom_point(alpha=0.5,size=ptsize) +
-      geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.5) +
+      geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.6, size=1.5) +
       scale_color_manual(values = grcolors) +
       labs(title = plot_title, x = "", y = paste("Loading",pc), color = "") + theme_light() +
-      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
   }else{
     ggplot()+labs(title = "Could not compute model,no plot returned")
   }
@@ -287,7 +293,7 @@ mbplsda_plotboot_loading <- function(x_input, pc=1, plot_title="", ptsize=3, pro
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-mbplsda_plotboot_coeff <- function(x_input, lv=1, plot_title="", ptsize=3, propbestvar=0.5){
+mbplsda_plotboot_coeff <- function(x_input, lv=1, plot_title="", ptsize=4, propbestvar=0.5){
   if(length(x_input)>0){
     #Check argument
     if (length(x_input$XYcoef) < lv){
@@ -309,11 +315,12 @@ mbplsda_plotboot_coeff <- function(x_input, lv=1, plot_title="", ptsize=3, propb
     ggplot(XYcoefBest, aes(x=variables, y=mean, color=block)) +
       #geom_errorbar(aes(ymin=mean-ciinf, ymax=mean+cisup), alpha=0.5, width=0.1, position=position_dodge(0.1)) +
       #geom_line(alpha=0.5) +  geom_point(alpha=0.5,size=ptsize) +
-      geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.5) +
+      geom_pointrange(aes(ymin=mean-ciinf, ymax=mean+cisup, color=block), alpha=0.6, size=1.5) +
       scale_color_manual(values = grcolors) +
       labs(title = plot_title, x = "", y = paste0("Regression coefficients\n(",names(x_input$XYcoef)[[lv]],")"), color = "") + theme_light() +
-      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+      theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
   }else{
     ggplot()+labs(title = "Could not compute model,no plot returned")
   }

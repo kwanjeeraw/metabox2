@@ -49,7 +49,8 @@ MUVR_plotvip <- function(MVObj, model="min", plot_title="") {
   dat=reshape2::melt(dat, id.vars=c("var")) #for ggplot
   ggplot(dat, aes(x = var, y = value)) + geom_boxplot(outlier.shape = NA) + ggtitle(plot_title) +
     geom_jitter(width=0.1, alpha=0.2) + theme_light() + coord_flip() + labs(x = "", y = "VIP rank") +
-    theme(plot.title = element_text(size = 12), axis.title=element_text(size=10), axis.text=element_text(size=10))
+    theme(plot.title = element_text(size = 12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11))
 }
 
 #'Validation plot
@@ -73,20 +74,20 @@ MUVR_plotval <- function(MVObj, plot_title="") {
   count=as.numeric(colnames(VAL))
   nRep=dim(VAL)[3]
   outplot = ggplot() + theme_classic()
-  colors <- c("validations" = "#fec44f", "repetitions" = "#737373", "overall" = "red",
-              "min"="#4393c3","mid"="#7fbc41","max"="#c51b7d")
+  colors <- c("validations" = "#fec44f", "repetitions" = "#9E9898", "overall" = "red",
+              "min"="#004DDF","mid"="#009E73","max"="#F279B9")
   for (r in 1:nRep) {
     for(o in 1:nrow(VAL[,,r])){
       all_validate = data.frame(count=factor(count),value=VAL[o,,r])
-      outplot = outplot+geom_line(data=all_validate,aes(x=count,y=value,group=1,color="validations"),linetype="dashed")
+      outplot = outplot+geom_line(data=all_validate,aes(x=count,y=value,group=1,color="validations"),alpha=0.7,linetype="dashed",linewidth=0.8)
     }
   }
   for (r in 1:nRep) {
     avg_rep = data.frame(count=factor(count),value=colMeans(VAL[,,r]))
-    outplot = outplot+geom_line(data=avg_rep,aes(x=count,y=value,group=1,color="repetitions"),size=0.7)
+    outplot = outplot+geom_line(data=avg_rep,aes(x=count,y=value,group=1,color="repetitions"),linewidth=0.9)
   }
   avg_all = data.frame(count=factor(count),value=apply(VAL,2,mean))
-  outplot = outplot+geom_line(data=avg_all,aes(x=count,y=value,group=1,color="overall"),size=0.9)
+  outplot = outplot+geom_line(data=avg_all,aes(x=count,y=value,group=1,color="overall"),linewidth=1.5)
   xindex = lapply(MVObj$nVar, function(x){#get x-axis index
     tmp = which((rev(count)) == x)
     if(length(tmp) == 0){ tmp=min(which(rev(count)>x))-0.5}
@@ -94,11 +95,12 @@ MUVR_plotval <- function(MVObj, plot_title="") {
   })
   vlines = data.frame(xint=unlist(xindex), value=MVObj$nVar, model=names(MVObj$nVar)) #get v-lines
   for (i in 1:3) {
-    outplot = outplot+geom_vline(data=vlines[i,],aes(xintercept = xint, color=model), linetype="dotdash",size=0.8)+
+    outplot = outplot+geom_vline(data=vlines[i,],aes(xintercept = xint, color=model), linetype="dotdash",linewidth=1)+
       geom_text(data=vlines[i,], aes(x = xint+0.1, y=round(max(VAL),1), color=model, label=value), angle=90)
   }
   outplot = outplot+labs(x="Number of variables", y=metric) +
     scale_colour_manual(name="",values=colors,label=c("Validations", "Repetitions","Overall","Min-relevant","Mid-relevant","All-relevant")) + ggtitle(plot_title) +
-    theme(plot.title = element_text(size = 12), axis.title=element_text(size=10), axis.text=element_text(size=10))
+    theme(plot.title = element_text(size = 12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11))
   return(outplot)
 }

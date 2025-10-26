@@ -350,7 +350,7 @@ boxplot_overview <- function(METBObj, plotvar=TRUE, plot_title=""){
     plotdata = reshape2::melt(dat, id = c("Sample_ID"))#for ggplot
     ggplot(plotdata, aes(x = variable, y = value, label=Sample_ID)) + geom_boxplot(outlier.shape = NA)+
       geom_jitter(width=0.1, alpha=0.2) + theme_light() + ggtitle(plot_title) +
-      theme(axis.title=element_blank(), axis.text=element_text(size=10)) + coord_flip() #by variables
+      theme(axis.title=element_blank(), axis.text=element_text(size=12)) + coord_flip() #by variables
   }else{
     if (nrow(METBObj$X)<2){#need at least 2 points
       cat("\nError! in density.default, need at least 2 data points.\nReturn no plot.\n")
@@ -360,7 +360,7 @@ boxplot_overview <- function(METBObj, plotvar=TRUE, plot_title=""){
     plotdata = reshape2::melt(dat, id = c("Variable_ID"))#for ggplot
     ggplot(plotdata, aes(x = variable, y = value, label=Variable_ID)) + geom_boxplot(outlier.shape = NA)+
       geom_jitter(width=0.1, alpha=0.2) + theme_light() + ggtitle(plot_title) +
-      theme(axis.title=element_blank(), axis.text=element_text(size=10)) + coord_flip() #by samples
+      theme(axis.title=element_blank(), axis.text=element_text(size=12)) + coord_flip() #by samples
   }
 }
 
@@ -403,7 +403,8 @@ boxplot_byF1 <- function(METBObj, xCol=1, factorLv1){
   ggplot(plotdata, aes(x=Groups, y = value, color=Groups, label=Sample_ID)) + geom_boxplot(outlier.shape = NA) +
     scale_color_manual(values = grcolors) + geom_jitter(width=0.1, alpha=0.2) + theme_light() + ggtitle(xnames) + labs(color="") +
     theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_blank(),
-          axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+          axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
 #'Box plot by category/factor F1 and F2
@@ -454,7 +455,8 @@ boxplot_byF1F2 <- function(METBObj, xCol=1, factorLv1, factorLv2){
   ggplot(plotdata, aes(x=F1, y = value, color=Groups, label=Sample_ID)) + geom_boxplot(outlier.shape = NA) + geom_point(position=position_jitterdodge(), alpha=0.2) +
     scale_color_manual(values = grcolors) + theme_light() + ggtitle(xnames) + labs(color="") +
     theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_blank(),
-          axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+          axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
 #'Combined statistics plot
@@ -478,7 +480,7 @@ boxplot_byF1F2 <- function(METBObj, xCol=1, factorLv1, factorLv2){
 #'#combine_statplot(uout$p_adj,mout$vip_val,x_cutoff = 0.05,y_cutoff = 1)
 #'@import ggplot2
 #'@export
-combine_statplot <- function(x_data, y_data, x_cutoff=0, y_cutoff=0, ptsize=3, plot_title=""){
+combine_statplot <- function(x_data, y_data, x_cutoff=0, y_cutoff=0, ptsize=5, plot_title=""){
   if(!is.data.frame(x_data)){
     x_data = data.frame(x_data)
   }
@@ -492,13 +494,14 @@ combine_statplot <- function(x_data, y_data, x_cutoff=0, y_cutoff=0, ptsize=3, p
   plotdata$stat_sum = factor(paste0(plotdata$x_sum,"_",plotdata$y_sum),
                              levels = c("TRUE_TRUE", "TRUE_FALSE", "FALSE_TRUE","FALSE_FALSE"))
   ggplot(plotdata, aes(x_stat, y_stat, label=Variable, color=stat_sum, group = stat_sum)) + geom_point(alpha=0.5, size=ptsize) +
-    geom_hline(yintercept=y_cutoff, linetype=5, colour="#3F3A65", alpha=0.7) +
-    geom_vline(xintercept = x_cutoff, linetype=5, colour="#3F3A65", alpha=0.7) +
+    geom_hline(yintercept=y_cutoff, linetype=5, linewidth = 0.9, colour="#F6BE00", alpha=0.7) +
+    geom_vline(xintercept = x_cutoff, linetype=5, linewidth = 0.9, colour="#F6BE00", alpha=0.7) +
     scale_color_manual(name = "",
-                       values = c("TRUE_TRUE"="#FF003A", "TRUE_FALSE"="#004DDF", "FALSE_TRUE"="#00BF15","FALSE_FALSE"="#464A44"),
+                       values = c("TRUE_TRUE"="#A84000", "TRUE_FALSE"="#004DDF", "FALSE_TRUE"="#009E73","FALSE_FALSE"="#595959"),
                        label = c("Both","Only < x_cutoff","Only > y_cutoff","None")) +
     theme_bw() + ggtitle(plot_title) + labs(x = "x statistics", y = "y statistics") +
-    theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10))
+    theme(plot.title = element_text(size=12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11))
 }
 
 #'Correlation heatmap
@@ -525,8 +528,9 @@ corrplot_heatmap <- function(corr_data, plot_title=""){
   corr_data$coeff=round(corr_data$coeff,2); corr_data$p_value=round(corr_data$p_value,2); corr_data$p_adj=round(corr_data$p_adj,2) #round to 2 points
   ggplot(corr_data, aes(x=Var1, y=Var2, fill=coeff, label=p_adj)) + geom_tile() + theme_light() + ggtitle(plot_title) +
     scale_fill_gradient2(low="blue",mid="white",high="red", limits=c(-1,1)) + labs(x = "", y = "", fill = "Coefficient") +
-    theme(plot.title = element_text(size = 12), axis.title=element_text(size=10),
-          axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2)) #+ geom_text()
+    theme(plot.title = element_text(size = 12), axis.title=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+          axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2)) #+ geom_text()
 }
 
 #'Density plot
@@ -591,8 +595,9 @@ intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title=
     ggplot(plotdata, aes(Sample_ID, value, color = ClassCol)) + geom_point(size=ptsize, alpha=0.5) +
       scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) + theme_minimal() +
       labs(x = "Sample", y = "Intensity", color="") + ggtitle(colnames(METBObj$X)[xCol]) +
-      theme(plot.title = element_text(size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=8), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+      theme(plot.title = element_text(size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
   }else{#plot category/factor
     Y = as.factor(plotdata$ClassCol) #working data
     numlevels = nlevels(Y) #no. of levels
@@ -604,8 +609,9 @@ intensityplot_overview <- function(METBObj, xCol=1, classCol=NULL, legend_title=
     ggplot(plotdata, aes(Sample_ID, value, color = ClassCol)) + geom_point(size=ptsize, alpha=0.5) +
       scale_color_manual(values = grcolors) + theme_minimal() +
       labs(x = "Sample", y = "Intensity", color="") + ggtitle(colnames(METBObj$X)[xCol]) +
-      theme(plot.title = element_text(size = 12), axis.title=element_text(size=10),
-            axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+      theme(plot.title = element_text(size = 12), axis.title=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+            axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
   }
 }
 
@@ -661,8 +667,9 @@ interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize
   ggplot(statsum, aes(x = F1, y = median, colour = Groups, group = Groups)) + geom_point(size=ptsize, alpha=0.5) + geom_line() +
     #geom_errorbar(aes(ymin = mean - sd,ymax = mean + sd),width=0.1) +
     scale_color_manual(values = grcolors) + theme_light() + labs(title = xnames, x = "", y = "Median", color="") +
-    theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-          axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+    theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+          axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
 #'Loading plot
@@ -681,7 +688,7 @@ interactionplot_byF1F2 <- function(x_input, xCol=1, factorLv1, factorLv2, ptsize
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-multiv_loadingplot <- function(loading_data, oloading_data=NULL, ptsize=3, plot_title=""){
+multiv_loadingplot <- function(loading_data, oloading_data=NULL, ptsize=4, plot_title=""){
   if(!is.data.frame(loading_data)){
     loading_data = data.frame(loading_data)
   }
@@ -698,7 +705,7 @@ multiv_loadingplot <- function(loading_data, oloading_data=NULL, ptsize=3, plot_
   colnames(plotdata)[1] = 'Sample_ID'; colnames(plotdata)[2] = 'PCX'; colnames(plotdata)[3] = 'PCY' #change column name
   ggplot(plotdata, aes(PCX, PCY, label=Sample_ID)) + geom_point(color="red", alpha=0.5, size=ptsize) +
     geom_hline(yintercept=0, linetype=1) + geom_vline(xintercept = 0, linetype=1) + theme_minimal() + ggtitle(plot_title) +
-    theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+    theme(plot.title = element_text(size=12), axis.title=element_text(size=12), axis.text=element_text(size=12)) +
     labs(x = xlabel, y = ylabel)
 }
 
@@ -722,8 +729,9 @@ multiv_loadingplot_bypc <- function(loading_data, pc=1, plot_title=""){
   plotdata$vname = factor(plotdata$vname, levels = plotdata$vname) #set factor
   ggplot(plotdata, aes(x=vname, y=loading, fill=loading)) + geom_bar(stat = "identity", alpha=0.7) + theme_minimal() +
     scale_fill_gradient(low = "blue", high = "red") + labs(x = "", y = paste("Loading",pc), fill = "Loadings") + ggtitle(plot_title) +
-    theme(plot.title = element_text(size=12), axis.title=element_text(size=10),
-          axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+    theme(plot.title = element_text(size=12), axis.title=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+          axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
 #'Score plot
@@ -751,7 +759,7 @@ multiv_loadingplot_bypc <- function(loading_data, pc=1, plot_title=""){
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL, shapeCol=NULL, ptsize=3, plot_title="", legend_title="Color", shape_title="Shape"){
+multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL, shapeCol=NULL, ptsize=4, plot_title="", legend_title="Color", shape_title="Shape"){
   dat = METBObj$X #working data
   if(is.null(oscore_data)){
     plotdata = cbind(Sample_ID=METBObj$ID, data.frame(ClassCol=METBObj$inputdata[,METBObj$classCol], shapeCol=METBObj$inputdata[,shapeCol]), score_data) #for ggplot
@@ -778,7 +786,8 @@ multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL
     pl + geom_point(size=ptsize, alpha=0.75) +
       scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) +
       theme_minimal() + ggtitle(plot_title) +
-      theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+      theme(plot.title = element_text(size=12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11)) +
       labs(color=legend_title, shape=shape_title, x = paste(xlabel,"[", round(pcx*100, 2), "%]", sep=""), y = paste(ylabel,"[", round(pcy*100, 2), "%]", sep=""))
   }else{#plot category/factor
     Y = as.factor(plotdata$ClassCol) #working data
@@ -798,7 +807,8 @@ multiv_scoreplot <- function(METBObj, score_data, pcx=0, pcy=0, oscore_data=NULL
     pl + geom_point(size=ptsize, alpha=0.75) +
       stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) + scale_color_manual(values = grcolors) +
       theme_minimal() + ggtitle(plot_title) +
-      theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+      theme(plot.title = element_text(size=12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11)) +
       labs(color=legend_title, shape=shape_title, x = paste(xlabel,"[", round(pcx*100, 2), "%]", sep=""), y = paste(ylabel,"[", round(pcy*100, 2), "%]", sep=""))
   }
 }
@@ -826,8 +836,9 @@ multiv_vipplot <- function(vip_data, plot_title=""){
   plotdata$vname = factor(plotdata$vname, levels = plotdata$vname) #set factor
   ggplot(plotdata, aes(x=vname, y=value, fill=value)) + geom_bar(stat = "identity", alpha=0.7) + theme_minimal() +
     scale_fill_gradient(low = "yellow", high = "red") + labs(x = "", y = "VIP", fill = "VIP") + ggtitle(plot_title) +
-    theme(plot.title = element_text(size=12), axis.title=element_text(size=10),
-          axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+    theme(plot.title = element_text(size=12), axis.title=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+          axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
 #'VIP and loading plot
@@ -867,7 +878,8 @@ multiv_viploadingplot <- function(vip_data, loading_data, oloading_data=NULL, pl
   plotdata = merge(plotdata,vipdata,by.x = "Sample_ID",by.y="vname")
   ggplot(plotdata, aes(PCX, PCY, label=Sample_ID)) + geom_point(aes(fill=VIP,size=VIP), alpha=0.5, shape=21) +
     geom_hline(yintercept=0, linetype=1) + geom_vline(xintercept = 0, linetype=1) + theme_minimal() + ggtitle(plot_title) +
-    theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+    theme(plot.title = element_text(size=12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11)) +
     labs(x = xlabel, y = ylabel)+scale_fill_gradientn(colours=rev(heat.colors(16)))
 }
 
@@ -894,7 +906,7 @@ multiv_viploadingplot <- function(vip_data, loading_data, oloading_data=NULL, pl
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, scale=FALSE, ptsize=3, plot_title="", legend_title="Color", shape_title="Shape"){
+pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, scale=FALSE, ptsize=4, plot_title="", legend_title="Color", shape_title="Shape"){
   dat = METBObj$X #working data
   metadat = METBObj$inputdata[,1:METBObj$xCol-1]
   nmetada = ncol(metadat); xpc = nmetada+1; ypc = nmetada+2; #plot 2 PCs
@@ -923,7 +935,8 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
       #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
       pl + geom_point(size=ptsize, alpha=0.75) +
         scale_colour_gradientn(colours = rainbow(length(Y), start=0.17, end=1)) + theme_minimal() + ggtitle(plot_title) +
-        theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+        theme(plot.title = element_text(size=12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+              legend.title = element_text(size = 11), legend.text = element_text(size = 11)) +
         labs(col = legend_title, shape=shape_title, x = paste(xlabel, "[", round(prop.pca$importance[2,px]*100, 2), "%]", sep=""),
              y = paste(ylabel, "[", round(prop.pca$importance[2,py]*100, 2), "%]", sep=""))
     }else{#plot category/factor
@@ -945,7 +958,8 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
       #geom_text(aes(label=pcadata[,1]),hjust=0.4, vjust=1.3) + #show label
       pl + geom_point(size=ptsize, alpha=0.75) + stat_ellipse(aes(color=ClassCol), type = "norm", size=0.3) +
         scale_color_manual(values = grcolors) + theme_minimal() + ggtitle(plot_title) +
-        theme(plot.title = element_text(size=12), axis.title=element_text(size=10), axis.text=element_text(size=10)) +
+        theme(plot.title = element_text(size=12), axis.title=element_text(size=12), axis.text=element_text(size=12),
+              legend.title = element_text(size = 11), legend.text = element_text(size = 11)) +
         labs(color=legend_title, shape=shape_title, x = paste(xlabel, "[", round(prop.pca$importance[2,px]*100, 2), "%]", sep=""),
              y = paste(ylabel, "[", round(prop.pca$importance[2,py]*100, 2), "%]", sep=""))
     }
@@ -974,7 +988,7 @@ pcaplot_overview <- function(METBObj, classCol=NULL, shapeCol=NULL, px=1, py=2, 
 #'@import ggplot2
 #'@import RColorBrewer
 #'@export
-pvalplot_overview <- function(x_input, cutoff=0.05, plot_title="", ptsize=3){
+pvalplot_overview <- function(x_input, cutoff=0.05, plot_title="", ptsize=5){
   if(!is.data.frame(x_input)){
     cat("\nError! x_input must be a data frame.\nReturn no plot.\n")
     return(FALSE)
@@ -986,8 +1000,9 @@ pvalplot_overview <- function(x_input, cutoff=0.05, plot_title="", ptsize=3){
   ggplot(dat, aes(x=variables, y=value, color=sig, key=variables)) + geom_point(alpha=0.5,size=ptsize) + geom_hline(yintercept=(-log10(cutoff)), linetype=2) +
     scale_color_manual(labels = c("Not significant","Significant"), values = c("#377EB8","#E41A1C")) + theme_light() +
     labs(title = plot_title, x = "", y = "-log10 Scale", color = "") +
-    theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=10),
-          axis.text=element_text(size=10), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
+    theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title=element_text(size=12),
+          legend.title = element_text(size = 11), legend.text = element_text(size = 11),
+          axis.text=element_text(size=12), axis.text.x = element_text(angle=90,hjust=1,vjust=0.2))
 }
 
 #'RLA plot
@@ -1056,7 +1071,8 @@ rlaplot_overview <- function(METBObj, classCol=NULL, type="wg", dolog=TRUE, doav
       pl = pl + scale_x_discrete(limits = factor(c(1:100))) #xlimit 1-100
     }
     pl + geom_boxplot(outlier.alpha = 0.5) + theme_light() + ggtitle(plot_title) + labs(x = "Sample", y="") +
-      theme(plot.title = element_text(size = 12), axis.text=element_text(size=10), axis.text.y = element_blank()) + coord_flip() #by samples
+      theme(plot.title = element_text(size = 12), axis.text=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11), axis.text.y = element_blank()) + coord_flip() #by samples
   }else{#plot category/factor
     Y = as.factor(inputdata$ClassCol) #working data
     numlevels = nlevels(Y) #no. of levels
@@ -1071,6 +1087,7 @@ rlaplot_overview <- function(METBObj, classCol=NULL, type="wg", dolog=TRUE, doav
     }
     pl + geom_boxplot(outlier.alpha = 0.5)+
       scale_color_manual(values = grcolors) + theme_light() + ggtitle(plot_title) + labs(x = "Sample", y="", color=legend_title) +
-      theme(plot.title = element_text(size = 12), axis.text=element_text(size=10), axis.text.y = element_blank()) + coord_flip() #by samples
+      theme(plot.title = element_text(size = 12), axis.text=element_text(size=12),
+            legend.title = element_text(size = 11), legend.text = element_text(size = 11), axis.text.y = element_blank()) + coord_flip() #by samples
   }
 }
