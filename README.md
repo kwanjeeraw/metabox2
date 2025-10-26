@@ -72,8 +72,22 @@ docker run --name mbdocker -p 8081:3838 metaboxweb
 
 *Note: An online version is in high demand. Users may experience slow page loading.*
 
+References
+=========
+- Wanichthanarak K, In-On A, Fan S, Fiehn O, Wangwiwatsin A, Khoomrung S (2024) Data processing solutions to render metabolomics more quantitative: case studies in food and clinical metabolomics using Metabox 2.0. GigaScience 13(2024): [giae005](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giae005/7629842)
+- Wanichthanarak K, Fan S, Grapov D, Barupal DK, Fiehn O (2017) Metabox: A Toolbox for Metabolomic Data Analysis, Interpretation and Integrative Exploration. PLOS ONE 12(1): [e0171046](https://doi.org/10.1371/journal.pone.0171046)
+
+License
+=========
+[GNU General Public License (v3)](https://github.com/kwanjeeraw/metabox2/blob/master/LICENSE)
+
 Updates
 =======
+#### version 2.12 (OCT 2025)
+* Export an opls object for multiv_analyze
+* Improve visualization
+* Increase font size
+* Use color blind safe
 #### version 2.11 (DEC 2024)
 * New combine_statplot function for command version
 * Fix bugs for impute missing values in GUI version
@@ -121,12 +135,3 @@ Updates
 * Allow missing values in normalization, transformation and scaling
 #### version 2.0 (JUL 2022)
 * Initial version
-
-References
-=========
-- Wanichthanarak K, In-On A, Fan S, Fiehn O, Wangwiwatsin A, Khoomrung S (2024) Data processing solutions to render metabolomics more quantitative: case studies in food and clinical metabolomics using Metabox 2.0. GigaScience 13(2024): [giae005](https://academic.oup.com/gigascience/article/doi/10.1093/gigascience/giae005/7629842)
-- Wanichthanarak K, Fan S, Grapov D, Barupal DK, Fiehn O (2017) Metabox: A Toolbox for Metabolomic Data Analysis, Interpretation and Integrative Exploration. PLOS ONE 12(1): [e0171046](https://doi.org/10.1371/journal.pone.0171046)
-
-License
-=========
-[GNU General Public License (v3)](https://github.com/kwanjeeraw/metabox2/blob/master/LICENSE)
