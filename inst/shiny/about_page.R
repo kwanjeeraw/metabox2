@@ -21,23 +21,7 @@ fluidRow(
          fluidRow(
            h4("Updates"),
            column(12,
-                  HTML('<h5>version 2.11 (DEC 2024)</h5>
-                  <ul><li>New combine_statplot function for command version</li>
-                  <li>Fix bugs for impute missing values in GUI version</li></ul>
-                  <h5>version 2.10 (NOV 2024)</h5>
-                  <ul><li>New multiv_viploadingplot function</li>
-                  <li>New scoreplot with shape for command version</li>
-                  <li>New impute missing values by LOD and PCA overview</li>
-                  <li>Update annotation data</li>
-                  <li>Remove test_multinormality and test_multiequalvar functions</li>
-                  <li>Change to glog2 for rlaplot</li>
-                  <li>Change default no. of predI to 5</li>
-                  <li>Change default ptsize to 3</li>
-                  <li>Change pdf size of a report</li>
-                  <li>Change transparency of score plot</li>
-                  <li>Update and bugs fix for GUI version</li>
-                  <li>Fix bugs for enrichment and ORA analysis</li></ul>
-                  <p><a href="https://github.com/kwanjeeraw/metabox2">See all updates</a>.</p>'),
+                  HTML('<p><a href="https://github.com/kwanjeeraw/metabox2">See all updates</a>.</p>'),
            )),hr(style="border-top: 1px dashed #B5C7DA;"),
          fluidRow(
            h4("References"),
