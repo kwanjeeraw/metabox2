@@ -84,6 +84,7 @@ License
 Updates
 =======
 #### version 2.12 (OCT 2025)
+* Add evaluation arguments for multiv_analyze
 * Export an opls object for multiv_analyze
 * Improve visualization
 * Increase font size

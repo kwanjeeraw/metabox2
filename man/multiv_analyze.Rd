@@ -4,7 +4,7 @@
 \alias{multiv_analyze}
 \title{Multivariate analysis}
 \usage{
-multiv_analyze(METBObj, method="pca", scale="center")
+multiv_analyze(METBObj, method="pca", scale="center", predI=NA, crossvalI=3, permI=20)
 }
 \arguments{
 \item{METBObj}{METBObj object contains list of data.}
@@ -13,6 +13,12 @@ multiv_analyze(METBObj, method="pca", scale="center")
 
 \item{scale}{text indicating a scaling method for parameter \code{scaleC} of \code{ropls::opls()}: no centering nor scaling ('none'),
 mean-centering only ('center') [default], mean-centering and pareto scaling ('pareto'), or mean-centering and auto scaling ('standard').}
+
+\item{predI}{number of components. predI=5 for PCA, predI=1 for OPLS, predI=NA for PLS, autofit is performed.}
+
+\item{crossvalI}{number of cross-validation segments ([default] is 3). The number of samples must be at least >= crossvalI.}
+
+\item{permI}{number of random permutations of response labels. [default] is 20.}
 }
 \value{
 a list of the following components:

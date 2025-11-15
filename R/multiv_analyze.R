@@ -1,10 +1,13 @@
 #'Multivariate analysis
 #'@description Perform multivariate analysis.
-#'@usage multiv_analyze(METBObj, method="pca", scale="center")
+#'@usage multiv_analyze(METBObj, method="pca", scale="center", predI=NA, crossvalI=3, permI=20)
 #'@param METBObj METBObj object contains list of data.
 #'@param method name of multivariate analysis method. Choose one from the list: pca, pls, opls. Default is pca.
 #'@param scale text indicating a scaling method for parameter \code{scaleC} of \code{ropls::opls()}: no centering nor scaling ('none'),
 #'mean-centering only ('center') [default], mean-centering and pareto scaling ('pareto'), or mean-centering and auto scaling ('standard').
+#'@param predI number of components. predI=5 for PCA, predI=1 for OPLS, predI=NA for PLS, autofit is performed.
+#'@param crossvalI number of cross-validation segments ([default] is 3). The number of samples must be at least >= crossvalI.
+#'@param permI number of random permutations of response labels. [default] is 20.
 #'@return a list of the following components:
 #'
 #'model = an opls object.
@@ -32,7 +35,7 @@
 #'#sugar_dt = set_input_obj(sugar, 1,2,5)
 #'#out=multiv_analyze(sugar_dt)
 #'@export
-multiv_analyze <- function(METBObj, method="pca", scale="center"){
+multiv_analyze <- function(METBObj, method="pca", scale="center", predI=NA, crossvalI=3, permI=20){
   #Check argument
   tmparg <- try(method <- match.arg(method, c("pca","pls","opls"), several.ok = FALSE), silent = TRUE)
   if (class(tmparg) == "try-error") {
@@ -69,7 +72,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   cat("\n\nPerforming multivariate analysis ...\n")
   if (method == "pca"){#PCA
     out_data = tryCatch({
-      ropls::opls(x=dat, predI = 5, fig.pdfC="none", scaleC=scale, crossvalI=6)
+      ropls::opls(x=dat, predI = 5, fig.pdfC="none", scaleC=scale, crossvalI=crossvalI, permI=permI)
     },
     error=function(e){
       cat(e$message)
@@ -80,7 +83,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   }
   if (method == "pls"){#PLS
     out_data = tryCatch({
-      ropls::opls(x=dat, y=Y, fig.pdfC="none", scaleC=scale, crossvalI=6)
+      ropls::opls(x=dat, y=Y, fig.pdfC="none", scaleC=scale, predI=predI, crossvalI=crossvalI, permI=permI)
     },
     error=function(e){
       cat(e$message)
@@ -91,7 +94,7 @@ multiv_analyze <- function(METBObj, method="pca", scale="center"){
   }
   if (method == "opls"){#OPLS
     out_data = tryCatch({
-      ropls::opls(x=dat, y=Y, predI = 1, orthoI = 2, fig.pdfC="none", scaleC=scale, crossvalI=6)
+      ropls::opls(x=dat, y=Y, predI = 1, orthoI = 2, fig.pdfC="none", scaleC=scale, crossvalI=crossvalI, permI=permI)
     },
     error=function(e){
       cat(e$message)
