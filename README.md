@@ -12,7 +12,7 @@ Here are some alternative ways to use Metabox 2.0:
 
 ### Install as a standard R package
 * Download and install [R software](https://www.r-project.org/)
-* For R 4.4.1, Install metabox2 and required packages using the following commands:
+* For R 4.5.2, Install metabox2 and required packages using the following commands:
 ```
 ##Install R dependencies ##
 if (!require("BiocManager"))
