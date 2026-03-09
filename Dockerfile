@@ -1,5 +1,5 @@
 # Base R Shiny image
-FROM rocker/shiny:4.4.1
+FROM rocker/shiny:4.5.1
 
 # Install git
 RUN apt-get update && apt-get install -y git
@@ -12,14 +12,14 @@ RUN install2.r --error --skipinstalled \
     remotes BiocManager \
     && rm -rf /tmp/downloaded_packages
 
-RUN R -e "BiocManager::install('affy', update=FALSE, version='3.20')"
-RUN R -e "BiocManager::install('pcaMethods', update=FALSE, version='3.20')"
-RUN R -e "BiocManager::install('preprocessCore', update=FALSE, version='3.20')"
-RUN R -e "BiocManager::install('impute', update=FALSE, version='3.20')"
-RUN R -e "BiocManager::install('vsn', update=FALSE, version='3.20')"
-RUN R -e "BiocManager::install('ropls', update=FALSE, version='3.20')"
-RUN R -e "remotes::install_version('igraph',version='2.0.3',repos='https://cran.rstudio.org/')"
-RUN R -e "BiocManager::install('piano', update=FALSE, version='3.20')"
+RUN R -e "BiocManager::install('affy', update=FALSE, version='3.22')"
+RUN R -e "BiocManager::install('pcaMethods', update=FALSE, version='3.22')"
+RUN R -e "BiocManager::install('preprocessCore', update=FALSE, version='3.22')"
+RUN R -e "BiocManager::install('impute', update=FALSE, version='3.22')"
+RUN R -e "BiocManager::install('vsn', update=FALSE, version='3.22')"
+RUN R -e "BiocManager::install('ropls', update=FALSE, version='3.22')"
+RUN R -e "remotes::install_version('igraph',version='2.2.2',repos='https://cran.rstudio.org/')"
+RUN R -e "BiocManager::install('piano', update=FALSE, version='3.22')"
 RUN R -e "remotes::install_gitlab('CarlBrunius/MUVR', dependencies = 'Imports', version = '0.0.976', force = FALSE, upgrade = 'never')"
 RUN R -e "remotes::install_github('kwanjeeraw/metabox2', dependencies = 'Imports', force = FALSE, upgrade ='never')"
 
