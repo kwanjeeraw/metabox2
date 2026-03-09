@@ -19,14 +19,16 @@ if (!require("BiocManager"))
     install.packages("BiocManager")
 if (!require("remotes"))
   install.packages("remotes")
-BiocManager::install("affy", update=FALSE, version="3.20")
-BiocManager::install("pcaMethods", update=FALSE, version="3.20")
-BiocManager::install("preprocessCore", update=FALSE, version="3.20")
-BiocManager::install('impute', update=FALSE, version='3.20')
-BiocManager::install("vsn", update=FALSE, version="3.20")
-BiocManager::install("ropls", update=FALSE, version="3.20")
-remotes::install_version('igraph',version='2.0.3',repos='https://cran.rstudio.org/')
-BiocManager::install("piano", update=FALSE, version="3.20")
+BiocManager::install("affy", update=FALSE, version="3.22")
+BiocManager::install("pcaMethods", update=FALSE, version="3.22")
+BiocManager::install("preprocessCore", update=FALSE, version="3.22")
+BiocManager::install("impute", update=FALSE, version="3.22")
+BiocManager::install("vsn", update=FALSE, version="3.22")
+BiocManager::install("ropls", update=FALSE, version="3.22")
+remotes::install_version("igraph",version="2.2.2",repos="https://cran.rstudio.org/")
+#for mac os use the following to install igraph
+#install.packages("igraph", type = "binary")
+BiocManager::install("piano", update=FALSE, version="3.22")
 remotes::install_gitlab("CarlBrunius/MUVR")
 install.packages("https://cran.r-project.org/src/contrib/Archive/MetNorm/MetNorm_0.1.tar.gz", repo=NULL, method = "libcurl")
 
@@ -57,6 +59,7 @@ launch_gui()
 cd [go to Dockerfile location]
 docker build --no-cache=true --platform linux/x86_64 -t metaboxweb .
 docker run --name mbdocker -p 8081:3838 metaboxweb
+Next, navigate to http://localhost:8081/metaboxweb
 ```
 ### Use an online version from our servers
 * [server1](http://metabox.metsysbio.com:8081/metaboxweb/)
