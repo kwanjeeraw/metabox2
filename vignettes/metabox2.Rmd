@@ -1,7 +1,8 @@
 ---
-title: "metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation"
-author: "Kwanjeera W (<kwanjeera.wan@mahidol.ac.th>)"
+title: "Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation"
+author: "Kwanjeera W"
 date: "`r Sys.Date()`"
+always_allow_html: yes
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{metabox2}
@@ -16,210 +17,579 @@ knitr::opts_chunk$set(
 )
 ```
 
-## 1 INSTALLATION
+## HOW TO USE
 
-Install metabox2 and required packages using the following commands:
+Here are some alternative ways to use Metabox 2.0:
+
+* [Install as a standard R package](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#install-as-a-standard-r-package)
+
+* [Use GUI version from Docker](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-gui-version-from-docker)
+
+* [Use an online version](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-an-online-version-from-our-servers)
+
+### INPUT DATA
+
+The input dataset should be a CSV table containing metadata columns along with feature variables, as illustrated in Table 1. Samples are in rows, and variables (features) are in columns. Experimental information—such as batch, sample type, and injection order—is required for IS- and QC-based normalization.
+
+**Table 1**. Format of the input dataset. This example table includes experimental information (brown), metadata (blue), and metabolite features.
+
+```{r,echo=FALSE, results='asis', message=FALSE, warning=FALSE}
+library(knitr)
+library(kableExtra)
+dt = read.csv("https://raw.githubusercontent.com/kwanjeeraw/metabox2/main/inst/shiny/www/GCGC_DM_Samples.csv", row.names = NULL, check.names = FALSE)
+dt[c(1:3,23:25), 1:10] %>%
+  kable(row.names = FALSE) %>%
+  kable_styling(c("striped", "bordered"), full_width = FALSE) %>%
+  column_spec(1:2, bold = TRUE, background = '#c99a4a') %>%
+  column_spec(2, border_right = TRUE) %>%
+  column_spec(3:5, bold = TRUE, background = '#8fbce6') %>%
+  column_spec(5, border_right = TRUE)
+```
+
+## CONTENTS
+
+This tutorial demonstrates how to run Metabox 2.0 as an R package and requires familiarity with R. It walks through five modules. Figure 1 shows the pipeline overview. Follow the script step by step in the sections below.
+
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kwanjeeraw/metabox2/main/inst/shiny/www/first_pipeline.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 1. Overview of Metabox 2.0 containing three key pipelines and five modules</em>
+</p>
+')
+```
+ 
+Go to Section:
+
+* [PROJECT INITIALIZATION](#project-initialization)
+
+* [DATA PROCESSING](#data-processing)
+
+* [STATISTICAL ANALYSIS](#statistical-analysis)
+
+* [BIOMARKER ANALYSIS](#biomarker-analysis)
+
+* [INTEGRATIVE ANALYSIS](#integrative-analysis)
+
+* [DATA INTERPRETATION](#data-interpretation)
+
+## PROJECT INITIALIZATION
+
+### 1. Setup the project:
+
+* For this tutorial, download the [demo dataset](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/GCGC_DM_Samples.csv) (GCGC_DM_Samples.csv) and save it to your working directory
+
+* Open R or RStudio, then set the working directory and load the Metabox2 package with the following R command
+ 
+ ```
+ ##### INITIALIZATION #####
+ setwd("/Users/macuser/projectname/") #set the working directory
+ library(metabox2) #load the package
+ ```
+
+### 2. Load input data
+
+ ```
+input_dat = read_input_data(filename='GCGC_DM_Samples.csv') #load input file
+ ```
+ 
+### 3. Set Metabox object
+
+Specifying the required arguments for the ***set_input_obj*** function to setup the Metabox object:
+
+  - *inputdata*: dataframe of input data. Samples are in rows and variables/features are in columns.
+  - *idCol*: column index of the sample ID column. Default is 1.
+  - *classCol*: column index of the category/factor column (for hypothesis testing and classification) or the response column (for regression).
+  - *xCol*: column index of the first variable/feature column.
+ 
+ ```
+input_obj = set_input_obj(inputdata=input_dat, idCol=1, classCol=2, xCol=6) #setup metabox object
+head(input_obj$X) #preview the data
+ ```
+
+**Output:** The following output will be printed to the console, along with part of the input dataset. The dataset includes 75 samples across four groups and 91 metabolites, with some missing values.
 
 ```
-##Install metabox2 ##
-if (!require("devtools"))
-  install.packages("devtools")
-devtools::install_github("kwanjeeraw/metabox2")
-library(metabox2)
-
-##(Optional) Using graphical user interface (GUI) version ##
-install.packages("shiny") #Skip this step, if shiny package is alreay installed
-launch_gui()
+Data summary:
+- 75 samples and 91 variables.
+- repeated samples = FALSE .
+- class/factor with 4 levels.
+- 0 negative variables.
+- 478 ( 7 % ) missing values.
 ```
 
-## 2 DATA PROCESSING
+## DATA PROCESSING
 
-Example commands for Data processing module:
+Key steps in this module include missing value imputation, normalization, transformation, and scaling.
 
-**Loading input data**
+**Table 2**. Summary of normalization, transformation, and scaling in metabolomics.
+
+```{r, echo=FALSE}
+knitr::kable(
+  data.frame(
+    Step = c("Normalization", "Transformation", "Scaling"),
+    Purpose = c("Remove technical bias", "Improve data distribution", "Balance variable importance"),
+    Correction = c("Injection variation, batch effects",
+                   "Skewness, heteroscedasticity",
+                   "Dominance of high-intensity metabolites"),
+    Methods = c("IS-, QC-based, median/TIC",
+                "Log, square root, cube root",
+                "Pareto scaling, autoscaling, range scaling")
+  )
+)
+```
+
+**Note:** In practice, not all steps are required; the choice depends on the data. Users are encouraged to examine their data first.
+
+### ***Missing value imputation***
+
+This step replaces missing values using information from the existing data.
+
+Specifying the required arguments for the ***impute_missing_data*** function:
+
+  - *METBObj*: Metabox object.
+  - *method*: missing value imputation method (options: zero, halfmin, min, mean, median, lod, bpca, ppca, svd, knn, rf, default: median).
+  - *lod*: numeric value (e.g., LOD or LOQ) for imputing missing values; required for the lod method.
+  - *removeall*: logical value indicating whether variables with any missing values are removed (TRUE) or retained (FALSE; default).
+  - *cutoff*: percentage threshold for missing values (1–99; default = FALSE). If FALSE, all missing values are imputed; otherwise, variables exceeding the cutoff are removed.
 
 ```
-input_dat = read_input_data('GCGC_DM_Samples.csv') #load input file
-input_obj = set_input_obj(input_dat,idCol=1,classCol=3,xCol=6) #setup metabox object
-head(input_obj$X) #preview input data
-```
-
-**Missing value imputation**
-
-```
-output_imputed = impute_missing_data(input_obj, method="rf")
+output_imputed = impute_missing_data(METBObj=input_obj, method="rf", removeall=FALSE, cutoff=30)
 head(output_imputed$X) #preview imputed data
 ```
+**Output:** A summary of the output will be printed to the console, along with part of the imputed dataset. Try other methods or cutoff values if preferred.
 
-**CCMN Normalization**
-
-```
-output_norm = normalize_input_data_byqc(output_imputed, method="ccmn", istd=1:2, factorCol=3)
-head(output_norm$X) #preview normalized data
-```
-
-**Square root transformation**
+Optional: export the imputed data using the following R command
 
 ```
-output_sqrt = transform_input_data(output_norm, method="sqrt")
-head(output_sqrt$X) #preview transformed data
+write.csv(data.frame(output_imputed$inputdata[,1:(output_imputed$xCol-1)], output_imputed$X, check.names=FALSE), file='RF_imputed_data.csv', row.names=FALSE)
 ```
 
-**Pareto scaling**
+### ***Normalization***
+
+This step corrects technical variation using known reference compounds, quality control (QC) samples, or statistical assumptions about the dataset.
+
+#### Try IS-based normalization with CCMN method
+
+Specifying the required arguments for the ***normalize_input_data_byqc*** function:
+
+  - *METBObj*: Metabox object.
+  - *method*: normalization method (options: ccmn, nomis, ruvrand, serrf, loess, default: nomis).
+  - *istd*: a column index or a vector of column indices indicating the internal standard(s) (IS) in the METBObj$X dataframe. This parameter is required for IS-based normalization methods (ccmn, nomes, ruvrand).
+  - *factorCol*: a column index indicating the biological factor of interest in the METBObj$inputdata dataframe.
+  - *batch*:  a column index indicating the batch information in the METBObj$inputdata dataframe. Required for serrf and loess methods. Each batch must contain at least two QC samples.
+  - *sampleType*: a column index indicating the sample types in the METBObj$inputdata dataframe. Required for serrf and loess methods. Each batch must contain at least two QC samples. Use "qc" for QC samples and "sample" for subject samples.
+  - *injectionOrder*: a column index indicating the injection (run) order in the METBObj$inputdata dataframe. Required for serrf and loess methods. The injection order must be numeric and unique.
+  
+```
+output_norm = normalize_input_data_byqc(METBObj=output_imputed, method="ccmn", istd=1:2, factorCol=2)
+pcaplot_overview(output_norm, scale=TRUE) #preview normalized data with PCA
+```
+
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="fig2.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 2. PCA of CCMN normalized data</em>
+</p>
+')
+```
+
+#### Try Data-driven normalization by median
+
+Specifying the required arguments for the ***normalize_input_data_bydata*** function:
+
+  - *METBObj*: Metabox object.
+  - *method*: normalization method (options: contrast, cubic, eigenms, linear, loess, mean, median, pqn, quantile, sum, vsn, default: median).
+  - *ref*:  a row index or a vector of row indices indicating the reference/control samples in the METBObj$inputdata dataframe. This parameter is required for the pqn method.
 
 ```
-output_pareto = scale_input_data(output_norm, method="pareto")
-head(output_pareto$X) #preview scaled data
+output_norm = normalize_input_data_bydata(METBObj=output_imputed, method="median") #normalize by median
+pcaplot_overview(output_norm, scale=TRUE) #preview normalized data with PCA
 ```
 
-**Observing data with different plots**
+### ***Transformation***
+
+Transformation mainly changes distribution of the data.
+
+#### Try Square root transformation
+
+Specifying the required arguments for the ***transform_input_data*** function:
+
+  - *METBObj*: Metabox object.
+  - *method*: transformation method (options: cube, glog10, glog2, log10, log2, sqrt, default: sqrt).
+  
+```
+output_sqrt = transform_input_data(METBObj=output_norm, method="sqrt")
+pcaplot_overview(output_sqrt, scale=TRUE) #preview transformed data with PCA
+```
+
+### ***Scaling***
+
+Scaling adjusts the relative importance of variables (features) so that metabolites with large values do not dominate the analysis, particularly in multivariate analysis.
+
+#### Try Pareto scaling
+
+Specifying the required arguments for the ***scale_input_data*** function:
+
+  - *METBObj*: Metabox object.
+  - *method*: scaling method (options: auto, level, pareto, power, range, vast, default: pareto).
+  
+```
+output_pareto = scale_input_data(METBObj=output_norm, method="pareto")
+pcaplot_overview(output_pareto, scale=TRUE) #preview scaled data with PCA
+```
+
+#### Try observing data with different plots
+
+Metabox 2.0 includes several plotting functions for data visualization, as demonstrated in the following command.
 
 ```
-pcaplot_overview(output_sqrt, classCol=3) #PCA plot
-rlaplot_overview(output_sqrt, classCol=3, dolog = FALSE) #RLA plot
-densityplot_overview(output_sqrt$X, plotvar=TRUE) #Variable density plot
-densityplot_overview(output_sqrt$X, plotvar=FALSE) #Sample density plot
-boxplot_overview(output_sqrt, plotvar=TRUE) #Variable boxplot
-boxplot_overview(output_sqrt, plotvar=FALSE) #Sample boxplot
-```
-![RLA plot](rla.png)
+pcaplot_overview(output_pareto, classCol=2, shapeCol=4) #PCA plot
 
-## 3 STATISTICAL ANALYSIS
+boxplot_overview(output_pareto, plotvar=TRUE) #Variable boxplot
+boxplot_overview(output_pareto, plotvar=FALSE) #Sample boxplot
 
-Example commands for Statistical analysis module:
+rlaplot_overview(output_pareto, classCol=2, dolog = FALSE) #RLA plot
 
-**Univariate analysis**
+densityplot_overview(output_pareto$X, plotvar=TRUE) #Variable density plot
+densityplot_overview(output_pareto$X, plotvar=FALSE) #Sample density plot
 
 ```
-output_univ= univ_analyze(output_sqrt, var.equal = FALSE, ispara = FALSE, doposthoc = FALSE)
-str(output_univ) #preview statistical result
-boxplot_byF1(output_sqrt,xCol = 3,factorLv1 = output_sqrt$Y) #boxplot by a fator
-boxplot_byF1F2(output_sqrt,xCol = 3,factorLv1 = output_sqrt$Y,
-factorLv2=output_sqrt$inputdata$Batch) #boxplot by 2 fators
-interactionplot_byF1F2(output_sqrt$X,xCol = 3,factorLv1 = output_sqrt$Y,
-factorLv2 = output_sqrt$inputdata$Batch) #interaction plot
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="fig3.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 3. PCA and RLA plots</em>
+</p>
+')
 ```
-![Interaction plot](interaction.png)
 
-**Correlation analysis**
+## STATISTICAL ANALYSIS
+
+Metabox 2.0 supports both univariate and multivariate analyses.
+
+### ***Univariate analysis***
+
+**Table 3**. Summary of univariate statistical methods.
+
+```{r, echo=FALSE}
+df <- data.frame(
+  Type = c("Parametric", "Non-parametric"),
+  Pairwise_Independent = c("t.test", "wilcox.test/mann-whitney"),
+  Pairwise_Repeated = c("t.test (paired)", "wilcox.test (paired)"),
+  ANOVA_Independent = c("ANOVA -> posthoc.test",
+                        "kruskal.test -> dunn.test or Scheirer Ray Hare.test -> wilcox.test (2W-ANOVA)"),
+  ANOVA_Repeated = c("ANOVA -> pairwise.t.test",
+                     "friedman.test -> dunn.test"),
+  Correlation = c("Pearson", "Spearman"),
+  `Linear Modeling` = c("Linear mixed-effect", "N/A")
+)
+colnames(df) <- c("Type","Independent","Repeated","Independent", "Repeated","Correlation","Linear Modeling")
+knitr::kable(df, align = "c") %>%
+  add_header_above(c(" " = 1,"Pairwise" = 2,"ANOVA" = 2," " = 2)) %>% kable_styling(full_width = FALSE)
+```
+
+Specifying the required arguments for the ***univ_analyze*** function:
+
+  - *METBObj*: Metabox object.
+  - *var.equal*: a logical variable for pairwise comparisons indicating whether to assume equal variances between groups.
+  - *ispara*: a logical variable indicating whether to perform a parametric (TRUE) or non-parametric (FALSE; default) test.
+  - *factor2Col*: a column index of the second factor in the METBObj$inputdata dataframe. This parameter is used for two-way ANOVA.
+  - *doposthoc*: a logical variable indicating whether to perform post hoc tests for one-way and two-way ANOVA (FALSE; default).
+
+The following commands perform univariate analysis on the demo dataset. A Kruskal–Wallis rank-sum test is applied, as the data include four groups. Users can view plots for L-alanine; change xCol to explore other metabolites.
 
 ```
-output_corr= correlation_analyze(output_sqrt, method="pearson")
+output_univ = univ_analyze(METBObj=output_sqrt, var.equal=FALSE, ispara=FALSE, doposthoc=FALSE)
+str(output_univ) #preview statistical results
+
+boxplot_byF1(METBObj=output_sqrt, xCol=3, factorLv1=output_sqrt$Y) #boxplot by a fator
+boxplot_byF1F2(METBObj=output_sqrt, xCol=3, factorLv1=output_sqrt$Y, factorLv2=output_sqrt$inputdata$Batch) #boxplot by 2 fators
+interactionplot_byF1F2(x_input=output_sqrt$X, xCol=3, factorLv1=output_sqrt$Y, factorLv2=output_sqrt$inputdata$Batch) #interaction plot
+```
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="fig4.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 4. Boxplot and interaction plot for L-alanine</em>
+</p>
+')
+```
+
+### ***Correlation analysis***
+
+Specifying the required arguments for the ***correlation_analyze*** function:
+
+  - *METBObj*: Metabox object.
+  - *y*: a numeric vector, matrix, or dataframe of additional variables (e.g., genes, proteins, or compounds), with samples as row names. If provided, correlations will be calculated between all variables in METBObj$X and y.
+  - *method*: correlation method (options: pearson or spearman, default: pearson).
+
+```
+output_corr = correlation_analyze(METBObj=output_sqrt, method="pearson")
 str(output_corr) #preview statistical result
 corrplot_heatmap(data.frame(output_corr$corr_data)) #correlation heatmap
 ```
 
-**PCA analysis**
+### ***Multivariate analysis***
+
+Specifying the required arguments for the ***multiv_analyze*** function:
+
+  - *METBObj*: Metabox object.
+  - *method*: multivariate analysis method (options: pca, pls, opls, default: pca).
+  - *scale*: scaling method for scaleC in ropls::opls(): no centering or scaling ("none"), mean-centering only ("center", default), mean-centering with Pareto scaling ("pareto"), or mean-centering with autoscaling ("standard").
+  - *predI*: number of components (5 for PCA, 1 for OPLS, NA for PLS for autofit).
+  - *crossvalI*: number of cross-validation segments (default = 3); samples must be ≥ crossvalI.
+  - *permI*: number of permutations of response labels (default = 20).
+
+#### Try PCA
 
 ```
-output_pca= multiv_analyze(output_sqrt, method="pca", scale="center") #PCA
-str(output_pca) #preview statistical result
-multiv_scoreplot(output_sqrt,score_data = output_pca$score_val,
-pcx = output_pca$model_summary$R2X[1],pcy = output_pca$model_summary$R2X[2]) #PCA score plot
-multiv_loadingplot(output_pca$loading_val) #Loading plot
-multiv_loadingplot_bypc(output_pca$loading_val,pc = 1) #Loding plot of PC1
-```
-![PCA score plot](pca.png)
-
-**PLS-DA analysis**
-
-```
-output_plsda= multiv_analyze(output_sqrt, method="pls", scale="center") #PLS-DA
-str(output_plsda) #preview statistical result
-multiv_scoreplot(output_sqrt,score_data = output_plsda$score_val,
-pcx = output_plsda$model_summary$R2X[1],pcy = output_plsda$model_summary$R2X[2]) #PLS-DA score plot
-multiv_loadingplot(output_plsda$loading_val) #Loading plot
-multiv_loadingplot_bypc(output_plsda$loading_val,pc = 1) #Loding plot of PC1
-multiv_vipplot(output_plsda$vip_val) #VIP plot
+#Do PCA
+output_pca = multiv_analyze(METBObj=output_sqrt, method="pca", scale="center")
 ```
 
-**OPLS-DA analysis**
+**Output:** The following output will be printed to the console.
 
 ```
-input_dat = read_input_data('LC_LN_Samples.csv') #load input file
-input_obj = set_input_obj(input_dat,idCol=1,classCol=2,xCol=3) #setup metabox object
-head(input_obj$X) #preview input data
-output_oplsda= multiv_analyze(input_obj, method="opls", scale="pareto") #OPLS-DA
-str(output_oplsda) #preview statistical result
-multiv_scoreplot(input_obj,score_data = output_oplsda$score_val,
-oscore_data = output_oplsda$oscore_val,pcx = output_oplsda$model_summary$R2X[1],
-pcy = output_oplsda$model_summary$R2X[2]) #OPLS-DA score plot
-multiv_loadingplot(loading_data = output_oplsda$loading_val,
-oloading_data = output_oplsda$oloading_val) #Loading plot
-multiv_loadingplot_bypc(output_oplsda$loading_val,pc = 1) #Loding plot of PC1
-multiv_vipplot(output_oplsda$vip_val) #VIP plot
-```
-![VIP plot](vip.png)
+Performing multivariate analysis ...
+PCA
+75 samples x 84 variables
+center scaling of predictors
+      R2X(cum) pre ort
+Total    0.836   5   0
 
-## 4 BIOMARKER ANALYSIS
-
-Example commands for Biomarker analysis module:
-
-```
-input_dat = read_input_data('LC_LN_Samples.csv') #load input file
-input_obj = set_input_obj(input_dat,idCol=1,classCol=2,xCol=3) #setup metabox object
-head(input_obj$X) #preview input data
-output_muvr = run_muvr(input_obj, scale = FALSE, method="PLS") #biomarker analysis using PLS model
-MUVR_getvip(output_muvr) #Get VIP ranks
-MUVR_plotvip(output_muvr) #VIP rank plot
-MUVR_plotval(output_muvr) #Validation plot
-```
-![VIP rank plot](viprank.png)
-
-## 5 INTEGRATIVE ANALYSIS
-
-Example commands for Integrative analysis module:
-
-```
-input_dat1 = read_input_data('LC_Fat_Tissue.csv') #load input file1
-input_obj1 = set_input_obj(input_dat1,idCol=1,classCol=3,xCol=4) #setup metabox object
-input_dat2 = read_input_data('GC_Fat_Tissue.csv') #load input file2
-input_obj2 = set_input_obj(input_dat2,idCol=1,classCol=3,xCol=4) #setup metabox object
-output_mbpls = mbplsda_analyze(data.frame(input_obj1$Y), 
-list(lc = input_obj1$X,gc = input_obj2$X),nrepet=10, 
-npermut=5, nboot=5, testmodel=TRUE, cpus=1) #integrative analysis
-mbplsda_plottestdim(output_mbpls$result$res_optimal) #Prediction error rate plot
-mbplsda_plotpermut(output_mbpls$result$res_permut) #Permutation testing plot
-mbplsda_screeplot(output_mbpls$result$base_model$eig) #Scree plot
-mbplsda_plotboot_vipc(output_mbpls$result$res_boot) #Variable importance plot
-mbplsda_plotboot_bipc(output_mbpls$result$res_boot) #Block importance plot
-```
-![Block importance plot](bip.png)
-
-## 6 DATA INTERPRETATION
-
-Example commands for Data interpretation module:
-
-**Overrepresentation analysis**
-
-```
-#pathway, metabolite ORA
-output_ora1=overrep_analyze(fnanal_data$compound_data$kegg, nodetype="compound", size=5)
-head(output_ora1$enrichment) #preview result
-#pathway, protein ORA
-output_ora2=overrep_analyze(fnanal_data$combined_data$id[1:9], nodetype="protein", size=3)
-head(output_ora2$enrichment) #preview result
-#chemical class ORA
-output_ora3=overrep_analyze(fnanal_data$compound_data$hmdb, settype="chemicalclass")
-head(output_ora3$enrichment) #preview result
+ PCA was performed.
 ```
 
-**Pathway enrichment analysis**
+The following commands to explore outputs from the analysis.
 
 ```
-#enrichment analysis containing directional values (Fold-change)
-output_enr=enrichment_analyze(fnanal_data$compound_data, pcol=5, fccol=6, method="reporter", 
-nodetype="compound", settype="pathway")
-head(output_enr$enrichment) #preview result
-#enrichment network plot by piano package (optional)
-piano::networkPlot2(output_enr$network,class="distinct",direction = "down",significance=0.1,lay = 5)
-```
-![Enrichment network plot by piano package](enr.png)
+#PCA score plot
+multiv_scoreplot(METBObj=output_sqrt, score_data=output_pca$score_val, pcx=output_pca$model_summary$R2X[1], pcy=output_pca$model_summary$R2X[2])
 
-**Integrated pathway overrepresentation analysis**
+#Loading plot
+multiv_loadingplot(loading_data=output_pca$loading_val)
+
+#Loding plot of PC1
+multiv_loadingplot_bypc(loading_data=output_pca$loading_val, pc=1)
+```
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="fig5.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 5. PCA score and loading plots</em>
+</p>
+')
+```
+
+#### Try PLS-DA
 
 ```
-#integrated pathway ORA
-output_ora = comb_overrep_analyze(fnanal_data$combined_data, organism = "hsa", size = 3)
+#Do PLS-DA
+output_plsda = multiv_analyze(METBObj=output_sqrt, method="pls", scale="center")
+
+#Score plot
+multiv_scoreplot(METBObj=output_sqrt, score_data=output_plsda$score_val, pcx=output_plsda$model_summary$R2X[1], pcy=output_plsda$model_summary$R2X[2])
+
+#Loading plot
+multiv_loadingplot(loading_data=output_plsda$loading_val)
+
+#Loding plot of PC1
+multiv_loadingplot_bypc(loading_data=output_plsda$loading_val, pc=1)
+
+#VIP plot (Top 10)
+vip_filtered = sort(output_plsda$vip_val,decreasing=T)[1:10]
+multiv_vipplot(vip_data=vip_filtered, plot_title="VIP")
+
+#Combined VIP and loading plot
+multiv_viploadingplot(vip_data=output_plsda$vip_val, loading_data=output_plsda$loading_val, plot_title="Combined plot")
+```
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="fig6.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 6. VIP and combined plots</em>
+</p>
+')
+```
+
+With a given ***user_input_obj***, users can use the following commands to perform OPLS-DA. OPLS-DA works similarly to PLS-DA but is limited to comparisons between two groups at a time.
+
+```
+#Do OPLS-DA
+output_oplsda = multiv_analyze(METBObj=user_input_obj, method="opls", scale="center")
+#Plots
+multiv_scoreplot(METBObj=user_input_obj, score_data=output_oplsda$score_val, oscore_data=output_oplsda$oscore_val, pcx=output_oplsda$model_summary$R2X[1], pcy=output_oplsda$model_summary$R2X[2])
+
+multiv_loadingplot(loading_data=output_oplsda$loading_val, oloading_data=output_oplsda$oloading_val)
+
+multiv_vipplot(vip_data=output_oplsda$vip_val) #VIP plot
+```
+
+## BIOMARKER ANALYSIS
+
+Metabox 2.0 uses the [MUVR package](https://gitlab.com/CarlBrunius/MUVR) for biomarker analysis.
+
+For this tutorial, download the [demo dataset](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/LC_Fat_Tissue.csv) (LC_Fat_Tissue.csv) and save it to your working directory. Then, run the following commands for biomarker analysis. The dataset contains 94 samples across two groups and 24 metabolites.
+
+```
+#Load input data
+input_dat = read_input_data(filename='LC_Fat_Tissue.csv')
+
+#Setup Metabox object and preview data
+input_obj = set_input_obj(inputdata=input_dat, idCol=1, classCol=3, xCol=4)
+head(input_obj$X) #preview the data
+```
+
+Specifying the required arguments for the ***run_muvr*** function:
+
+  - *METBObj*: Metabox object.
+  - *scale*: logical; scale variables to unit variance before PLS (default = FALSE).
+  - *nRep*: number of double cross-validation repetitions (default = 3).
+  - *varRatio*: proportion of variables in inner loops (default = 0.75).
+  - *partitionSize*: proportion of data for training (default = 0.7).
+  - *method*: ML method (PLS or RF; default = PLS).
+  - *DA*: logical for classification (default = TRUE); set FALSE for regression.
+  - *fitness*: evaluation metric; AUROC (default) or MISS for classification, RMSEP for regression.
+
+```
+#Biomarker analysis by PLS-DA
+output_muvr = run_muvr(METBObj=input_obj, scale=TRUE, method="PLS")
+
+#Get VIP ranks
+MUVR_getvip(output_muvr)
+
+#VIP rank plot
+MUVR_plotvip(output_muvr)
+
+#Performance plot
+MUVR_plotval(output_muvr)
+```
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="fig7.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 7. VIP plot</em>
+</p>
+')
+```
+
+## INTEGRATIVE ANALYSIS
+
+Metabox 2.0 uses the [packMBPLSDA](https://cran.r-project.org/web/packages/packMBPLSDA/index.html) for integrative analysis.
+
+For this tutorial, download the [LC dataset](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/LC_Fat_Tissue.csv) (LC_Fat_Tissue.csv) and the [GC dataset](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/GC_Fat_Tissue.csv) (GC_Fat_Tissue.csv), and save them to your working directory. Integrative analysis requires at least two datasets from the same subjects measured on different platforms. Then, run the following commands for integrative analysis. Each dataset contains 94 samples, including 24 LC metabolites and 137 GC metabolites.
+
+```
+#Load two input datasets
+input_LC = read_input_data(filename='LC_Fat_Tissue.csv') #load input file1
+input_GC = read_input_data(filename='GC_Fat_Tissue.csv') #load input file2
+
+#Setup Metabox objects and preview data
+obj_LC = set_input_obj(inputdata=input_LC, idCol=1, classCol=3, xCol=4)
+obj_GC = set_input_obj(inputdata=input_GC, idCol=1, classCol=3, xCol=4)
+head(obj_LC$X) #preview the data1
+```
+
+Specifying the required arguments for the ***mbplsda_analyze*** function:
+
+  - *class_data*: one-column data frame of class/category data.
+  - *input_data*: list of dataframes containing two or more datasets of explanatory (independent) variables. must have the same samples and no duplicated variables.
+  - *scale*: logical; whether to standardize variables.
+  - *option*: block weighting method: none (default) or uniform.
+  - *nf*: number of principal components (default = 10).
+  - *optdim*: optimal number of components (default = 2).
+  - *nrepet*: number of cross-validation repetitions.
+  - *npermut*: number of permutations.
+  - *nboot*: number of bootstrap replications.
+  - *threshold*: numeric value between 0 and 1 indicating the prediction threshold (default = 0.5).
+  - *testmodel*: logical value indicating whether to perform model component testing and permutation (default = FALSE).
+  - *cpus*: number of CPUs for parallel computing.
+
+```
+#Integrative analysis by MBPLSDA
+output_mbpls = mbplsda_analyze(class_data=data.frame(obj_LC$Y), input_data=list(lc = obj_LC$X,gc = obj_GC$X), nrepet=10, npermut=5, nboot=5, testmodel=TRUE, cpus=1)
+
+#Block importance plot
+mbplsda_plotboot_bipc(output_mbpls$result$res_boot)
+
+#Variable importance plot
+mbplsda_plotboot_vipc(output_mbpls$result$res_boot)
+
+#Prediction error rate plot
+mbplsda_plottestdim(output_mbpls$result$res_optimal)
+
+#Permutation testing plot
+mbplsda_plotpermut(output_mbpls$result$res_permut)
+
+#Scree plot
+mbplsda_screeplot(output_mbpls$result$base_model$eig)
+```
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="fig8.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 8. Block importance plot</em>
+</p>
+')
+```
+
+## DATA INTERPRETATION
+
+Metabox 2.0 provides data interpretation in a pathway context for genes, proteins, and metabolites, as well as chemical class context for metabolites.
+
+For this tutorial, download the [demo dataset](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/metabolite_list.csv) (metabolite_list.csv) and save it to your working directory. It is assumed that users already have a list of metabolites and associated statistical information, as shown in the demo dataset.
+
+#### Try overrepresentation analysis (ORA)
+
+Specifying the required arguments for the ***overrep_analyze*** function:
+
+  - *txtinput*: character vector of feature IDs (e.g., c("C12078", "C02273")). For pathway analysis uses KEGG IDs (e.g., C12078) for compounds, UniProt entries (e.g., P0C9J6) for proteins, and NCBI Gene IDs (e.g., 10327) for genes. For chemical class analysis uses HMDB IDs (e.g., HMDB0000001) for compounds.
+  - *nodetype*: node type: compound (default), protein, or gene.
+  - *settype*: set type: pathway (default) or chemicalclass.
+  - *organism*: KEGG organism code; not used if `settype = "chemicalclass"` (default = hsa; or tdc).
+  - *size*: minimum number of members per term (default = 3).
+  - *universe*: background feature IDs (default = all unique IDs in the set collection).
+
+```
+#Load input file
+input_dat = read_input_data(filename='metabolite_list.csv')
+
+#Do pathway ORA
+output_ora = overrep_analyze(txtinput=input_dat$kegg, nodetype="compound", size=5)
 head(output_ora$enrichment) #preview result
+
+#Do chemical class ORA
+output_chem = overrep_analyze(txtinput=input_dat$hmdb, settype="chemicalclass")
+head(output_chem$enrichment) #preview result
+
+#Export resutl
+write.csv(output_chem$enrichment,file="ora.csv",row.names=FALSE)
 ```
+
+#### Try pathway enrichment analysis
+
+Specifying the required arguments for the ***enrichment_analyze*** function:
+
+  - *input_data*: dataframe containing feature IDs, statistics (e.g., p-, t-, or F-values), and optional directions (e.g., fold changes).
+  - *pcol*: column index for statistical values (default = 2).
+  - *fcol*: column index for direction values (e.g., fold changes; default = NULL, directionality ignored).
+  - *method*: enrichment method: reporter (default), fisher, median, mean, stouffer.
+  - *nodetype*: node type: compound (default), protein, or gene.
+  - *settype*: set type: pathway (default) or chemicalclass.
+  - *organism*: KEGG organism code; not used if `settype = "chemicalclass"` (default = hsa; or tdc).
+  - *size*: minimum number of members per term (default = 3).
+  
+```
+#Load input file
+input_dat = read_input_data(filename='metabolite_list.csv')
+
+#Enrichment analysis containing directional values (Fold-change)
+output_enr = enrichment_analyze(input_data=input_dat, pcol=5, fccol=6, method="reporter", nodetype="compound", settype="pathway")
+head(output_enr$enrichment) #preview result
+
+#Export resutl
+write.csv(output_enr$enrichment,file="enrichment.csv",row.names=FALSE)
+```
+
