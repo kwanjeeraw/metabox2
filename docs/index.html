@@ -1352,7 +1352,7 @@ head(output_ora$enrichment) #preview result
 output_chem = overrep_analyze(txtinput=input_dat$hmdb, settype=&quot;chemicalclass&quot;)
 head(output_chem$enrichment) #preview result
 
-#Export resutl
+#Export result
 write.csv(output_chem$enrichment,file=&quot;ora.csv&quot;,row.names=FALSE)</code></pre>
 </div>
 <div id="try-pathway-enrichment-analysis" class="section level4">
@@ -1384,7 +1384,7 @@ input_dat = read_input_data(filename=&#39;metabolite_list.csv&#39;)
 output_enr = enrichment_analyze(input_data=input_dat, pcol=5, fccol=6, method=&quot;reporter&quot;, nodetype=&quot;compound&quot;, settype=&quot;pathway&quot;)
 head(output_enr$enrichment) #preview result
 
-#Export resutl
+#Export result
 write.csv(output_enr$enrichment,file=&quot;enrichment.csv&quot;,row.names=FALSE)</code></pre>
 </div>
 </div>

@@ -564,7 +564,7 @@ head(output_ora$enrichment) #preview result
 output_chem = overrep_analyze(txtinput=input_dat$hmdb, settype="chemicalclass")
 head(output_chem$enrichment) #preview result
 
-#Export resutl
+#Export result
 write.csv(output_chem$enrichment,file="ora.csv",row.names=FALSE)
 ```
 
@@ -589,7 +589,7 @@ input_dat = read_input_data(filename='metabolite_list.csv')
 output_enr = enrichment_analyze(input_data=input_dat, pcol=5, fccol=6, method="reporter", nodetype="compound", settype="pathway")
 head(output_enr$enrichment) #preview result
 
-#Export resutl
+#Export result
 write.csv(output_enr$enrichment,file="enrichment.csv",row.names=FALSE)
 ```
 
