@@ -1,5 +1,5 @@
 ---
-title: "Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and interpretation"
+title: "Metabox 2.0: Tutorial for R version"
 author: "Kwanjeera W"
 date: "`r Sys.Date()`"
 always_allow_html: yes

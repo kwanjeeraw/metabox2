@@ -6,7 +6,7 @@ Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and i
 How to use
 ==========
 Here are some alternative ways to use Metabox 2.0:
-* [Install as a standard R package](#install-as-a-standard-r-package), see [tutorial](https://kwanjeeraw.github.io/metabox2/)
+* [Install as a standard R package](#install-as-a-standard-r-package), see [TUTORIAL](https://kwanjeeraw.github.io/metabox2/)
 * [Use GUI version from Docker](#use-gui-version-from-docker)
 * [Use an online version](#use-an-online-version-from-our-servers)
 
