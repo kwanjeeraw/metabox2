@@ -1,5 +1,5 @@
 ---
-title: "Metabox 2.0: Tutorial for R version"
+title: "Metabox 2.0: Tutorial for R Commands"
 author: "Kwanjeera W"
 date: "`r Sys.Date()`"
 always_allow_html: yes
@@ -22,10 +22,8 @@ knitr::opts_chunk$set(
 Here are some alternative ways to use Metabox 2.0:
 
 * [Install as a standard R package](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#install-as-a-standard-r-package)
-
-* [Use GUI version from Docker](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-gui-version-from-docker)
-
-* [Use an online version](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-an-online-version-from-our-servers)
+* [Use metabox with Docker](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-metabox-with-docker)
+* [Use metabox via online server](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-an-online-version-from-our-servers)
 
 ### INPUT DATA
 
@@ -62,15 +60,10 @@ cat('
 Go to Section:
 
 * [PROJECT INITIALIZATION](#project-initialization)
-
 * [DATA PROCESSING](#data-processing)
-
 * [STATISTICAL ANALYSIS](#statistical-analysis)
-
 * [BIOMARKER ANALYSIS](#biomarker-analysis)
-
 * [INTEGRATIVE ANALYSIS](#integrative-analysis)
-
 * [DATA INTERPRETATION](#data-interpretation)
 
 ## PROJECT INITIALIZATION
@@ -78,7 +71,6 @@ Go to Section:
 ### 1. Setup the project:
 
 * For this tutorial, download the [demo dataset](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/GCGC_DM_Samples.csv) (GCGC_DM_Samples.csv) and save it to your working directory
-
 * Open R or RStudio, then set the working directory and load the Metabox2 package with the following R command
  
  ```

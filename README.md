@@ -6,13 +6,18 @@ Metabox 2.0: A toolbox for thorough metabolomic data analysis, integration and i
 How to use
 ==========
 Here are some alternative ways to use Metabox 2.0:
-* [Install as a standard R package](#install-as-a-standard-r-package), see [TUTORIAL](https://kwanjeeraw.github.io/metabox2/)
-* [Use GUI version from Docker](#use-gui-version-from-docker)
-* [Use an online version](#use-an-online-version-from-our-servers)
+* [Install as a standard R package](#install-as-a-standard-r-package)
+* [Use metabox with Docker](#use-metabox-with-docker)
+* [Use metabox via online server](#use-an-online-version-from-our-servers)
+
+### Tutorials
+* Tutorial for R Commands, click [here](https://kwanjeeraw.github.io/metabox2/)
+* Metabox 2.0 GUI Tutorial, click [here](https://kwanjeeraw.github.io/metaboxweb/)
 
 ### Install as a standard R package
 * Download and install [R software](https://www.r-project.org/)
 * For R 4.5.2, Install metabox2 and required packages using the following commands:
+
 ```
 ##Install R dependencies ##
 if (!require("BiocManager"))
@@ -51,16 +56,19 @@ output_multiv = multiv_analyze(input_obj, method = "pca", scale = "standard")
 ##(Optional) Use graphical user interface ##
 launch_gui()
 ```
-### Use GUI version from Docker
+
+### Use Metabox with Docker
 * Download and install [Docker](https://www.docker.com/)
 * Download a Dockerfile from [here](https://github.com/kwanjeeraw/metabox2/blob/main/Dockerfile)
 * Build and deploy metaboxweb Docker using the following commands:
+
 ```
 cd [go to Dockerfile location]
 docker build --no-cache=true --platform linux/x86_64 -t metaboxweb .
 docker run --name mbdocker -p 8081:3838 metaboxweb
 Next, navigate to http://localhost:8081/metaboxweb
 ```
+
 ### Use an online version from our servers
 * [server1](http://metabox.metsysbio.com:8081/metaboxweb/)
 * [server2](http://metabox.metsysbio.com:8082/metaboxweb/)
