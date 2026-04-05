@@ -101,11 +101,17 @@ univ_analyze <- function(METBObj, var.equal = FALSE, ispara = FALSE, factor2Col 
   stat_summ = get_stat_summary(METBObj) #get stat table
   if(levelrnum == 2 && !(factor2Col)){#t-test
     if(ispara){#parametric test
-      t_data = apply(dat, 2, function(x) {t.test(x ~ F1, paired=isRepeated, var.equal=var.equal)})
+      t_data = apply(dat, 2, function(x) {
+          t.test(x[F1 == levels(F1)[1]],x[F1 == levels(F1)[2]],
+                      paired = isRepeated, var.equal = var.equal)
+      })
       p_value = sapply(t_data, function(x) {x$p.value})
       p_adj = p.adjust(p_value, method="fdr") #Benjamini & Hochberg
     }else{#nonparametric test
-      t_data = apply(dat, 2, function(x) {wilcox.test(x ~ F1, paired=isRepeated, var.equal=var.equal)})
+      t_data = apply(dat, 2, function(x) {
+        wilcox.test(x[F1 == levels(F1)[1]],x[F1 == levels(F1)[2]],
+               paired = isRepeated, var.equal = var.equal)
+      })
       p_value = sapply(t_data, function(x) {x$p.value})
       p_adj = p.adjust(p_value, method="fdr") #Benjamini & Hochberg
     }

@@ -94,6 +94,9 @@ License
 
 Updates
 =======
+#### version 2.13 (APR 2026)
+* Fix x ~ F1 formula error for t.test and wilcox.test
+* Add tutorial
 #### version 2.12 (OCT 2025)
 * Add evaluation arguments for multiv_analyze
 * Export an opls object for multiv_analyze
