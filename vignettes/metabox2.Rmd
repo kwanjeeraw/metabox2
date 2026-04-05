@@ -25,7 +25,29 @@ Here are some alternative ways to use Metabox 2.0:
 * [Use metabox with Docker](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-metabox-with-docker)
 * [Use metabox via online server](https://github.com/kwanjeeraw/metabox2?tab=readme-ov-file#use-an-online-version-from-our-servers)
 
-### INPUT DATA
+## CONTENTS
+
+This tutorial demonstrates how to run Metabox 2.0 as an R package and requires familiarity with R. It walks through five modules. Figure 1 shows the pipeline overview. Follow the script step by step in the sections below.
+
+```{r, echo=FALSE, results='asis'}
+cat('
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kwanjeeraw/metabox2/main/inst/shiny/www/first_pipeline.png" style="max-width:100%; height:auto;"><br>
+  <em>Figure 1. Overview of Metabox 2.0 containing three key pipelines and five modules</em>
+</p>
+')
+```
+ 
+Go to Section:
+
+* [PROJECT INITIALIZATION](#project-initialization)
+* [DATA PROCESSING](#module-1-data-processing)
+* [STATISTICAL ANALYSIS](#module-2-statistical-analysis)
+* [BIOMARKER ANALYSIS](#module-3-biomarker-analysis)
+* [INTEGRATIVE ANALYSIS](#module-4-integrative-analysis)
+* [DATA INTERPRETATION](#module-5-data-interpretation)
+
+### PREPARE INPUT DATA
 
 The input dataset should be a CSV table containing metadata columns along with feature variables, as illustrated in Table 1. Samples are in rows, and variables (features) are in columns. Experimental information—such as batch, sample type, and injection order—is required for IS- and QC-based normalization.
 
@@ -43,28 +65,6 @@ dt[c(1:3,23:25), 1:10] %>%
   column_spec(3:5, bold = TRUE, background = '#8fbce6') %>%
   column_spec(5, border_right = TRUE)
 ```
-
-## CONTENTS
-
-This tutorial demonstrates how to run Metabox 2.0 as an R package and requires familiarity with R. It walks through five modules. Figure 1 shows the pipeline overview. Follow the script step by step in the sections below.
-
-```{r, echo=FALSE, results='asis'}
-cat('
-<p align="center">
-  <img src="https://raw.githubusercontent.com/kwanjeeraw/metabox2/main/inst/shiny/www/first_pipeline.png" style="max-width:100%; height:auto;"><br>
-  <em>Figure 1. Overview of Metabox 2.0 containing three key pipelines and five modules</em>
-</p>
-')
-```
- 
-Go to Section:
-
-* [PROJECT INITIALIZATION](#project-initialization)
-* [DATA PROCESSING](#data-processing)
-* [STATISTICAL ANALYSIS](#statistical-analysis)
-* [BIOMARKER ANALYSIS](#biomarker-analysis)
-* [INTEGRATIVE ANALYSIS](#integrative-analysis)
-* [DATA INTERPRETATION](#data-interpretation)
 
 ## PROJECT INITIALIZATION
 
@@ -110,7 +110,7 @@ Data summary:
 - 478 ( 7 % ) missing values.
 ```
 
-## DATA PROCESSING
+## Module 1-DATA PROCESSING
 
 Key steps in this module include missing value imputation, normalization, transformation, and scaling.
 
@@ -257,7 +257,7 @@ cat('
 ')
 ```
 
-## STATISTICAL ANALYSIS
+## Module 2-STATISTICAL ANALYSIS
 
 Metabox 2.0 supports both univariate and multivariate analyses.
 
@@ -419,7 +419,7 @@ multiv_loadingplot(loading_data=output_oplsda$loading_val, oloading_data=output_
 multiv_vipplot(vip_data=output_oplsda$vip_val) #VIP plot
 ```
 
-## BIOMARKER ANALYSIS
+## Module 3-BIOMARKER ANALYSIS
 
 Metabox 2.0 uses the [MUVR package](https://gitlab.com/CarlBrunius/MUVR) for biomarker analysis.
 
@@ -467,7 +467,7 @@ cat('
 ')
 ```
 
-## INTEGRATIVE ANALYSIS
+## Module 4-INTEGRATIVE ANALYSIS
 
 Metabox 2.0 uses the [packMBPLSDA](https://cran.r-project.org/web/packages/packMBPLSDA/index.html) for integrative analysis.
 
@@ -527,13 +527,15 @@ cat('
 ')
 ```
 
-## DATA INTERPRETATION
+## Module 5-DATA INTERPRETATION
 
 Metabox 2.0 provides data interpretation in a pathway context for genes, proteins, and metabolites, as well as chemical class context for metabolites.
 
 For this tutorial, download the [demo dataset](https://github.com/kwanjeeraw/metabox2/blob/main/inst/shiny/www/metabolite_list.csv) (metabolite_list.csv) and save it to your working directory. It is assumed that users already have a list of metabolites and associated statistical information, as shown in the demo dataset.
 
 #### Try overrepresentation analysis (ORA)
+
+Pathway overrepresentation analysis will be performed on a given list of metabolites using the KEGG database as the pathway resource, while chemical class overrepresentation analysis will be performed using the HMDB database as the metabolite resource.
 
 Specifying the required arguments for the ***overrep_analyze*** function:
 
@@ -561,6 +563,8 @@ write.csv(output_chem$enrichment,file="ora.csv",row.names=FALSE)
 ```
 
 #### Try pathway enrichment analysis
+
+Pathway enrichment analysis will be performed on a given list of metabolites, incorporating statistical values (e.g., p-, t-, or F-values) and optional directionality (e.g., fold changes), using the KEGG database as the pathway resource.
 
 Specifying the required arguments for the ***enrichment_analyze*** function:
 
