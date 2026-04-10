@@ -51,7 +51,7 @@ Go to Section:
 
 The input dataset should be a CSV table containing metadata columns along with feature variables, as illustrated in Table 1. Samples are in rows, and variables (features) are in columns. Experimental information—such as batch, sample type, and injection order—is required for IS- and QC-based normalization.
 
-**Table 1**. Format of the input dataset. This example table includes experimental information (brown), metadata (blue), and metabolite features.
+**Table 1**. Format of the input dataset. This example table includes metadata (brown), experimental information (blue), and metabolite features.
 
 ```{r,echo=FALSE, results='asis', message=FALSE, warning=FALSE}
 library(knitr)
