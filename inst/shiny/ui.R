@@ -565,7 +565,7 @@ ui <- fluidPage(theme = bs_theme(version = 3, bootswatch = "lumen", base_font = 
                                                                                                      ),selected = "pca"),
                                                                                         radioButtons("Mscale", h5("Choose scaling method, if data wasn't processed"),
                                                                                                      choices = list(
-                                                                                                       "None" = "center",
+                                                                                                       "Center (only mean-centering)" = "center",
                                                                                                        "Pareto" = "pareto",
                                                                                                        "Auto" = "standard"
                                                                                                      ),selected = "center"),
