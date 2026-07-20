@@ -16,7 +16,7 @@ Here are some alternative ways to use Metabox 2.0:
 
 ### Install as a standard R package
 * Download and install [R software](https://www.r-project.org/)
-* For R 4.5.2, Install metabox2 and required packages using the following commands:
+* For R 4.6.1, Install metabox2 and required packages using the following commands:
 
 ```
 ##Install R dependencies ##
@@ -24,16 +24,16 @@ if (!require("BiocManager"))
     install.packages("BiocManager")
 if (!require("remotes"))
   install.packages("remotes")
-BiocManager::install("affy", update=FALSE, version="3.22")
-BiocManager::install("pcaMethods", update=FALSE, version="3.22")
-BiocManager::install("preprocessCore", update=FALSE, version="3.22")
-BiocManager::install("impute", update=FALSE, version="3.22")
-BiocManager::install("vsn", update=FALSE, version="3.22")
-BiocManager::install("ropls", update=FALSE, version="3.22")
+BiocManager::install("affy", update=FALSE, version="3.23")
+BiocManager::install("pcaMethods", update=FALSE, version="3.23")
+BiocManager::install("preprocessCore", update=FALSE, version="3.23")
+BiocManager::install("impute", update=FALSE, version="3.23")
+BiocManager::install("vsn", update=FALSE, version="3.23")
+BiocManager::install("ropls", update=FALSE, version="3.23")
 remotes::install_version("igraph",version="2.2.2",repos="https://cran.rstudio.org/")
 #for mac os use the following to install igraph
 #install.packages("igraph", type = "binary")
-BiocManager::install("piano", update=FALSE, version="3.22")
+BiocManager::install("piano", update=FALSE, version="3.23")
 remotes::install_gitlab("CarlBrunius/MUVR")
 install.packages("https://cran.r-project.org/src/contrib/Archive/MetNorm/MetNorm_0.1.tar.gz", repo=NULL, method = "libcurl")
 
